@@ -7,14 +7,14 @@ type UserInfoAuthCodeSignupFormProps = {
   onVerify: () => void;
   resetAuthCode: boolean;
   phone: string;
-  purpose?: 'signup' | 'findPassword' | 'findLoginId';
+  purpose?: 'SIGNUP' | 'FIND_PASSWORD' | 'FIND_LOGIN_ID' | 'CHANGE_PHONE';
 };
 
 const UserInfoAuthCodeSignupForm = ({
   onVerify,
   resetAuthCode,
   phone,
-  purpose = 'signup',
+  purpose = 'SIGNUP',
 }: UserInfoAuthCodeSignupFormProps) => {
   const [authCode, setAuthCode] = useState('');
   const [timeLeft, setTimeLeft] = useState(180);
