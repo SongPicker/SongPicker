@@ -29,7 +29,6 @@ import java.util.List;
 public class TeamController {
     private final TeamService teamService;
 
-
     @GetMapping
     public ResponseEntity<?> myTeamGet(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo){
         List<TeamDto> teamDtoList = teamService.getMyTeams(loginMemberInfo.getLoginId());

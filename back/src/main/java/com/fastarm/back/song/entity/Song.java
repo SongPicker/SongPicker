@@ -2,16 +2,13 @@
 package com.fastarm.back.song.entity;
 
 import jakarta.persistence.*;
-import kotlinx.serialization.descriptors.PrimitiveKind;
 import lombok.*;
 
 import java.time.LocalDate;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @Getter
-@Builder
 public class Song {
 
     @Id

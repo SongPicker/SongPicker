@@ -3,7 +3,6 @@ package com.fastarm.back.notification.entity;
 import com.fastarm.back.notification.enums.Status;
 import com.fastarm.back.team.entity.Team;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,9 +10,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
-@Builder
 public class NotificationTeamInvite {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,8 +21,7 @@ public class NotificationTeamInvite {
     private Team team;
 
     @Enumerated(EnumType.STRING)
-    @Builder.Default
-    private Status status = Status.WAIT;
+    private Status status;
 
     @OneToOne
     @JoinColumn(name = "id", nullable = false)
@@ -37,6 +33,13 @@ public class NotificationTeamInvite {
 
     public void reject() {
         this.status = Status.REJECT;
+    }
+
+    @Builder
+    public NotificationTeamInvite(Team team, Notification notification) {
+        this.team = team;
+        this.notification = notification;
+        this.status = Status.WAIT;
     }
 
 }
