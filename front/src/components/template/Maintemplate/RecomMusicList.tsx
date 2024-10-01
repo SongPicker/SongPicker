@@ -4,7 +4,11 @@ import MusicDetailModal from '../commons/MusicDetailModal';
 import { IoMdRefreshCircle } from 'react-icons/io';
 import { TbMoodSadSquint } from 'react-icons/tb';
 
-import { getPersonalRecommendations, getSongDetail, SongDetail } from '../../../services/songservices';
+import {
+  getPersonalRecommendations,
+  getSongDetail,
+  SongDetail,
+} from '../../../services/songservices';
 
 // Props 타입 정의
 type Props = {
@@ -123,24 +127,26 @@ const RecomMusicList = ({ onShowNotification, onShowConnectionModal }: Props) =>
   }, [onShowNotification]);
 
   // 곡 선택 핸들러
-  const handleItemClick = useCallback(async (music: RecommendedSong) => {
-    setIsLoadingDetail(true);
-    try {
-      const response = await getSongDetail(music.songId);
-      if (response.code === 'SO100') {
-        setSelectedSongDetail(response.data);
-        setIsModalOpen(true);
-      } else {
-        throw new Error(response.message || '노래 상세 정보를 불러오는데 실패했습니다.');
+  const handleItemClick = useCallback(
+    async (music: RecommendedSong) => {
+      setIsLoadingDetail(true);
+      try {
+        const response = await getSongDetail(music.songId);
+        if (response.code === 'SO100') {
+          setSelectedSongDetail(response.data);
+          setIsModalOpen(true);
+        } else {
+          throw new Error(response.message || '노래 상세 정보를 불러오는데 실패했습니다.');
+        }
+      } catch (error) {
+        const errorMessage = handleApiError(error, '노래 상세 정보를 불러오는데 실패했습니다.');
+        onShowNotification('오류 발생', errorMessage);
+      } finally {
+        setIsLoadingDetail(false);
       }
-    } catch (error) {
-      const errorMessage = handleApiError(error, '노래 상세 정보를 불러오는데 실패했습니다.');
-      onShowNotification('오류 발생', errorMessage);
-    } finally {
-      setIsLoadingDetail(false);
-    }
-  }, [onShowNotification]);
-
+    },
+    [onShowNotification]
+  );
 
   // 터치 이벤트 핸들러
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
@@ -244,12 +250,12 @@ const RecomMusicList = ({ onShowNotification, onShowConnectionModal }: Props) =>
       </div>
       {selectedSongDetail && (
         <MusicDetailModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        songDetail={selectedSongDetail}
-        isLoading={isLoadingDetail}
-        height="80vh"
-      />
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          songDetail={selectedSongDetail}
+          isLoading={isLoadingDetail}
+          height="80vh"
+        />
       )}
     </div>
   );

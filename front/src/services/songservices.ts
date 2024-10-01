@@ -32,3 +32,40 @@ export const getSongDetail = async (songId: number | string) => {
   });
   return response.data;
 };
+
+// 노래 검색 API 함수
+// export const searchSongs = async (keyword: string) => {
+//   const response = await axiosInstance({
+//     method: 'GET',
+//     url: '/api/songs/search',
+//     params: { keyword },
+//   });
+//   return response.data;
+// };
+
+export const searchSongs = async (keyword: string) => {
+  try {
+    const response = await axiosInstance({
+      method: 'GET',
+      url: '/api/songs/search',
+      params: { keyword },
+    });
+
+    // 응답 데이터 구조 확인 및 처리
+    console.log('API Response:', response);
+    if (response.data && response.data.body) {
+      return response.data.body;
+    } else if (response.data) {
+      return response.data;
+    } else {
+      console.warn('Unexpected API response structure:', response);
+      return { songSearchList: [] };
+    }
+  } catch (error) {
+    console.error('Search API Error:', error);
+    if (axios.isAxiosError(error) && error.response) {
+      console.error('Error response:', error.response);
+    }
+    throw error;
+  }
+};
