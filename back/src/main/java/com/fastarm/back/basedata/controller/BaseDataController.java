@@ -2,7 +2,7 @@ package com.fastarm.back.basedata.controller;
 
 import com.fastarm.back.auth.security.dto.LoginMemberInfo;
 import com.fastarm.back.basedata.controller.dto.BaseDataAddRequest;
-import com.fastarm.back.basedata.controller.dto.GetPopularResponse;
+import com.fastarm.back.basedata.controller.dto.PopularGetResponse;
 import com.fastarm.back.basedata.dto.BaseDataAddDto;
 import com.fastarm.back.basedata.service.BaseDataService;
 import com.fastarm.back.common.controller.dto.ApiResponse;
@@ -23,7 +23,7 @@ public class BaseDataController {
 
     @GetMapping("/initial")
     public ResponseEntity<?> popularList(@PageableDefault(size = 33, sort = "id") Pageable pageable) {
-        Slice<GetPopularResponse> result = baseDataService.getPopularList(pageable);
+        Slice<PopularGetResponse> result = baseDataService.getPopularList(pageable);
         return ResponseEntity.ok(new ApiResponse<>("BD100", "선택 데이터 항목 조회 성공", result));
     }
 

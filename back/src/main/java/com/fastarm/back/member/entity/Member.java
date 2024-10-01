@@ -14,11 +14,9 @@ import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @SQLDelete(sql = "UPDATE member SET is_withdraw = true WHERE id = ?")
 @SQLRestriction("is_withdraw != true")
-@Builder
 @Getter
 public class Member {
 
@@ -47,7 +45,7 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Column(length = 256)
+    @Column(length = 512)
     private String profileImage;
 
     @Column(nullable = false)
@@ -62,9 +60,42 @@ public class Member {
 
     private LocalDateTime withdrawnAt;
 
+    public void modifyPassword(String newPassword) {
+        this.password = newPassword;
+    }
+
+    public void modifyNickname(String newNickname) {
+        this.nickname = newNickname;
+    }
+
+    public void modifyPhone(String newPhone) {
+        this.phone = newPhone;
+    }
+
+    public void modifyProfileImage(String newProfileImage) {
+        this.profileImage = newProfileImage;
+    }
+
+    @Builder
+    public Member(Role role, Gender gender, String phone, LocalDate birth, String nickname, String name, String password, String loginId) {
+        this.role = role;
+        this.gender = gender;
+        this.phone = phone;
+        this.birth = birth;
+        this.nickname = nickname;
+        this.name = name;
+        this.password = password;
+        this.loginId = loginId;
+    }
+
     @PrePersist
     protected void onCreate() {
         isWithdraw = false;
+    }
+
+    @PreRemove
+    protected void onDelete() {
+        this.withdrawnAt = LocalDateTime.now();
     }
 }
 

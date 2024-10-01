@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetPopularResponse {
+public class PopularGetResponse {
     private Long id;
     private String coverImage;
     private String title;

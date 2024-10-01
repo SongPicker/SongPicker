@@ -1,5 +1,6 @@
 package com.fastarm.back.team.service;
 
+import com.fastarm.back.common.constants.S3Constants;
 import com.fastarm.back.common.service.S3Service;
 
 import com.fastarm.back.notification.entity.Notification;
@@ -50,9 +51,7 @@ public class TeamService {
 
     }
 
-
     @Transactional(readOnly = true)
-
     public TeamDetailDto getTeamDetail(TeamDetailRequest dto) {
 
 
@@ -84,7 +83,7 @@ public class TeamService {
             Member member = memberRepository.findByNickname(receiverNickName).orElseThrow(MemberNotFoundException::new);
 
 
-            if(teamMemberRepository.existsByTeamAndMember(team,member)) {
+            if (teamMemberRepository.existsByTeamAndMember(team,member)) {
                 alreadyInGroup.add(receiverNickName);
                 continue;
             }
@@ -121,8 +120,11 @@ public class TeamService {
     @Transactional
     public Long createTeam(TeamAddDto dto) throws IOException {
         String imagePath;
-        if(dto.getTeamImage().isEmpty()) imagePath="https://songpicker.s3.ap-northeast-2.amazonaws.com/%EB%B2%BC%EB%9D%BD%EC%9D%B4+(2).png";
-        else imagePath = s3Service.uploadFile(dto.getTeamImage());
+        if (dto.getTeamImage().isEmpty()) {
+            imagePath = S3Constants.DEFAULT_IMAGE;
+        } else {
+            imagePath = s3Service.uploadFile(dto.getTeamImage());
+        }
 
         Team team = dto.toEntity(imagePath);
         Team savedTeam = teamRepository.save(team);
@@ -141,28 +143,29 @@ public class TeamService {
 
     @Transactional
     public void modifyTeam(TeamModifyDto dto) throws IOException, URISyntaxException {
-        Member member = memberRepository.findByLoginId(dto.getLoginId()).orElseThrow(MemberNotFoundException::new);
-        Team team = teamRepository.findById(dto.getTeamId()).orElseThrow(TeamNotFoundException :: new);
+        Member member = memberRepository.findByLoginId(dto.getLoginId())
+                .orElseThrow(MemberNotFoundException::new);
+        Team team = teamRepository.findById(dto.getTeamId())
+                .orElseThrow(TeamNotFoundException :: new);
 
         checkPermission(member,team);
 
         String imagPath;
-        if(dto.getTeamImage()!=null){
+        if (dto.getTeamImage() != null) {
             s3Service.deleteFile(team.getTeamImage());
             imagPath = s3Service.uploadFile(dto.getTeamImage());
-        }else{
+        } else {
             imagPath=team.getTeamImage();
         }
 
         team.changeTeam(dto.getTeamName(), imagPath);
         teamRepository.save(team);
-
     }
 
 
     @Transactional
     public void checkPermission(Member member, Team team) {
-        Boolean isMember = teamMemberRepository.existsByTeamAndMember(team,member);
+        boolean isMember = teamMemberRepository.existsByTeamAndMember(team,member);
 
         if (!isMember) throw new TeamMemberNotFoundException();
     }
@@ -177,7 +180,7 @@ public class TeamService {
         teamMemberRepository.delete(teamMember);
 
         int remainingMembers = teamMemberRepository.countByTeamId(dto.getTeamId());
-        if(remainingMembers==0) teamRepository.delete(team);
+        if (remainingMembers==0) teamRepository.delete(team);
     }
 
 }
