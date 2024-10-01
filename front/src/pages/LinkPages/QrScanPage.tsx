@@ -3,11 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import QrScanner from 'react-qr-scanner';
 import SubTopNavbar from '../../components/molecules/commons/SubTopNavbar';
 import ConnectionModal from '../../components/template/commons/ConnectionModal';
-import {
-  checkConnectionStatus,
-  connectGroupService,
-  connectService,
-} from '../../services/connection';
+import { connectGroupService, connectService } from '../../services/connection';
 import axios from 'axios';
 
 type QrScanResult = string | { text: string };
@@ -17,9 +13,9 @@ const QrScanPage = () => {
   const [modalMessage, setModalMessage] = useState('');
   const [modalIcon, setModalIcon] = useState<'spinner' | 'link'>('spinner');
   const navigate = useNavigate();
-  const { state } = useLocation();
-  const mode = state?.mode;
-  const groupId = state?.groupId;
+  const location = useLocation();
+  const mode = location.state?.mode;
+  const groupId = location.state?.groupId;
 
   const handleScan = async (data: QrScanResult | null) => {
     if (!data) return;
@@ -31,7 +27,6 @@ const QrScanPage = () => {
 
     try {
       const { serialNumber } = JSON.parse(scanResult);
-      // const response = await connectService(serialNumber);
       let response;
 
       if (groupId) {
@@ -46,36 +41,24 @@ const QrScanPage = () => {
       if (response.code === 'CO100') {
         setModalMessage('연결에 성공했습니다!');
         setModalIcon('link');
-        setTimeout(async () => {
+        setTimeout(() => {
           setShowModal(false);
-
-          // 연결 성공 후 연결 상태 강제 업데이트
-          try {
-            const updatedStatus = await checkConnectionStatus();
-            console.log('Updated connection status:', updatedStatus);
-          } catch (error) {
-            console.error('Failed to fetch updated connection status:', error);
-          }
-
-          // navigate로 메인 페이지로 이동
-          navigate('/', { state: { isConnected: true, mode: mode || '그룹 모드' } });
+          navigate('/', {
+            state: {
+              isConnected: true,
+              mode: mode || '그룹 모드',
+              groupId: groupId,
+            },
+          });
         }, 1500);
       } else {
         throw new Error('Connection failed');
       }
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 409) {
-        setModalMessage('이미 연결된 기기입니다. 메인 화면으로 이동합니다.');
-        setModalIcon('link');
-        setTimeout(() => {
-          setShowModal(false);
-          navigate('/');
-        }, 2000);
-      } else {
-        setModalMessage('연결 중 오류가 발생했습니다. 다시 시도해주세요.');
-        setModalIcon('link');
-        setTimeout(() => setShowModal(false), 1500);
-      }
+      console.error('Connection error:', error);
+      setModalMessage('연결 중 오류가 발생했습니다. 다시 시도해주세요.');
+      setModalIcon('link');
+      setTimeout(() => setShowModal(false), 1500);
     }
   };
 
