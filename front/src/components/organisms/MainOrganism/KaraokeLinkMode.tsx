@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import LinkmodeLeft from '../../molecules/MainMolecule/LinkmodeLeft';
 import LinkmodeCircle from '../../atoms/MainAtom/LinkmodeCircle';
 
-const KaraokeLinkMode = () => {
+const KaraokeLinkMode = ({ isConnected }: { isConnected: boolean }) => {
   const navigate = useNavigate();
 
   const handleLinkModeCircleClick = () => {
@@ -16,9 +16,9 @@ const KaraokeLinkMode = () => {
       style={{ background: 'linear-gradient(to bottom, #D34ADE, #5B2B99)' }}
     >
       <div className="flex justify-between w-full h-full bg-black rounded-2xl p-4">
-        <LinkmodeLeft />
+        <LinkmodeLeft isConnected={isConnected} />
         <div onClick={handleLinkModeCircleClick} className="self-center ms-2">
-          <LinkmodeCircle />
+          <LinkmodeCircle isConnected={isConnected} />
         </div>
       </div>
     </div>

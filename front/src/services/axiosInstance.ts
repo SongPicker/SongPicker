@@ -16,7 +16,7 @@ interface ApiSuccessResponse<T = unknown> {
 type ApiResponse<T = unknown> = ApiErrorResponse | ApiSuccessResponse<T>;
 
 const axiosInstance: AxiosInstance = axios.create({
-  baseURL: '/',
+  baseURL: '/api',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -40,7 +40,7 @@ const refreshAccessToken = async (): Promise<string> => {
       '/api/auths/refresh',
       {},
       {
-        baseURL: '/',
+        baseURL: '/api',
         headers: {
           'Content-Type': 'application/json',
         },

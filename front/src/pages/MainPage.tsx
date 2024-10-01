@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import MainLayout from '../layouts/MainLayout';
 import KaraokeLinkMode from '../components/organisms/MainOrganism/KaraokeLinkMode';
 import RecomMusicList from '../components/template/Maintemplate/RecomMusicList';
@@ -6,6 +6,7 @@ import CustomAlert from '../components/template/commons/CustomAlertModal';
 import ConnectionModal from '../components/template/commons/ConnectionModal';
 import UserStatisticsBanner from '../components/template/Maintemplate/UserStatisticsBanner';
 import RecomThemeBanner from '../components/template/Maintemplate/RecomThemeBanner';
+import { checkConnectionStatus } from '../services/connection';
 
 const MainPage = () => {
   const [showNotification, setShowNotification] = useState(false);
@@ -14,7 +15,28 @@ const MainPage = () => {
   const [connectionModalMessage, setConnectionModalMessage] = useState('');
   const [modalIcon, setModalIcon] = useState<'link' | 'spinner' | 'reservation'>('link');
   const [autoCloseDelay, setAutoCloseDelay] = useState<number | undefined>(undefined);
+  const [isConnected, setIsConnected] = useState(false); // 연결 상태 관리
 
+  // 연결 상태를 가져오는 함수
+  const fetchConnectionStatus = useCallback(async () => {
+    try {
+      const response = await checkConnectionStatus();
+      console.log('Fetched connection status:', response);
+      setIsConnected(response.body);
+    } catch (error) {
+      console.error('Failed to fetch connection status:', error);
+      setIsConnected(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchConnectionStatus(); // 컴포넌트 마운트 시 상태 확인
+    const intervalId = setInterval(fetchConnectionStatus, 30000); // 30초마다 상태 확인
+
+    return () => clearInterval(intervalId); // 컴포넌트 언마운트 시 인터벌 해제
+  }, [fetchConnectionStatus]);
+
+  // 임시 테마 노래 1
   const kpopTheme = {
     title: '신나는 K-POP 여자 아이돌 노래',
     gradientColors: 'bg-gradient-to-r from-red-400 to-pink-500',
@@ -26,6 +48,7 @@ const MainPage = () => {
     ],
   };
 
+  // 임시 테마 노래 2
   const balladeTheme = {
     title: '감성적인 발라드 모음',
     gradientColors: 'bg-gradient-to-r from-blue-400 to-purple-500',
@@ -71,7 +94,7 @@ const MainPage = () => {
       <div className="flex flex-col py-4 w-full">
         {/* 노래방 연결 */}
         <div className="px-2 mb-8">
-          <KaraokeLinkMode />
+          <KaraokeLinkMode isConnected={isConnected} />
         </div>
 
         {/* 사용자 맞춤 추천곡 */}

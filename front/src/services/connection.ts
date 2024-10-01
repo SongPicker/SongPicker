@@ -44,3 +44,13 @@ export const checkConnectionStatus = async () => {
   });
   return response.data;
 };
+
+// 연동해지
+export const disconnectService = async () => {
+  const response = await axiosInstance({
+    method: 'DELETE',
+    url: '/api/connections',
+  });
+  console.log('Disconnect service response:', response.data);
+  return response.data;
+};
