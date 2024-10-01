@@ -88,7 +88,7 @@ const LoginForm = () => {
         />
       </div>
       <div className="text-right mb-2">
-        <a href="#" className="text-input-text hover:text-white text-sm">
+        <a href="/find-account" className="text-input-text hover:text-white text-sm">
           아이디 • 비밀번호 찾기
         </a>
       </div>

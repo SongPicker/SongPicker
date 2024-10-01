@@ -7,7 +7,7 @@ type ModalButtonProps = {
 };
 
 const ModalButton = ({ onClick, variant, children }: ModalButtonProps) => {
-  const baseClasses = 'btn text-sm !h-[25px] !w-[84px] !min-h-0 font-semibold';
+  const baseClasses = 'btn text-sm !h-[25px] !w- !min-h-0 font-semibold';
   const variantClasses = variant === 'primary' ? 'btn-primary' : 'btn-accent';
 
   return (

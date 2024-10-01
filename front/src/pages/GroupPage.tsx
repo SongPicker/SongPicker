@@ -7,7 +7,7 @@ const GroupPage = () => {
   return (
     <Routes>
       <Route index element={<GroupList />} />
-      <Route path=":teamId" element={<GroupDetail />} />
+      <Route path=":teamId/*" element={<GroupDetail />} />
     </Routes>
   );
 };

@@ -5,16 +5,17 @@ type CustomAlertProps = {
   title: string;
   description: string;
   onClose: () => void;
+  duration?: number; // 새로운 prop 추가
 };
 
-const CustomAlert = ({ title, description, onClose }: CustomAlertProps) => {
+const CustomAlert = ({ title, description, onClose, duration = 1200 }: CustomAlertProps) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       onClose();
-    }, 1200);
+    }, duration);
 
     return () => clearTimeout(timer);
-  }, [onClose]);
+  }, [onClose, duration]);
 
   return (
     <div className="fixed top-[70px] left-1/2 transform -translate-x-1/2 w-[95vw] max-w-sm z-[9999]">

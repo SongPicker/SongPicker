@@ -47,3 +47,17 @@ export const leaveGroup = async (teamId: number) => {
     throw error;
   }
 };
+
+// 그룹 초대
+export const inviteMembers = async (teamId: number, receivers: string[]) => {
+  try {
+    const response = await axiosInstance.post('/api/teams/invite', {
+      teamId,
+      receivers,
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Invite members error:', error);
+    throw error;
+  }
+};

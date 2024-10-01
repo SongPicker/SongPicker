@@ -69,3 +69,23 @@ export const searchSongs = async (keyword: string) => {
     throw error;
   }
 };
+
+// 최근 노래
+
+export interface RecentSong {
+  number: number;
+  coverImage: string;
+  title: string;
+  singer: string;
+  isLike: boolean;
+  likeId: number | null;
+}
+
+// 최근 노래 조회(그룹) API
+export const getRecentSongs = async (teamId: number) => {
+  const response = await axiosInstance({
+    method: 'GET',
+    url: `/api/histories/team/recent-songs?teamId=${teamId}`,
+  });
+  return response.data;
+};

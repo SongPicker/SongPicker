@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import GroupCard from '../../molecules/group/GroupCard';
 import EditGroupModal from '../../organisms/group/EditGroupModal';
-import { leaveGroup } from '../../../services/groupService';
+import MemberAddModal from '../../organisms/group/MemberAddModal'; // 추가
+
 interface Group {
   teamId: number;
   teamImage: string;
@@ -13,15 +14,16 @@ interface Group {
 interface GroupListContentProps {
   groups: Group[];
   onGroupEdited: (updatedGroup: Group) => void;
+  onGroupLeft: (teamId: number) => void;
 }
 
-const GroupListContent = ({ groups, onGroupEdited }: GroupListContentProps) => {
+const GroupListContent = ({ groups, onGroupEdited, onGroupLeft }: GroupListContentProps) => {
   const navigate = useNavigate();
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isMemberAddModalOpen, setIsMemberAddModalOpen] = useState(false); // 추가
   const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
   const [localGroups, setLocalGroups] = useState<Group[]>(groups);
-  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setLocalGroups(groups);
@@ -34,8 +36,8 @@ const GroupListContent = ({ groups, onGroupEdited }: GroupListContentProps) => {
     [navigate]
   );
 
-  const toggleMenu = useCallback((e: React.MouseEvent, teamId: number) => {
-    e.stopPropagation();
+  const toggleMenu = useCallback((e: React.MouseEvent | null, teamId: number) => {
+    if (e) e.stopPropagation();
     setOpenMenuId(prevId => (prevId === teamId ? null : teamId));
   }, []);
 
@@ -65,26 +67,26 @@ const GroupListContent = ({ groups, onGroupEdited }: GroupListContentProps) => {
     [onGroupEdited]
   );
 
-  const handleLeaveGroup = useCallback(
-    async (teamId: number) => {
-      try {
-        const response = await leaveGroup(teamId);
-        if (response.code === 'TE102') {
-          setLocalGroups(prevGroups => prevGroups.filter(group => group.teamId !== teamId));
-          await onGroupEdited({ teamId, teamName: '', teamImage: '', teamMemberCount: 0 });
-        } else {
-          console.error('그룹 나가기 실패:', response.message);
-        }
-      } catch (error) {
-        console.error('그룹 나가기 오류:', error);
-      }
+  const handleGroupLeftInternal = useCallback(
+    (teamId: number) => {
+      setLocalGroups(prevGroups => prevGroups.filter(group => group.teamId !== teamId));
+      onGroupLeft(teamId);
     },
-    [onGroupEdited]
+    [onGroupLeft]
   );
 
-  const handleGroupLeft = useCallback((teamId: number) => {
-    console.log(`그룹 ${teamId}에서 나갔습니다.`);
-    // 필요한 경우 여기에 추가 로직을 구현할 수 있습니다.
+  const handleAddMemberClick = useCallback(
+    (group: Group) => {
+      setSelectedGroup(group);
+      setIsMemberAddModalOpen(true);
+      closeMenu();
+    },
+    [closeMenu]
+  );
+
+  const handleMembersInvited = useCallback(() => {
+    console.log('멤버 초대 완료');
+    setIsMemberAddModalOpen(false);
   }, []);
 
   return (
@@ -100,12 +102,9 @@ const GroupListContent = ({ groups, onGroupEdited }: GroupListContentProps) => {
             openMenuId={openMenuId}
             onMenuToggle={toggleMenu}
             onGroupClick={() => handleGroupClick(group.teamId)}
-            onAddMemberClick={() => console.log('멤버 추가 clicked')}
+            onAddMemberClick={() => handleAddMemberClick(group)} // 멤버 추가 클릭 시 호출
             onEditClick={e => handleEditClick(e, group)}
-            onLeaveClick={() => handleLeaveGroup(group.teamId)}
-            onGroupLeft={() => {
-              console.log(`그룹 ${group.teamId}에서 나갔습니다.`);
-            }}
+            onGroupLeft={() => handleGroupLeftInternal(group.teamId)}
             isOpen={openMenuId === group.teamId}
           />
         ))}
@@ -117,6 +116,15 @@ const GroupListContent = ({ groups, onGroupEdited }: GroupListContentProps) => {
           onClose={() => setIsEditModalOpen(false)}
           group={selectedGroup}
           onGroupEdited={handleGroupEditedInternal}
+        />
+      )}
+
+      {selectedGroup && (
+        <MemberAddModal
+          isOpen={isMemberAddModalOpen}
+          onClose={() => setIsMemberAddModalOpen(false)}
+          teamId={selectedGroup.teamId}
+          onMembersInvited={handleMembersInvited}
         />
       )}
     </div>

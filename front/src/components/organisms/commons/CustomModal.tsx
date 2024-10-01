@@ -1,10 +1,10 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import ModalContent from '../../molecules/commons/ModalContent;';
 
 type CustomModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  message: string;
+  message: React.ReactNode;
   leftButtonText?: string;
   rightButtonText: string;
   onLeftClick?: () => void;

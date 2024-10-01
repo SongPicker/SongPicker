@@ -11,12 +11,11 @@ interface GroupCardProps {
   teamName: string;
   teamMemberCount: number;
   openMenuId: number | null;
-  onMenuToggle: (e: React.MouseEvent, teamId: number) => void;
+  onMenuToggle: (e: React.MouseEvent | null, teamId: number) => void;
   onGroupClick: () => void;
   onAddMemberClick: (e: React.MouseEvent) => void;
   onEditClick: (e: React.MouseEvent) => void;
-  onLeaveClick: (teamId: number) => void;
-  onGroupLeft: () => void;
+  onGroupLeft: (teamId: number) => void;
   isOpen: boolean;
 }
 
@@ -30,24 +29,34 @@ const GroupCard = ({
   onGroupClick,
   onAddMemberClick,
   onEditClick,
-  onLeaveClick,
   onGroupLeft,
   isOpen,
 }: GroupCardProps) => (
   <div
     className="bg-gray-800 rounded-lg p-3 cursor-pointer relative flex flex-col justify-between"
-    onClick={onGroupClick}
+    onClick={() => {
+      if (!isOpen) {
+        onGroupClick();
+      }
+    }}
   >
     <div className="absolute top-2 right-2">
       <MenuIconButton onClick={e => onMenuToggle(e, teamId)} />
       {isOpen && openMenuId === teamId && (
         <GroupMenu
           teamId={teamId}
-          onClose={e => onMenuToggle(e, teamId)}
-          onAddMemberClick={onAddMemberClick}
-          onEditClick={onEditClick}
-          onLeaveClick={() => onLeaveClick(teamId)}
-          onGroupLeft={onGroupLeft}
+          onClose={() => onMenuToggle(null, teamId)} // 이벤트 객체 없이 null 전달
+          onAddMemberClick={e => {
+            e.stopPropagation(); // 클릭 이벤트 상위 전파 방지
+            onAddMemberClick(e);
+          }}
+          onEditClick={e => {
+            e.stopPropagation(); // 클릭 이벤트 상위 전파 방지
+            onEditClick(e);
+          }}
+          onGroupLeft={() => {
+            onGroupLeft(teamId); // teamId만 넘겨 처리
+          }}
         />
       )}
     </div>

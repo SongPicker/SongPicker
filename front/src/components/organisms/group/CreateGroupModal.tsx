@@ -47,7 +47,7 @@ const CreateGroupModal = ({ isOpen, onClose, onGroupCreated }: CreateGroupModalP
           console.log('그룹 생성 성공:', response.data);
           onClose();
           await onGroupCreated();
-          navigate(`/group/${response.data}`);
+          navigate(`/group/${response.data}?newGroup=true`);
         } else {
           console.error('그룹 생성 실패');
         }

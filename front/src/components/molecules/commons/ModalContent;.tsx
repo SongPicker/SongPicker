@@ -2,7 +2,7 @@ import React from 'react';
 import ModalButton from '../../atoms/commons/ModalButton';
 
 type ModalContentProps = {
-  message: string;
+  message: React.ReactNode;
   leftButtonText?: string;
   rightButtonText: string;
   onLeftClick?: () => void;

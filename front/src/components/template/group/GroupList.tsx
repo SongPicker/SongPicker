@@ -41,11 +41,16 @@ const GroupList = () => {
     );
   }, []);
 
+  // 그룹 나가기 시 그룹을 제거하는 함수
+  const handleGroupLeft = useCallback((teamId: number) => {
+    setGroups(prevGroups => prevGroups.filter(group => group.teamId !== teamId));
+  }, []);
+
   const fixedContent = (
     <div className="flex p-4 bg-black justify-end">
       <button
         onClick={() => setIsModalOpen(true)}
-        className="w-1/3 bg-primary text-white py-2 rounded-md hover:bg-purple-700 transition-colors"
+        className="w-1/3 bg-primary text-sm text-white py-2 rounded-md hover:bg-primary transition-colors"
       >
         새 그룹 만들기
       </button>
@@ -55,7 +60,12 @@ const GroupList = () => {
   return (
     <MainLayout title="그룹" fixedContent={fixedContent}>
       <div className="pb-16">
-        <GroupListContent groups={groups} onGroupEdited={handleGroupEdited} />
+        {/* GroupListContent에 onGroupLeft 전달 */}
+        <GroupListContent
+          groups={groups}
+          onGroupEdited={handleGroupEdited}
+          onGroupLeft={handleGroupLeft}
+        />
       </div>
       <CreateGroupModal
         isOpen={isModalOpen}
