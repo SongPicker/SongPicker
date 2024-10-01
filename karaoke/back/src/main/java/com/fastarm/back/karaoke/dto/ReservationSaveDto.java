@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SaveReservationDto {
+public class ReservationSaveDto {
     private int number;
     private String title;
     private String singer;
