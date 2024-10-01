@@ -50,14 +50,14 @@ const FindId = ({ onVerificationComplete }: Props) => {
         onChange={handlePhoneChange}
         onValidation={handlePhoneValidation}
         showLabel={false}
-        purpose="findLoginId"
+        purpose="FIND_LOGIN_ID"
       />
       {showAuthCode && (
         <UserInfoAuthCodeSignupForm
           onVerify={handleAuthCodeVerify}
           resetAuthCode={resetAuthCode}
           phone={phone}
-          purpose="findLoginId"
+          purpose="FIND_LOGIN_ID"
         />
       )}
     </div>

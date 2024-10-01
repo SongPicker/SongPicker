@@ -2,20 +2,16 @@ package com.fastarm.back.team.entity;
 
 import com.fastarm.back.member.entity.Member;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
-@Builder
 @Table(name = "team_member")
 public class TeamMember {
 
@@ -34,5 +30,12 @@ public class TeamMember {
     @CreationTimestamp
     @Column(name = "join_at", nullable = false, updatable = false)
     private LocalDateTime joinAt;
+
+    @Builder
+    public TeamMember(Member member, Team team){
+        this.member = member;
+        this.team = team;
+    }
+
 
 }

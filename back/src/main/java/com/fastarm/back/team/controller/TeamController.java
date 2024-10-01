@@ -29,24 +29,23 @@ import java.util.List;
 public class TeamController {
     private final TeamService teamService;
 
-
     @GetMapping
     public ResponseEntity<?> myTeamGet(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo){
         List<TeamDto> teamDtoList = teamService.getMyTeams(loginMemberInfo.getLoginId());
-        return new ResponseEntity<>(new ApiResponse<>("TE103", "내 그룹 목록 조회 성공", teamDtoList),HttpStatus.OK);
+        return ResponseEntity.ok(new ApiResponse<>("TE103", "내 그룹 목록 조회 성공", teamDtoList));
     }
 
     @GetMapping("/{teamId}")
     public ResponseEntity<?> teamDetailGet(@PathVariable Long teamId, @AuthenticationPrincipal LoginMemberInfo loginMemberInfo){
         TeamDetailDto teamDetailDto = teamService.getTeamDetail(TeamDetailRequest.from(teamId, loginMemberInfo.getLoginId()));
-        return new ResponseEntity<>(new ApiResponse<>("TE104", "그룹 상세 조회 성공", teamDetailDto),HttpStatus.OK);
+        return ResponseEntity.ok(new ApiResponse<>("TE104", "그룹 상세 조회 성공", teamDetailDto));
     }
 
     @PostMapping("/invite")
     public ResponseEntity<?> teamInvite(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo,
                                         @RequestBody TeamInviteRequest teamInviteRequest){
         TeamInviteResponse teamInviteResponse = teamService.inviteTeam(teamInviteRequest.toDto(loginMemberInfo.getLoginId()));
-        return new ResponseEntity<>(new ApiResponse<>("TE101", "그룹 초대 성공",teamInviteResponse),HttpStatus.OK);
+        return ResponseEntity.ok(new ApiResponse<>("TE101", "그룹 초대 성공",teamInviteResponse));
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -54,7 +53,7 @@ public class TeamController {
                                          @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) throws IOException {
 
         Long teamId = teamService.createTeam(teamAddRequest.toDto(loginMemberInfo.getLoginId()));
-        return new ResponseEntity<>(new ApiResponse<>("TE100", "그룹 생성 성공", teamId), HttpStatus.CREATED);
+        return ResponseEntity.ok(new ApiResponse<>("TE100", "그룹 생성 성공", teamId));
     }
 
     @PutMapping("/{teamId}")
@@ -62,7 +61,7 @@ public class TeamController {
                                         @PathVariable Long teamId,
                                         @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) throws IOException, URISyntaxException {
         teamService.modifyTeam(teamModifyRequest.toDto(teamId,loginMemberInfo.getLoginId()));
-        return new ResponseEntity<>(new ApiResponse<>("TE105","그룹 정보 수정 성공",null),HttpStatus.OK);
+        return ResponseEntity.ok(new ApiResponse<>("TE105","그룹 정보 수정 성공",null));
     }
 
     @DeleteMapping
@@ -74,7 +73,7 @@ public class TeamController {
                 .teamId(teamId)
                 .build());
 
-        return new ResponseEntity<>(new ApiResponse<>("TE102","그룹 나가기 성공",null),HttpStatus.OK);
+        return ResponseEntity.ok(new ApiResponse<>("TE102","그룹 나가기 성공",null));
     }
 
 

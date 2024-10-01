@@ -31,7 +31,7 @@ const CustomModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden ">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden">
       <div
         className="fixed inset-0 bg-black opacity-50 w-screen max-w-[640px] mx-auto"
         onClick={onClose}

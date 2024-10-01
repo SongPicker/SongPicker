@@ -10,7 +10,6 @@ import com.fastarm.back.song.dto.SongDto;
 
 import com.fastarm.back.song.service.SongService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -27,13 +26,13 @@ public class SongController {
     public ResponseEntity<?> getSongDetails(@PathVariable Long songId, @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
 
         SongDetailDto songDetail = songService.getSongDetails(SongDetailRequest.from(songId, loginMemberInfo.getLoginId()));
-        return new ResponseEntity<>(new ApiResponse<>("SO100", "노래 상세 조회 성공", songDetail), HttpStatus.OK);
+        return ResponseEntity.ok(new ApiResponse<>("SO100", "노래 상세 조회 성공", songDetail));
 
     }
     @GetMapping("/my/recommendations")
     public ResponseEntity<?> mySongsRecommend(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo){
         List<SongDto> songRecommendDtos = songService.recommendMySong(loginMemberInfo.getLoginId());
-        return new ResponseEntity<>(new ApiResponse<>("SO102","선곡 추천 성공",songRecommendDtos), HttpStatus.OK);
+        return ResponseEntity.ok(new ApiResponse<>("SO102","선곡 추천 성공",songRecommendDtos));
     }
 
 
@@ -54,7 +53,7 @@ public class SongController {
     @GetMapping("/search")
     public ResponseEntity<?> songsSearch(@RequestParam String keyword, @AuthenticationPrincipal LoginMemberInfo loginMemberInfo){
         SongSearchResponse songSearchResponse = songService.searchSongs(SongSearchRequest.from(keyword, loginMemberInfo.getLoginId()));
-        return new ResponseEntity<>(new ApiResponse<>("SO101","노래 검색 성공",songSearchResponse), HttpStatus.OK);
+        return ResponseEntity.ok(new ApiResponse<>("SO101","노래 검색 성공",songSearchResponse));
     }
 
 

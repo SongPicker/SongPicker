@@ -1,9 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BsThreeDotsVertical, BsX } from 'react-icons/bs';
-
+import GroupCard from '../../molecules/group/GroupCard';
+import EditGroupModal from '../../organisms/group/EditGroupModal';
+import { leaveGroup } from '../../../services/groupService';
 interface Group {
-  teamId: string;
+  teamId: number;
   teamImage: string;
   teamName: string;
   teamMemberCount: number;
@@ -11,94 +12,113 @@ interface Group {
 
 interface GroupListContentProps {
   groups: Group[];
+  onGroupEdited: (updatedGroup: Group) => void;
 }
 
-const GroupListContent = ({ groups }: GroupListContentProps) => {
+const GroupListContent = ({ groups, onGroupEdited }: GroupListContentProps) => {
   const navigate = useNavigate();
-  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
+  const [localGroups, setLocalGroups] = useState<Group[]>(groups);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  const handleGroupClick = (teamId: string) => {
-    navigate(`/group/${teamId}`);
-  };
-
-  const toggleMenu = (e: React.MouseEvent, teamId: string) => {
-    e.stopPropagation();
-    setOpenMenuId(openMenuId === teamId ? null : teamId);
-  };
-
-  const closeMenu = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setOpenMenuId(null);
-  };
-
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setOpenMenuId(null);
-      }
-    };
+    setLocalGroups(groups);
+  }, [groups]);
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+  const handleGroupClick = useCallback(
+    (teamId: number) => {
+      navigate(`/group/${teamId}`);
+    },
+    [navigate]
+  );
+
+  const toggleMenu = useCallback((e: React.MouseEvent, teamId: number) => {
+    e.stopPropagation();
+    setOpenMenuId(prevId => (prevId === teamId ? null : teamId));
+  }, []);
+
+  const closeMenu = useCallback(() => {
+    setOpenMenuId(null);
+  }, []);
+
+  const handleEditClick = useCallback(
+    (e: React.MouseEvent, group: Group) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setSelectedGroup(group);
+      setIsEditModalOpen(true);
+      closeMenu();
+    },
+    [closeMenu]
+  );
+
+  const handleGroupEditedInternal = useCallback(
+    async (updatedGroup: Group) => {
+      setLocalGroups(prevGroups =>
+        prevGroups.map(group => (group.teamId === updatedGroup.teamId ? updatedGroup : group))
+      );
+      await onGroupEdited(updatedGroup);
+      setIsEditModalOpen(false);
+    },
+    [onGroupEdited]
+  );
+
+  const handleLeaveGroup = useCallback(
+    async (teamId: number) => {
+      try {
+        const response = await leaveGroup(teamId);
+        if (response.code === 'TE102') {
+          setLocalGroups(prevGroups => prevGroups.filter(group => group.teamId !== teamId));
+          await onGroupEdited({ teamId, teamName: '', teamImage: '', teamMemberCount: 0 });
+        } else {
+          console.error('그룹 나가기 실패:', response.message);
+        }
+      } catch (error) {
+        console.error('그룹 나가기 오류:', error);
+      }
+    },
+    [onGroupEdited]
+  );
+
+  const handleGroupLeft = useCallback((teamId: number) => {
+    console.log(`그룹 ${teamId}에서 나갔습니다.`);
+    // 필요한 경우 여기에 추가 로직을 구현할 수 있습니다.
   }, []);
 
   return (
     <div className="h-full overflow-y-auto bg-black">
       <div className="grid grid-cols-2 gap-4 p-4">
-        {groups.map(group => (
-          <div
+        {localGroups.map(group => (
+          <GroupCard
             key={group.teamId}
-            className="bg-gray-800 rounded-lg p-4 m-2 cursor-pointer relative aspect-square flex flex-col justify-between"
-            onClick={() => handleGroupClick(group.teamId)}
-          >
-            <div className="absolute top-2 right-2" ref={menuRef}>
-              <button
-                className="p-1 rounded-full hover:bg-gray-700 transition-colors"
-                onClick={e => toggleMenu(e, group.teamId)}
-              >
-                <BsThreeDotsVertical className="text-gray-400" />
-              </button>
-              {openMenuId === group.teamId && (
-                <div className="absolute right-0 mt-1 w-40 bg-gray-700 bg-opacity-90 rounded-md shadow-lg overflow-hidden z-10 transition-all duration-300 ease-in-out origin-top-right scale-100 opacity-100">
-                  <div className="relative">
-                    <button
-                      onClick={closeMenu}
-                      className="absolute top-2 right-2 text-gray-400 hover:text-white"
-                    >
-                      <BsX size={20} />
-                    </button>
-                  </div>
-                  <div className="py-2">
-                    <a href="#" className="block px-4 py-2 text-sm text-white hover:bg-gray-600">
-                      멤버 추가
-                    </a>
-                    <a href="#" className="block px-4 py-2 text-sm text-white hover:bg-gray-600">
-                      그룹 편집
-                    </a>
-                    <a href="#" className="block px-4 py-2 text-sm text-white hover:bg-gray-600">
-                      그룹 나가기
-                    </a>
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="flex flex-col flex-grow">
-              <div className="flex justify-center">
-                <img
-                  src={group.teamImage}
-                  alt={group.teamName}
-                  className="w-2/3 object-cover mb-4"
-                />
-              </div>
-              <h2 className="text-lg font-semibold text-white">{group.teamName}</h2>
-              <p className="text-sm text-gray-400">{group.teamMemberCount} / 6</p>
-            </div>
-          </div>
+            teamId={group.teamId}
+            teamImage={group.teamImage}
+            teamName={group.teamName}
+            teamMemberCount={group.teamMemberCount}
+            openMenuId={openMenuId}
+            onMenuToggle={toggleMenu}
+            onGroupClick={() => handleGroupClick(group.teamId)}
+            onAddMemberClick={() => console.log('멤버 추가 clicked')}
+            onEditClick={e => handleEditClick(e, group)}
+            onLeaveClick={() => handleLeaveGroup(group.teamId)}
+            onGroupLeft={() => {
+              console.log(`그룹 ${group.teamId}에서 나갔습니다.`);
+            }}
+            isOpen={openMenuId === group.teamId}
+          />
         ))}
       </div>
+
+      {selectedGroup && (
+        <EditGroupModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          group={selectedGroup}
+          onGroupEdited={handleGroupEditedInternal}
+        />
+      )}
     </div>
   );
 };

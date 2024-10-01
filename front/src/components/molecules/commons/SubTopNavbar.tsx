@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import BackButton from '../../atoms/commons/BackButton';
 
 type SubTopNavbarProps = {
-  title: string;
+  title: string | ReactNode;
   onBackButtonClick?: () => void;
 };
 

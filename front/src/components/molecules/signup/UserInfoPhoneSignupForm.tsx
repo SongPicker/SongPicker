@@ -10,7 +10,7 @@ type UserInfoPhoneSignupFormProps = {
   onChange: (phone: string) => void;
   onValidation: (isValid: boolean) => void;
   showLabel?: boolean;
-  purpose?: 'signup' | 'findPassword' | 'findLoginId';
+  purpose?: 'SIGNUP' | 'FIND_PASSWORD' | 'CHANGE_PHONE' | 'FIND_LOGIN_ID';
 };
 
 const UserInfoPhoneSignupForm = ({
@@ -19,7 +19,7 @@ const UserInfoPhoneSignupForm = ({
   onChange,
   onValidation,
   showLabel = true,
-  purpose = 'signup',
+  purpose = 'SIGNUP',
 }: UserInfoPhoneSignupFormProps) => {
   const [phone, setPhone] = useState('');
   const [isPhoneValid, setIsPhoneValid] = useState(false);

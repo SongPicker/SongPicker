@@ -3,7 +3,6 @@ package com.fastarm.back.notification.entity;
 import com.fastarm.back.member.entity.Member;
 import com.fastarm.back.notification.enums.Type;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,9 +14,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
-@Builder
 @SQLDelete(sql = "UPDATE notification SET is_deleted = true WHERE id = ?")
 @Where(clause = "is_deleted = false")
 public class Notification {
@@ -50,7 +47,7 @@ public class Notification {
     @Enumerated(EnumType.STRING)
     private Type type;
 
-    @OneToOne(mappedBy = "notification",fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "notification", fetch = FetchType.LAZY)
     private NotificationTeamInvite notificationTeamInvite;
 
     public void read() {
@@ -58,5 +55,15 @@ public class Notification {
     }
     public void delete() {
         this.isDeleted = true;
+    }
+
+    @Builder
+    public Notification(Member receiver, Member sender, String content,Type type) {
+        this.receiver = receiver;
+        this.sender = sender;
+        this.content = content;
+        this.type = type;
+        this.isRead = false;
+        this.isDeleted = false;
     }
 }

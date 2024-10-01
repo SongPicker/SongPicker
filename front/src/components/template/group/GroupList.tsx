@@ -1,20 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import MainLayout from '../../../layouts/MainLayout';
 import CreateGroupModal from '../../organisms/group/CreateGroupModal';
 import GroupListContent from '../../organisms/group/GroupListContent';
+import { getGroupList } from '../../../services/groupService';
 
-// Mock data for groups
-const mockGroups = Array(16)
-  .fill(null)
-  .map((_, index) => ({
-    teamId: `team${index + 1}`,
-    teamImage: '/src/assets/songPickerLogo.svg',
-    teamName: '최대여덟글자하자',
-    teamMemberCount: Math.floor(Math.random() * 6) + 5,
-  }));
+interface Group {
+  teamId: number;
+  teamImage: string;
+  teamName: string;
+  teamMemberCount: number;
+}
 
 const GroupList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [groups, setGroups] = useState<Group[]>([]);
+
+  const fetchGroups = useCallback(async () => {
+    try {
+      const response = await getGroupList();
+      if (response.code === 'TE103') {
+        setGroups(response.data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch groups:', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchGroups();
+  }, [fetchGroups]);
+
+  const handleGroupCreated = useCallback(async () => {
+    await fetchGroups();
+    setIsModalOpen(false);
+  }, [fetchGroups]);
+
+  const handleGroupEdited = useCallback((updatedGroup: Group) => {
+    setGroups(prevGroups =>
+      prevGroups.map(group => (group.teamId === updatedGroup.teamId ? updatedGroup : group))
+    );
+  }, []);
 
   const fixedContent = (
     <div className="flex p-4 bg-black justify-end">
@@ -30,9 +55,13 @@ const GroupList = () => {
   return (
     <MainLayout title="그룹" fixedContent={fixedContent}>
       <div className="pb-16">
-        <GroupListContent groups={mockGroups} />
+        <GroupListContent groups={groups} onGroupEdited={handleGroupEdited} />
       </div>
-      <CreateGroupModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <CreateGroupModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onGroupCreated={handleGroupCreated}
+      />
     </MainLayout>
   );
 };

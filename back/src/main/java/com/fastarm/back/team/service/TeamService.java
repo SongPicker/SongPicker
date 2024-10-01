@@ -99,8 +99,6 @@ public class TeamService {
                     .receiver(member)
                     .sender(sender)
                     .content(team.getName() + " 팀에 초대되었습니다.")
-                    .isRead(false)
-                    .isDeleted(false)
                     .type(Type.TEAM_INVITE)
                     .build();
             notificationRepository.save(notification);

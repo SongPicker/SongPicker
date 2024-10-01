@@ -6,9 +6,7 @@ import com.fastarm.back.notification.controller.dto.NotificationRequest;
 import com.fastarm.back.notification.controller.dto.TeamInviteNotificationRequest;
 import com.fastarm.back.notification.dto.NotificationDto;
 import com.fastarm.back.notification.service.NotificationService;
-import com.google.protobuf.Api;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -24,25 +22,21 @@ public class NotificationController {
     public ResponseEntity<?> teamInvitationRespond(@RequestBody TeamInviteNotificationRequest teamInviteNotificationRequest,
                                                    @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
         notificationService.respondTeamInvitation(teamInviteNotificationRequest.toDto(loginMemberInfo.getLoginId()));
-        return new ResponseEntity<>(new ApiResponse<>("NO100","그룹 초대 응답 성공",null), HttpStatus.OK);
-
+        return ResponseEntity.ok(new ApiResponse<>("NO100","그룹 초대 응답 성공",null));
     }
 
     @PutMapping("/read")
     public ResponseEntity<?> notificationRead(@RequestBody NotificationRequest notificationRequest,
                                               @AuthenticationPrincipal LoginMemberInfo loginMemberInfo){
         notificationService.readNotification(notificationRequest.toDto(loginMemberInfo.getLoginId()));
-        return new ResponseEntity<>(new ApiResponse<>("NO101","알림 읽기 성공",null),HttpStatus.OK);
+        return ResponseEntity.ok(new ApiResponse<>("NO101","알림 읽기 성공",null));
     }
 
     @DeleteMapping("/{notificationId}")
     public ResponseEntity<?> notificationRemove(@PathVariable Long notificationId,
                                                 @AuthenticationPrincipal LoginMemberInfo loginMemberInfo){
-
-
         notificationService.removeNotification(NotificationDto.of(notificationId,loginMemberInfo.getLoginId()));
-        return new ResponseEntity<>(new ApiResponse<>("NO102","알림 삭제 성공",null),HttpStatus.OK);
+        return ResponseEntity.ok(new ApiResponse<>("NO102","알림 삭제 성공",null));
     }
-
 
 }

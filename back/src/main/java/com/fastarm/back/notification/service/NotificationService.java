@@ -13,7 +13,6 @@ import com.fastarm.back.notification.repository.NotificationRepository;
 import com.fastarm.back.notification.repository.NotificationTeamInviteRepository;
 import com.fastarm.back.team.entity.Team;
 import com.fastarm.back.team.entity.TeamMember;
-import com.fastarm.back.team.exception.TeamMemberNotFoundException;
 import com.fastarm.back.team.repository.TeamMemberRepository;
 import com.fastarm.back.notification.exception.TeamInviteNotificationNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +33,7 @@ public class NotificationService {
         NotificationTeamInvite notificationInvite = notificationTeamInviteRepository.findById(dto.getNotificationId())
                 .orElseThrow(TeamInviteNotificationNotFoundException::new);
 
-        if(dto.getAccept() != null && dto.getAccept()){
+        if (dto.getAccept() != null && dto.getAccept()){
             notificationInvite.accept();
 
             Team team = notificationInvite.getTeam();
@@ -55,7 +54,6 @@ public class NotificationService {
         } else {
             notificationInvite.reject();
         }
-
         notificationTeamInviteRepository.save(notificationInvite);
     }
 
@@ -71,7 +69,6 @@ public class NotificationService {
 
         notification.read();
         notificationRepository.save(notification);
-
 
     }
 

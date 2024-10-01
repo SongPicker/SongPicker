@@ -12,10 +12,9 @@ interface AuthState {
   setSongSelected: (isSelected: boolean) => void; // 곡 선택 상태 설정 함수
   register: (userData: RegisterData) => Promise<void>;
   login: (accessToken: string, loginId: string) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
   getAccessToken: () => string | null;
   setAccessToken: (token: string) => void;
-  // getRole: () => string | null;
   getLoginId: () => string | null;
   checkLoginIdAvailability: (loginId: string) => Promise<{ isAvailable: boolean; message: string }>;
   checkNicknameAvailability: (
@@ -47,6 +46,23 @@ interface ErrorResponse {
   message: string;
 }
 
+// 로그아웃 요청 함수
+const logoutRequest = async (): Promise<boolean> => {
+  try {
+    const response = await axiosInstance.post('/api/auths/logout');
+    if (response.data.code === 'AU105') {
+      console.log('로그아웃 성공');
+      return true;
+    } else {
+      console.error('로그아웃 실패:', response.data.message);
+      return false;
+    }
+  } catch (error) {
+    console.error('로그아웃 중 오류 발생:', error);
+    return false;
+  }
+};
+
 const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
@@ -63,7 +79,6 @@ const useAuthStore = create<AuthState>()(
         try {
           const response = await axiosInstance.post('/api/members', userData);
           console.log('Registration API response:', response.data);
-          // 회원가입 후 추가 작업 (예: 자동 로그인)이 필요하다면 여기에 구현
         } catch (error) {
           if (axios.isAxiosError(error)) {
             const axiosError = error as AxiosError<ErrorResponse>;
@@ -95,12 +110,19 @@ const useAuthStore = create<AuthState>()(
         set({ accessToken: formattedToken, isAuthenticated: true });
       },
 
-      logout: () => {
-        console.log('Logging out, clearing token'); // 로그아웃 시 메시지 출력
-        set({ isAuthenticated: false, accessToken: null, loginId: null });
+      // 로그아웃 기능 구현
+      logout: async () => {
+        const isLoggedOut = await logoutRequest();
+        if (isLoggedOut) {
+          console.log('로그아웃 상태 업데이트 및 localStorage 삭제');
+          set({ isAuthenticated: false, accessToken: null, loginId: null });
+          localStorage.removeItem('auth-storage'); // 로컬 스토리지에서 인증 정보 삭제
+        } else {
+          console.error('로그아웃 처리 실패');
+        }
       },
+
       getAccessToken: () => get().accessToken,
-      // getRole: () => get().role,
       getLoginId: () => get().loginId,
 
       checkLoginIdAvailability: async (loginId: string) => {

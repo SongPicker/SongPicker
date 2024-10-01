@@ -1,7 +1,6 @@
 package com.fastarm.back.team.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,9 +10,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
-@Builder
 public class Team {
 
     @Id
@@ -30,10 +27,13 @@ public class Team {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "used_at")
-    private LocalDateTime usedAt;
-
     public void changeTeam(String name, String teamImage){
+        this.name = name;
+        this.teamImage = teamImage;
+    }
+
+    @Builder
+    public Team(String name, String teamImage){
         this.name = name;
         this.teamImage = teamImage;
     }

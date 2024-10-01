@@ -46,7 +46,7 @@ const BottomSlideModal = ({
   if (!isOpen && !isAnimating) return null;
 
   return (
-    <div className="w-screen max-w-[640px] mx-auto fixed inset-0 z-[9999] flex items-end justify-center">
+    <div className="w-screen max-w-[640px] mx-auto fixed inset-0 z-[9989] flex items-end justify-center">
       <div
         className={`fixed inset-0 bg-black transition-opacity duration-300 ${
           isOpen ? 'opacity-50' : 'opacity-0'

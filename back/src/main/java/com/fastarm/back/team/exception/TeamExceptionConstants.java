@@ -8,8 +8,8 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum TeamExceptionConstants implements ExceptionConstants {
-    Team_Member_Not_Found_Exception("TE000", "그룹원 조회 실패", HttpStatus.BAD_REQUEST),
-    Team_Not_Found_Exception("TE001", "그룹 조회 실패", HttpStatus.BAD_REQUEST);
+    TEAM_MEMBER_NOT_FOUND("TE000", "그룹원 조회 실패", HttpStatus.BAD_REQUEST),
+    TEAM_NOT_FOUND("TE001", "그룹 조회 실패", HttpStatus.BAD_REQUEST);
 
 
     final String code;
