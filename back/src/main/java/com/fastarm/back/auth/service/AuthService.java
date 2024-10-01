@@ -1,11 +1,12 @@
 package com.fastarm.back.auth.service;
 
+import com.fastarm.back.auth.dto.PasswordVerifyDto;
 import com.fastarm.back.auth.dto.PhoneSendDto;
 import com.fastarm.back.auth.dto.PhoneVerifyDto;
 import com.fastarm.back.auth.enums.PhoneAuthPurpose;
+import com.fastarm.back.auth.exception.PasswordAuthenticationException;
 import com.fastarm.back.auth.exception.PhoneAuthenticationException;
 import com.fastarm.back.common.constants.RedisConstants;
-import com.fastarm.back.common.constants.RedisSessionConstants;
 import com.fastarm.back.common.constants.RedisExpiredTimeConstants;
 import com.fastarm.back.common.service.RedisService;
 import com.fastarm.back.member.entity.Member;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
 import net.nurigo.sdk.message.service.DefaultMessageService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,7 @@ public class AuthService {
     private final DefaultMessageService messageService;
     private final RedisService redisService;
     private final MemberRepository memberRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private static final String senderPhone = "01085914442";
 
@@ -47,7 +50,7 @@ public class AuthService {
     @Transactional
     public void sendAuthCode(PhoneSendDto phoneSendDto) {
 
-        if (phoneSendDto.getPurpose().equals(PhoneAuthPurpose.FIND_PASSWORD.getValue())) {
+        if (phoneSendDto.getPurpose() == PhoneAuthPurpose.FIND_PASSWORD) {
             Member member = memberRepository.findByLoginId(phoneSendDto.getLoginId())
                     .orElseThrow(MemberNotFoundException::new);
             if (!member.getPhone().equals(phoneSendDto.getPhone())) {
@@ -73,6 +76,16 @@ public class AuthService {
             throw new PhoneAuthenticationException();
         }
         redisService.deleteData(generatePrefixedKey(phoneVerifyDto.getPhone()));
+    }
+
+    @Transactional
+    public void verifyPassword(PasswordVerifyDto passwordVerifyDto) {
+        Member member = memberRepository.findByLoginId(passwordVerifyDto.getLoginId())
+                .orElseThrow(MemberNotFoundException::new);
+
+        if (!bCryptPasswordEncoder.matches(passwordVerifyDto.getInputPassword(), member.getPassword())) {
+            throw new PasswordAuthenticationException();
+        }
     }
 
     private String generatePrefixedKey(String phone) {

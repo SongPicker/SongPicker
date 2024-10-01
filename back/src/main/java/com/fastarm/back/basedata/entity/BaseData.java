@@ -7,9 +7,7 @@ import lombok.*;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class BaseData {
 
     @Id
@@ -23,4 +21,10 @@ public class BaseData {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "song_id")
     private Song song;
+
+    @Builder
+    public BaseData(Member member, Song song) {
+        this.member = member;
+        this.song = song;
+    }
 }

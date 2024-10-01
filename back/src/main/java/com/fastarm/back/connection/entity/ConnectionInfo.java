@@ -12,11 +12,9 @@ import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Getter
-@Builder
 @SQLDelete(sql = "UPDATE connection_info SET status = 'DISCONNECT' WHERE id = ?")
 @SQLRestriction("status != 'DISCONNECT'")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class ConnectionInfo {
 
     @Id
@@ -43,8 +41,24 @@ public class ConnectionInfo {
     @Column(nullable = false)
     private Mode mode;
 
+    @Builder(builderMethodName = "individualConnectionInfoBuilder")
+    public ConnectionInfo(Machine machine, Member member, Mode mode) {
+        this.machine = machine;
+        this.member = member;
+        this.mode = mode;
+    }
+
+    @Builder(builderMethodName = "teamConnectionInfoBuilder")
+    public ConnectionInfo(Machine machine, Member member, Team team, Mode mode) {
+        this.machine = machine;
+        this.member = member;
+        this.team = team;
+        this.mode = mode;
+    }
+
     @PrePersist
     protected void onCreate() {
         status = Status.CONNECT;
     }
+
 }

@@ -11,7 +11,7 @@ import com.fastarm.back.connection.repository.ConnectionInfoRepository;
 import com.fastarm.back.karaoke.entity.Machine;
 import com.fastarm.back.connection.dto.*;
 import com.fastarm.back.connection.exception.CannotConnectException;
-import com.fastarm.back.karaoke.dto.SaveReservationDto;
+import com.fastarm.back.karaoke.dto.ReservationSaveDto;
 import com.fastarm.back.karaoke.repository.MachineRepository;
 import com.fastarm.back.member.entity.Member;
 import com.fastarm.back.member.exception.MemberNotFoundException;
@@ -60,7 +60,7 @@ public class ConnectionServiceImpl implements ConnectionService {
             throw new AlreadyExistConnectionException();
         }
 
-        ConnectionInfo connectionInfo = ConnectionInfo.builder()
+        ConnectionInfo connectionInfo = ConnectionInfo.individualConnectionInfoBuilder()
                 .machine(machine)
                 .member(member)
                 .mode(Mode.INDIVIDUAL)
@@ -93,7 +93,7 @@ public class ConnectionServiceImpl implements ConnectionService {
                 throw new AlreadyExistConnectionException();
             }
 
-            ConnectionInfo connectionInfo = ConnectionInfo.builder()
+            ConnectionInfo connectionInfo = ConnectionInfo.teamConnectionInfoBuilder()
                     .machine(machine)
                     .member(teamMember.getMember())
                     .team(teamMember.getTeam())
@@ -134,9 +134,9 @@ public class ConnectionServiceImpl implements ConnectionService {
         Song song = songRepository.findByNumber(reservationDto.getNumber())
                 .orElseThrow(NotFoundSongException::new);
 
-        SaveReservationDto saveReservationDto;
+        ReservationSaveDto reservationSaveDto;
         if (connectionInfo.getMode() == Mode.TEAM) {
-            saveReservationDto = SaveReservationDto.builder()
+            reservationSaveDto = ReservationSaveDto.builder()
                     .number(song.getNumber())
                     .title(song.getTitle())
                     .singer(song.getSinger())
@@ -144,7 +144,7 @@ public class ConnectionServiceImpl implements ConnectionService {
                     .mode(Mode.TEAM)
                     .build();
         } else {
-            saveReservationDto = SaveReservationDto.builder()
+            reservationSaveDto = ReservationSaveDto.builder()
                     .number(song.getNumber())
                     .title(song.getTitle())
                     .singer(song.getSinger())
@@ -154,7 +154,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         }
         String serialNumber = connectionInfo.getMachine().getSerialNumber();
 
-        redisService.addToList(RedisConstants.RESERVATION_INFO + serialNumber, saveReservationDto, RedisExpiredTimeConstants.CONNECTION_EXPIRED);
+        redisService.addToList(RedisConstants.RESERVATION_INFO + serialNumber, reservationSaveDto, RedisExpiredTimeConstants.CONNECTION_EXPIRED);
     }
 
 }

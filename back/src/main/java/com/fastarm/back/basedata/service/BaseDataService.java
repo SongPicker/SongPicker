@@ -1,7 +1,7 @@
 package com.fastarm.back.basedata.service;
 
 import com.fastarm.back.basedata.constants.BaseDataConstants;
-import com.fastarm.back.basedata.controller.dto.GetPopularResponse;
+import com.fastarm.back.basedata.controller.dto.PopularGetResponse;
 import com.fastarm.back.basedata.dto.BaseDataAddDto;
 import com.fastarm.back.basedata.entity.BaseData;
 import com.fastarm.back.basedata.exception.CannotSaveBaseDataException;
@@ -29,7 +29,7 @@ public class BaseDataService {
     private final MemberRepository memberRepository;
 
     @Transactional(readOnly = true)
-    public Slice<GetPopularResponse> getPopularList(Pageable pageable) {
+    public Slice<PopularGetResponse> getPopularList(Pageable pageable) {
         return songRepository.getPopularSongs(pageable);
     }
 

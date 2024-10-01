@@ -1,6 +1,6 @@
 package com.fastarm.back.song.repository;
 
-import com.fastarm.back.basedata.controller.dto.GetPopularResponse;
+import com.fastarm.back.basedata.controller.dto.PopularGetResponse;
 import com.fastarm.back.song.entity.Song;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.domain.Pageable;
@@ -17,9 +17,9 @@ public interface SongRepository extends JpaRepository<Song, Long> , SongReposito
 
     @Query("""
         SELECT s.id
-        FROM Song s 
+        FROM Song s
         WHERE s.title LIKE %:keyword%
-        ORDER BY CASE 
+        ORDER BY CASE
         WHEN s.title LIKE :keyword THEN 0
         WHEN s.title LIKE :keyword% THEN 1
         WHEN s.title LIKE %:keyword THEN 2
@@ -31,7 +31,7 @@ public interface SongRepository extends JpaRepository<Song, Long> , SongReposito
 
     @Query("""
         SELECT s.id
-        FROM Song s 
+        FROM Song s
         WHERE s.singer LIKE %:keyword%
         ORDER BY CASE 
         WHEN s.singer LIKE :keyword THEN 0
@@ -50,10 +50,8 @@ public interface SongRepository extends JpaRepository<Song, Long> , SongReposito
     
     Optional<Song> findByNumber(int number);
 
-    Optional<Song> findById(Long id);
-
     @Query("""
-        SELECT new com.fastarm.back.basedata.controller.dto.GetPopularResponse(
+        SELECT new com.fastarm.back.basedata.controller.dto.PopularGetResponse(
             s.id,
             s.coverImage,
             s.title,
@@ -63,5 +61,5 @@ public interface SongRepository extends JpaRepository<Song, Long> , SongReposito
         WHERE s.isPopular = true
     """
     )
-    Slice<GetPopularResponse> getPopularSongs(Pageable pageable);
+    Slice<PopularGetResponse> getPopularSongs(Pageable pageable);
 }
