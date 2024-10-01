@@ -5,6 +5,7 @@ import com.fastarm.back.member.repository.MemberRepository;
 import com.fastarm.back.song.controller.dto.SongDetailRequest;
 import com.fastarm.back.song.controller.dto.SongSearchRequest;
 import com.fastarm.back.song.controller.dto.SongSearchResponse;
+import com.fastarm.back.song.controller.dto.TeamSongsRecommendRequest;
 import com.fastarm.back.song.dto.SongDetailDto;
 import com.fastarm.back.song.dto.SongDto;
 import com.fastarm.back.song.entity.Song;
@@ -33,6 +34,21 @@ public class SongService {
     public List<SongDto> recommendMySong(String loginId){
 
         Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(MemberNotFoundException::new);
+
+        List<Song> randomSongs = songRepository.findRandomSongs();
+        List<Long> songIds = randomSongs.stream().map(Song::getId).collect(Collectors.toList());
+
+        List<SongDto> songDtoList = songRepository.findSongsWithLikeStatus(songIds, member.getId());
+
+        return songDtoList;
+
+    }
+
+    @Transactional
+    public List<SongDto> recommendTeamSong(TeamSongsRecommendRequest dto){
+
+        Member member = memberRepository.findByLoginId(dto.getLoginId())
                 .orElseThrow(MemberNotFoundException::new);
 
         List<Song> randomSongs = songRepository.findRandomSongs();

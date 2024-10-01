@@ -24,7 +24,7 @@ public class NotificationTeamInvite {
     private Status status;
 
     @OneToOne
-    @JoinColumn(name = "id", nullable = false)
+    @JoinColumn(name = "notification_id", nullable = false)
     private Notification notification;
 
     public void accept() {

@@ -4,21 +4,18 @@ import com.fastarm.back.member.entity.Member;
 import com.fastarm.back.notification.entity.NotificationTeamInvite;
 import com.fastarm.back.notification.enums.Status;
 import com.fastarm.back.notification.enums.Type;
+import com.fastarm.back.team.entity.Team;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface NotificationTeamInviteRepository  extends JpaRepository<NotificationTeamInvite, Long> {
-    @Query("""
-           SELECT m FROM Member m 
-           WHERE m.nickname IN :nicknames 
-           AND m.id NOT IN (SELECT tm.member.id FROM TeamMember tm WHERE tm.team.id = :teamId) 
-           AND m.id NOT IN (SELECT nti.notification.receiver.id FROM NotificationTeamInvite nti 
-           WHERE nti.team.id = :teamId AND nti.status = 'WAIT')
-           """)
-    List<Member> findInvitableMembers(@Param("teamId") Long teamId, @Param("nicknames") List<String> nicknames);
+
+    boolean existsByTeamAndNotificationReceiverIdAndStatus(Team team, Long receiverId, Status status);
+    Optional<NotificationTeamInvite> findByNotificationId(Long notificationId);
 
     @Query("""
            SELECT CASE WHEN COUNT(nt) > 0 THEN TRUE ELSE FALSE END 

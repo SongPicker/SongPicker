@@ -30,23 +30,23 @@ public class NotificationService {
 
     @Transactional
     public void respondTeamInvitation(TeamInviteNotificationDto dto){
-        NotificationTeamInvite notificationInvite = notificationTeamInviteRepository.findById(dto.getNotificationId())
+        NotificationTeamInvite notificationInvite = notificationTeamInviteRepository.findByNotificationId(dto.getNotificationId())
                 .orElseThrow(TeamInviteNotificationNotFoundException::new);
+
+        Member receiver = notificationInvite.getNotification().getReceiver();
 
         if (dto.getAccept() != null && dto.getAccept()){
             notificationInvite.accept();
 
             Team team = notificationInvite.getTeam();
-            Member member = memberRepository.findByLoginId(dto.getLoginId())
-                    .orElseThrow(MemberNotFoundException::new);
 
-            boolean alreadyExists = teamMemberRepository.existsByTeamAndMember(team,member);
+            boolean alreadyExists = teamMemberRepository.existsByTeamAndMember(team,receiver);
             if (alreadyExists) {
                 throw new AlreadyInviteException();
             }
 
             TeamMember teamMember = TeamMember.builder()
-                    .member(member)
+                    .member(receiver)
                     .team(team)
                     .build();
 

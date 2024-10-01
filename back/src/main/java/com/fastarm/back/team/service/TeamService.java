@@ -88,7 +88,7 @@ public class TeamService {
                 continue;
             }
 
-            if (notificationTeamInviteRepository.existsByTypeAndReceiverIdAndStatus(Type.TEAM_INVITE,member.getId(), Status.WAIT)) {
+            if (notificationTeamInviteRepository.existsByTeamAndNotificationReceiverIdAndStatus(team,member.getId(), Status.WAIT)) {
                 previouslyInvited.add(receiverNickName);
                 continue;
             }
