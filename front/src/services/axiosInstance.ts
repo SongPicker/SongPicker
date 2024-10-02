@@ -97,10 +97,9 @@ axiosInstance.interceptors.response.use(
         }
       } else if (response.data.code === 'AU007') {
         // 리프레시 토큰 만료 처리
-        useAuthStore.getState().logout();
         localStorage.removeItem('auth-storage');
-        // 옵션: 사용자에게 알림을 표시하거나 로그인 페이지로 리다이렉트
-        window.location.href = '/login'; // 로그인 페이지 URL을 적절히 수정하세요
+        useAuthStore.getState().setAccessToken('');
+        useAuthStore.getState().setSongSelected(false);
         return Promise.reject(new Error('Refresh token expired'));
       }
     }
