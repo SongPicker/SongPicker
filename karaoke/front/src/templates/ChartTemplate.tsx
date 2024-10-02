@@ -3,7 +3,7 @@ import ChartName from '../molecules/ChartName';
 import LandingCharacter from '../assets/LandingCharacter.svg';
 import Text36 from '../atoms/Text36';
 import { ChartTemplateProps } from '../shared/Types';
-import ChartNotCarousel from '../organisms/ChartNotCarousel';
+import ChartNotCarousel from '../organisms/ReservationList';
 
 const ChartTemplate = (props: ChartTemplateProps) => {
   console.log(props);
