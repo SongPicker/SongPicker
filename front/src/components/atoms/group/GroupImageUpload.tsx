@@ -4,7 +4,7 @@ import { MdOutlineAddCircleOutline } from 'react-icons/md';
 interface GroupImageUploadProps {
   groupImage: File | null;
   onImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  currentImageUrl?: string;
+  currentImageUrl?: string | null;
 }
 
 const GroupImageUpload: React.FC<GroupImageUploadProps> = ({

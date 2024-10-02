@@ -12,13 +12,13 @@ import CustomModal from '../../organisms/commons/CustomModal';
 
 interface Group {
   teamId: number;
-  teamImage: string;
+  teamImage: string | null;
   teamName: string;
   teamMemberCount: number;
   members?: Array<{ profileImage: string | null; nickname: string }>;
 }
 
-const GroupDetail: React.FC = () => {
+const GroupDetail = () => {
   const { teamId } = useParams<{ teamId: string }>();
   const navigate = useNavigate();
   const location = useLocation();
@@ -125,7 +125,7 @@ const GroupDetail: React.FC = () => {
       <div className="w-8"></div>
       <div className="flex items-center">
         <img
-          src={groupDetail.teamImage}
+          src={groupDetail.teamImage || '/basicImg.png'}
           alt={groupDetail.teamName}
           className="w-6 h-6 rounded-full mr-2"
         />

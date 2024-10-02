@@ -5,7 +5,7 @@ import GroupNameInput from '../../atoms/group/GroupNameInput';
 interface EditGroupFormProps {
   groupName: string;
   groupImage: File | null;
-  currentGroupImage: string;
+  currentGroupImage: string | null;
   onNameChange: (name: string) => void;
   onImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: () => void;

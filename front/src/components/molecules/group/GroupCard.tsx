@@ -7,7 +7,7 @@ import GroupMenu from './GroupMenu';
 
 interface GroupCardProps {
   teamId: number;
-  teamImage: string;
+  teamImage: string | null;
   teamName: string;
   teamMemberCount: number;
   openMenuId: number | null;

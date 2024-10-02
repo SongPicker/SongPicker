@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface GroupImageProps {
-  src: string;
+  src: string | null;
   alt: string;
 }
 

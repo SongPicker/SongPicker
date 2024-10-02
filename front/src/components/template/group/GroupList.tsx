@@ -6,7 +6,7 @@ import { getGroupList } from '../../../services/groupService';
 
 interface Group {
   teamId: number;
-  teamImage: string;
+  teamImage: string | null;
   teamName: string;
   teamMemberCount: number;
 }

@@ -6,7 +6,7 @@ import MemberAddModal from '../../organisms/group/MemberAddModal'; // 추가
 
 interface Group {
   teamId: number;
-  teamImage: string;
+  teamImage: string | null;
   teamName: string;
   teamMemberCount: number;
 }

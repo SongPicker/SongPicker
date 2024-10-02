@@ -30,7 +30,7 @@ const GroupMembers = ({ members, onAddMemberClick }: GroupMembersProps) => {
           <div key={index} className="flex flex-col items-center ">
             <div className="w-10 h-10 rounded-full mb-2 overflow-hidden">
               <img
-                src={member.profileImage || '/src/assets/exampleImg.png'}
+                src={member.profileImage || '/basicImg.png'}
                 alt={member.nickname}
                 className="w-full h-full object-cover"
               />
