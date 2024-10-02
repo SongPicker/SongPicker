@@ -3,6 +3,7 @@ package com.fastarm.back.member.service;
 import com.fastarm.back.auth.exception.NotCheckPhoneAuthenticationException;
 import com.fastarm.back.common.constants.RedisSessionConstants;
 import com.fastarm.back.common.service.S3Service;
+import com.fastarm.back.member.controller.dto.ProfileInfoResponse;
 import com.fastarm.back.member.dto.*;
 import com.fastarm.back.member.entity.Member;
 import com.fastarm.back.member.exception.*;
@@ -55,7 +56,7 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public String findNickname(String loginId) {
+    public String getNickname(String loginId) {
         Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(MemberNotFoundException::new);
         return member.getNickname();
@@ -127,6 +128,17 @@ public class MemberService {
             }
             member.modifyProfileImage(null);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public ProfileInfoResponse getProfileInfo(String loginId) {
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(MemberNotFoundException::new);
+
+        return ProfileInfoResponse.builder()
+                .nickname(member.getNickname())
+                .profileImage(member.getProfileImage())
+                .build();
     }
 
     private Boolean checkSignupPreAuth(MemberAddDto memberAddDto) {

@@ -57,8 +57,8 @@ public class MemberController {
     }
 
     @GetMapping("/nickname")
-    public ResponseEntity<?> nicknameFind(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
-        String result = memberService.findNickname(loginMemberInfo.getLoginId());
+    public ResponseEntity<?> nicknameGet(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
+        String result = memberService.getNickname(loginMemberInfo.getLoginId());
         return ResponseEntity.ok(new ApiResponse<>("ME110", "닉네임 조회 성공", result));
     }
 
@@ -120,6 +120,12 @@ public class MemberController {
                                                 @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) throws URISyntaxException, IOException {
         memberService.modifyProfileImage(profileImageModifyRequest.toDto(loginMemberInfo.getLoginId()));
         return ResponseEntity.ok(new ApiResponse<>("ME108", "프로필 사진 수정 성공", null));
+    }
+
+    @GetMapping("/profile-info")
+    public ResponseEntity<?> myPageGet(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
+        ProfileInfoResponse result = memberService.getProfileInfo(loginMemberInfo.getLoginId());
+        return ResponseEntity.ok(new ApiResponse<>("ME111", "프로필 정보 조회 성공", result));
     }
 }
 
