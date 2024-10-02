@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import MainLayout from '../layouts/MainLayout';
 import KaraokeLinkMode from '../components/organisms/MainOrganism/KaraokeLinkMode';
 import RecomMusicList from '../components/template/Maintemplate/RecomMusicList';
@@ -6,6 +6,8 @@ import CustomAlert from '../components/template/commons/CustomAlertModal';
 import ConnectionModal from '../components/template/commons/ConnectionModal';
 import UserStatisticsBanner from '../components/template/Maintemplate/UserStatisticsBanner';
 import RecomThemeBanner from '../components/template/Maintemplate/RecomThemeBanner';
+import { checkConnectionStatus, disconnectService } from '../services/connection';
+import { useLocation } from 'react-router-dom';
 
 const MainPage = () => {
   const [showNotification, setShowNotification] = useState(false);
@@ -14,7 +16,64 @@ const MainPage = () => {
   const [connectionModalMessage, setConnectionModalMessage] = useState('');
   const [modalIcon, setModalIcon] = useState<'link' | 'spinner' | 'reservation'>('link');
   const [autoCloseDelay, setAutoCloseDelay] = useState<number | undefined>(undefined);
+  const [isConnected, setIsConnected] = useState(false); // 연결 상태 관리
+  const [selectedMode, setSelectedMode] = useState('');
+  const location = useLocation();
 
+  // 연결 상태를 가져오는 함수
+  const fetchConnectionStatus = useCallback(async () => {
+    try {
+      const response = await checkConnectionStatus();
+      console.log('Fetched connection status:', response);
+
+      if (response && typeof response.data === 'boolean') {
+        setIsConnected(response.data);
+        // 모드 정보는 QrScanPage에서 전달받은 것을 사용
+      } else {
+        console.error('Unexpected response format:', response);
+        setIsConnected(false);
+      }
+    } catch (error) {
+      console.error('Failed to fetch connection status:', error);
+      setIsConnected(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchConnectionStatus();
+    const intervalId = setInterval(fetchConnectionStatus, 1200000);
+    return () => clearInterval(intervalId);
+  }, [fetchConnectionStatus]);
+
+  useEffect(() => {
+    // QrScanPage에서 전달받은 상태 확인
+    if (location.state) {
+      const { isConnected: newIsConnected, mode: newMode } = location.state;
+      if (newIsConnected !== undefined) {
+        setIsConnected(newIsConnected);
+      }
+      if (newMode) {
+        setSelectedMode(newMode);
+      }
+    }
+  }, [location]);
+
+  const handleDisconnect = async () => {
+    try {
+      const response = await disconnectService();
+      if (response.code === 'CO103') {
+        setIsConnected(false);
+        setSelectedMode('');
+        console.log('연결이 해제되었습니다.');
+      } else {
+        throw new Error('Disconnect failed');
+      }
+    } catch (error) {
+      console.error('Failed to disconnect:', error);
+    }
+  };
+
+  // 임시 테마 노래 1
   const kpopTheme = {
     title: '신나는 K-POP 여자 아이돌 노래',
     gradientColors: 'bg-gradient-to-r from-red-400 to-pink-500',
@@ -26,6 +85,7 @@ const MainPage = () => {
     ],
   };
 
+  // 임시 테마 노래 2
   const balladeTheme = {
     title: '감성적인 발라드 모음',
     gradientColors: 'bg-gradient-to-r from-blue-400 to-purple-500',
@@ -71,7 +131,11 @@ const MainPage = () => {
       <div className="flex flex-col py-4 w-full">
         {/* 노래방 연결 */}
         <div className="px-2 mb-8">
-          <KaraokeLinkMode />
+          <KaraokeLinkMode
+            isConnected={isConnected}
+            selectedMode={selectedMode}
+            onDisconnect={handleDisconnect}
+          />
         </div>
 
         {/* 사용자 맞춤 추천곡 */}

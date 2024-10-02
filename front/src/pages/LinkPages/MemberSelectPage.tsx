@@ -3,14 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import SubTopNavbar from '../../components/molecules/commons/SubTopNavbar';
 import MemberSelectList from '../../components/template/Maintemplate/MemberSelectList';
 import FooterButton from '../../components/atoms/commons/FooterButton';
-import { saveSelectedMode } from '../../services/connectionStorage';
 
 const MemberSelectPage = () => {
   const [selectedMode, setSelectedMode] = useState<string>('');
   const navigate = useNavigate();
 
   const handleNext = () => {
-    saveSelectedMode(selectedMode);
     if (selectedMode === '그룹 모드') {
       navigate('/group-select');
     } else {

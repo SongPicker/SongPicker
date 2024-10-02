@@ -3,8 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import QrScanner from 'react-qr-scanner';
 import SubTopNavbar from '../../components/molecules/commons/SubTopNavbar';
 import ConnectionModal from '../../components/template/commons/ConnectionModal';
-import { connectService } from '../../services/connection';
-import { saveConnectionInfo } from '../../services/connectionStorage';
+import { connectGroupService, connectService } from '../../services/connection';
+import axios from 'axios';
 
 type QrScanResult = string | { text: string };
 
@@ -13,8 +13,9 @@ const QrScanPage = () => {
   const [modalMessage, setModalMessage] = useState('');
   const [modalIcon, setModalIcon] = useState<'spinner' | 'link'>('spinner');
   const navigate = useNavigate();
-  const { state } = useLocation();
-  const mode = state?.mode;
+  const location = useLocation();
+  const mode = location.state?.mode;
+  const groupId = location.state?.groupId;
 
   const handleScan = async (data: QrScanResult | null) => {
     if (!data) return;
@@ -26,24 +27,35 @@ const QrScanPage = () => {
 
     try {
       const { serialNumber } = JSON.parse(scanResult);
-      const response = await connectService(serialNumber);
+      let response;
+
+      if (groupId) {
+        response = await connectGroupService({ serialNumber, groupId });
+      } else {
+        response = await connectService(serialNumber);
+      }
 
       // 요청한 콘솔 로그만 남김
       console.log('Connection response:', response);
 
       if (response.code === 'CO100') {
-        saveConnectionInfo(serialNumber, mode);
         setModalMessage('연결에 성공했습니다!');
         setModalIcon('link');
         setTimeout(() => {
           setShowModal(false);
-          navigate('/');
+          navigate('/', {
+            state: {
+              isConnected: true,
+              mode: mode || '그룹 모드',
+              groupId: groupId,
+            },
+          });
         }, 1500);
       } else {
         throw new Error('Connection failed');
       }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
+      console.error('Connection error:', error);
       setModalMessage('연결 중 오류가 발생했습니다. 다시 시도해주세요.');
       setModalIcon('link');
       setTimeout(() => setShowModal(false), 1500);

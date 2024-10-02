@@ -9,8 +9,7 @@ interface TwoBtnAlertModalProps {
 }
 
 const TwoBtnAlertModal = ({ isVisible, onClose, onConfirm, message }: TwoBtnAlertModalProps) => {
-  useEffect(() => {
-  }, [isVisible]);
+  useEffect(() => {}, [isVisible]);
 
   const handleClose = () => {
     onClose();

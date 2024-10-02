@@ -1,24 +1,27 @@
 import React, { useState, useCallback } from 'react';
 import { MdOutlineLinkOff } from 'react-icons/md';
 import TwoBtnAlertModal from '../../template/commons/TwoBtnAlertModal';
+import { disconnectService } from '../../../services/connection';
 
-const DisconnectButton = () => {
+interface DisconnectButtonProps {
+  onDisconnect: () => void;
+}
+
+const DisconnectButton = ({ onDisconnect }: DisconnectButtonProps) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const handleDisconnectClick = useCallback(() => {
+  const handleDisconnectClick = () => {
     setIsModalVisible(true);
-  }, []);
+  };
 
-  const handleCloseModal = useCallback(() => {
+  const handleCloseModal = () => {
     setIsModalVisible(false);
-  }, []);
+  };
 
-  const handleConfirm = useCallback(() => {
-    // 여기에 연결 해제 로직을 추가하세요
-    console.log('연결이 해제되었습니다.');
+  const handleConfirm = async () => {
+    await onDisconnect();
     setIsModalVisible(false);
-  }, []);
-
+  };
   return (
     <>
       <div className="flex items-center" onClick={handleDisconnectClick}>
