@@ -1,30 +1,32 @@
 import ChartItem from '../molecules/ChartItem';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Reservation } from '../shared/Types';
+import { Reservation, ReservationItem } from '../shared/Types';
 import findYoutube from '../utils/findYoutube';
+import saveSingSong from '../utils/saveSingSong';
 
-type ChartNotCarouselProps = {
+type ReservationListProps = {
   data: Reservation;
 };
 
-const ChartNotCarousel = (props: ChartNotCarouselProps) => {
+const ReservationList = (props: ReservationListProps) => {
   const navigate = useNavigate();
   const [clickedTitle, setClickedTitle] = useState('');
-  const [clickedArtist, setClickedArtist] = useState('');
+  const [clickedSinger, setClickedSinger] = useState('');
 
   // 클릭한 노래 상태 변경
-  const handleClickedSong = useCallback((title: string, artist: string) => {
-    setClickedTitle(title);
-    setClickedArtist(artist);
+  const handleClickedSong = useCallback((song: ReservationItem) => {
+    setClickedTitle(song.title);
+    setClickedSinger(song.singer);
+    saveSingSong(song)
   }, []);
 
   // 클릭한 노래가 변경되면 유튜브 검색을 실행
   useEffect(() => {
-    if (clickedTitle && clickedArtist) {
-      findYoutube(clickedTitle, clickedArtist, navigate);
+    if (clickedTitle && clickedSinger) {
+      findYoutube(clickedTitle, clickedSinger, navigate);
     }
-  }, [clickedTitle, clickedArtist]);
+  }, [clickedTitle, clickedSinger]);
 
   return (
     <div className="relative w-full">
@@ -49,4 +51,4 @@ const ChartNotCarousel = (props: ChartNotCarouselProps) => {
   );
 };
 
-export default ChartNotCarousel;
+export default ReservationList;

@@ -1,6 +1,6 @@
 import ChartName from '../molecules/ChartName';
 // import ChartCarousel from '../organisms/ChartCarousel';
-import ChartNotCarousel from '../organisms/ChartNotCarousel';
+import ChartNotCarousel from '../organisms/ReservationList';
 import { ChartTemplateProps } from '../shared/Types';
 
 const MiniChartTemplate = (props: ChartTemplateProps) => {

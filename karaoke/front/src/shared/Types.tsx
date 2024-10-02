@@ -22,8 +22,8 @@ export type ReservationItem = {
   title: string;
   singer: string;
   nickname: string;
-  groupId: number | null;
-  type: string;
+  teamId: number | null;
+  mode: string;
 };
 
 export type Reservation = ReservationItem[];

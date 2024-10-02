@@ -4,7 +4,7 @@ import { ReservationItem } from '../shared/Types';
 
 export type ChartItemProps = {
   data: ReservationItem;
-  handleClickedSong: (title: string, artist: string) => void;
+  handleClickedSong: (song:ReservationItem) => void;
 };
 
 const ChartItem = (props: ChartItemProps) => {
@@ -12,7 +12,7 @@ const ChartItem = (props: ChartItemProps) => {
     <div
       className="w-[1690px] h-fit bg-black/50 grid grid-flow-col grid-cols-12 p-2.5 gap-x-2.5 hover:bg-[#80F9C6] duration-75 cursor-pointer group"
       onClick={() => {
-        props.handleClickedSong(props.data.title, props.data.singer);
+        props.handleClickedSong(props.data);
       }}
     >
       {/* 노래방 번호 */}
