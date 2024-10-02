@@ -6,7 +6,7 @@ import CustomAlert from '../components/template/commons/CustomAlertModal';
 import ConnectionModal from '../components/template/commons/ConnectionModal';
 import UserStatisticsBanner from '../components/template/Maintemplate/UserStatisticsBanner';
 import RecomThemeBanner from '../components/template/Maintemplate/RecomThemeBanner';
-import { checkConnectionStatus, disconnectService } from '../services/connection';
+import { checkConnectionStatus, disconnectService } from '../services/connectionService';
 import { useLocation } from 'react-router-dom';
 
 const MainPage = () => {

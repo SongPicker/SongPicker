@@ -8,7 +8,7 @@ import {
   getPersonalRecommendations,
   getSongDetail,
   SongDetail,
-} from '../../../services/songservices';
+} from '../../../services/songService';
 
 // Props 타입 정의
 type Props = {

@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { MdOutlineLinkOff } from 'react-icons/md';
 import TwoBtnAlertModal from '../../template/commons/TwoBtnAlertModal';
-import { disconnectService } from '../../../services/connection';
+import { disconnectService } from '../../../services/connectionService';
 
 interface DisconnectButtonProps {
   onDisconnect: () => void;

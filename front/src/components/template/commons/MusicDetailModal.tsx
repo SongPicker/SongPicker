@@ -1,6 +1,6 @@
 import React from 'react';
 import BottomSlideModal from './BottomSlideModal';
-import { SongDetail } from '../../../services/songservices';
+import { SongDetail } from '../../../services/songService';
 
 interface MusicDetailModalProps {
   isOpen: boolean;

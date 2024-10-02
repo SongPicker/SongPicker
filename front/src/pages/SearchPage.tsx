@@ -3,7 +3,7 @@ import MainLayout from '../layouts/MainLayout';
 import SearchMain from '../components/template/SearchMain';
 import SearchBar from '../components/molecules/search/SearchBar';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { getSongDetail, searchSongs, SongDetail } from '../services/songservices';
+import { getSongDetail, searchSongs, SongDetail } from '../services/songService';
 import axios from 'axios';
 import MusicDetailModal from '../components/template/commons/MusicDetailModal';
 import CustomAlert from '../components/template/commons/CustomAlertModal';

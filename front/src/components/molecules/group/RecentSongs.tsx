@@ -4,7 +4,7 @@ import {
   getSongDetail,
   RecentSong,
   SongDetail,
-} from '../../../services/songservices';
+} from '../../../services/songService';
 import MusicItem from '../../organisms/commons/MusicItem';
 import { IoMdRefreshCircle } from 'react-icons/io';
 import { TbMoodSadSquint } from 'react-icons/tb';

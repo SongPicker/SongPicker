@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import QrScanner from 'react-qr-scanner';
 import SubTopNavbar from '../../components/molecules/commons/SubTopNavbar';
 import ConnectionModal from '../../components/template/commons/ConnectionModal';
-import { connectGroupService, connectService } from '../../services/connection';
+import { connectGroupService, connectService } from '../../services/connectionService';
 import axios from 'axios';
 
 type QrScanResult = string | { text: string };

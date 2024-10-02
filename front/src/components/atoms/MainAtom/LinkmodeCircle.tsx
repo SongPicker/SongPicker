@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { checkConnectionStatus, disconnectService } from '../../../services/connection';
+import { checkConnectionStatus, disconnectService } from '../../../services/connectionService';
 import TwoBtnAlertModal from '../../template/commons/TwoBtnAlertModal';
 
 const LinkmodeCircle = ({ isConnected }: { isConnected: boolean }) => {

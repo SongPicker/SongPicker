@@ -34,15 +34,6 @@ export const getSongDetail = async (songId: number | string) => {
 };
 
 // 노래 검색 API 함수
-// export const searchSongs = async (keyword: string) => {
-//   const response = await axiosInstance({
-//     method: 'GET',
-//     url: '/api/songs/search',
-//     params: { keyword },
-//   });
-//   return response.data;
-// };
-
 export const searchSongs = async (keyword: string) => {
   try {
     const response = await axiosInstance({
@@ -71,7 +62,6 @@ export const searchSongs = async (keyword: string) => {
 };
 
 // 최근 노래
-
 export interface RecentSong {
   number: number;
   coverImage: string;
@@ -88,4 +78,22 @@ export const getRecentSongs = async (teamId: number) => {
     url: `/api/histories/team/recent-songs?teamId=${teamId}`,
   });
   return response.data;
+};
+
+// 찜 목록 인터페이스
+export interface LikedSong {
+  number: string;
+  coverImage: string;
+  title: string;
+  singer: string;
+  likeId: number;
+}
+
+// 찜 목록 조회 API
+export const getLikedSongs = async () => {
+  const response = await axiosInstance({
+    method: 'GET',
+    url: '/api/likes',
+  });
+  return response.data.data;
 };
