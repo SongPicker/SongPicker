@@ -8,6 +8,7 @@ import com.fastarm.back.basedata.constants.BaseDataConstants;
 import com.fastarm.back.basedata.repository.BaseDataRepository;
 import com.fastarm.back.common.constants.JwtConstants;
 import com.fastarm.back.auth.security.service.ResponseService;
+import com.fastarm.back.common.constants.RedisExpiredTimeConstants;
 import com.fastarm.back.member.controller.dto.MemberLoginRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -74,7 +75,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         String role = auth.getAuthority();
 
         String access = JwtUtil.createJwt("access", loginId, role, JwtConstants.ACCESS_EXPIRED);
-        String refresh = JwtUtil.createJwt("refresh", loginId, role, JwtConstants.REFRESH_EXPIRED);
+        String refresh = JwtUtil.createJwt("refresh", loginId, role, RedisExpiredTimeConstants.TOKEN_EXPIRED);
 
         RefreshToken refreshToken = RefreshToken.builder()
                 .loginId(loginId)
@@ -95,7 +96,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     }
 
     @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
         ResponseService.setResponse(response, "AU000", "일반 로그인 실패", null, HttpStatus.UNAUTHORIZED);
     }
 

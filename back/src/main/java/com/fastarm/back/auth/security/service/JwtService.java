@@ -4,6 +4,9 @@ import com.fastarm.back.auth.exception.RefreshAuthenticationException;
 import com.fastarm.back.auth.security.entity.RefreshToken;
 import com.fastarm.back.auth.security.util.JwtUtil;
 import com.fastarm.back.common.constants.JwtConstants;
+import com.fastarm.back.common.constants.RedisConstants;
+import com.fastarm.back.common.constants.RedisExpiredTimeConstants;
+import com.fastarm.back.common.constants.RedisFieldConstants;
 import com.fastarm.back.common.service.RedisService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
@@ -19,7 +22,7 @@ public class JwtService {
     private final RedisService redisService;
 
     public void saveRefreshToken(RefreshToken refreshToken) {
-        redisService.setData(generatePrefixedKey(refreshToken.getLoginId()), refreshToken.getRefreshToken(), JwtConstants.REFRESH_EXPIRED);
+        redisService.setHashData(generatePrefixedKey(refreshToken.getLoginId()), RedisFieldConstants.REFRESH, refreshToken.getRefreshToken(), RedisExpiredTimeConstants.TOKEN_EXPIRED);
     }
 
     public void reissueAccess(HttpServletRequest request, HttpServletResponse response) {
@@ -47,14 +50,14 @@ public class JwtService {
 
         String loginId = JwtUtil.getLoginId(refreshToken);
 
-        if (redisService.getData(generatePrefixedKey(loginId)) == null) {
+        if (redisService.getHashData(generatePrefixedKey(loginId), RedisFieldConstants.REFRESH) == null) {
             throw new RefreshAuthenticationException();
         }
 
         String role = JwtUtil.getRole(refreshToken);
 
         String newAccess = JwtUtil.createJwt("access", loginId, role, JwtConstants.ACCESS_EXPIRED);
-        String newRefresh = JwtUtil.createJwt("refresh", loginId, role, JwtConstants.REFRESH_EXPIRED);
+        String newRefresh = JwtUtil.createJwt("refresh", loginId, role, RedisExpiredTimeConstants.TOKEN_EXPIRED);
 
         RefreshToken newRefreshToken = RefreshToken.builder()
                 .loginId(loginId)
@@ -68,7 +71,7 @@ public class JwtService {
     }
 
     private String generatePrefixedKey(String key) {
-        return JwtConstants.REFRESH_TOKEN + ":" + key;
+        return RedisConstants.TOKEN + key;
     }
 
 }

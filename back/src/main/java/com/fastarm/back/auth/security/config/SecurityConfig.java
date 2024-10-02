@@ -56,7 +56,6 @@ public class SecurityConfig {
                         .requestMatchers("/auths/login", "/members").permitAll()
                         .requestMatchers("/auths/refresh").permitAll()
                         .requestMatchers("/auths/phone/*", "/members/check-nickname", "/members/check-phone", "/members/check-id", "/members/find-id", "/members/find-password").permitAll()
-                        .requestMatchers("/songs/my/recommendations").permitAll()
                         .anyRequest().authenticated());
 
         http

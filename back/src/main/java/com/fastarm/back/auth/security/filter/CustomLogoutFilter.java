@@ -4,6 +4,8 @@ import com.fastarm.back.auth.exception.RefreshAuthenticationException;
 import com.fastarm.back.auth.security.service.ResponseService;
 import com.fastarm.back.auth.security.util.JwtUtil;
 import com.fastarm.back.common.constants.JwtConstants;
+import com.fastarm.back.common.constants.RedisConstants;
+import com.fastarm.back.common.constants.RedisFieldConstants;
 import com.fastarm.back.common.service.RedisService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -65,7 +67,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
         String loginId = JwtUtil.getLoginId(refreshToken);
 
-        if (redisService.getData(generatePrefixedKey(loginId)) == null) {
+        if (redisService.getHashData(generatePrefixedKey(loginId), RedisFieldConstants.REFRESH) == null) {
             throw new RefreshAuthenticationException();
         }
 
@@ -81,6 +83,6 @@ public class CustomLogoutFilter extends GenericFilterBean {
     }
 
     private String generatePrefixedKey(String key) {
-        return JwtConstants.REFRESH_TOKEN + ":" + key;
+        return RedisConstants.TOKEN + key;
     }
 }
