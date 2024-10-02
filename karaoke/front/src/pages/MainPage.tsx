@@ -3,10 +3,12 @@ import MainBackground from '../assets/MainBackground.png';
 import CircleButton from '../molecules/CircleButton';
 import GuideQrcode from '../organisms/GuideQrcode';
 import ChartTemplates from '../templates/ChartTemplate';
+import { useFetchReservation } from '../hooks/useFetchReservation';
 
 const MainPage = () => {
   const [showRecommendation, setShowRecommendation] = useState(false);
   const [showReservation, setShowReservation] = useState(false);
+  const { data: reservationData, isLoading: reservationIsLoading } = useFetchReservation();
 
   // 추천 차트 오픈
   const handleRecommendation = () => {
@@ -18,8 +20,11 @@ const MainPage = () => {
     setShowReservation(!showReservation);
   };
 
-  
+  if (reservationIsLoading) {
+    return <div>로딩로딩로딩</div>;
+  }
 
+  // console.log('예약ㄱㄱ', reservationData)
   return (
     <div
       className="relative w-full h-full bg-cover bg-center mb-11"
@@ -44,14 +49,19 @@ const MainPage = () => {
       {/* 추천 차트 */}
       {showRecommendation && (
         <div className="flex h-full">
-          <ChartTemplates chartName="SongPicker 추천 차트" closeChart={handleRecommendation} />
+          {/* <ChartTemplates chartName="SongPicker 추천 차트" closeChart={handleRecommendation} /> */}
         </div>
       )}
 
       {/* 예약 목록 */}
       {showReservation && (
         <div className="flex h-full">
-          <ChartTemplates chartName="SongPicker 예약 목록" closeChart={handleReservation} />
+          <ChartTemplates
+            chartName="SongPicker 예약 목록"
+            closeChart={handleReservation}
+            data={reservationData || []}
+            isLoading={reservationIsLoading}
+          />
         </div>
       )}
     </div>

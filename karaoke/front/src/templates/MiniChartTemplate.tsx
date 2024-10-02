@@ -1,6 +1,6 @@
 import ChartName from '../molecules/ChartName';
-import ChartCarousel from '../organisms/ChartCarousel';
-import ChartData from '../shared/ChartData';
+// import ChartCarousel from '../organisms/ChartCarousel';
+import ChartNotCarousel from '../organisms/ChartNotCarousel';
 import { ChartTemplateProps } from '../shared/Types';
 
 const MiniChartTemplate = (props: ChartTemplateProps) => {
@@ -8,13 +8,12 @@ const MiniChartTemplate = (props: ChartTemplateProps) => {
     <div className="relative top-24 w-full flex justify-center pointer-events-none">
       {/* 차트 */}
       <div className="relative  bg-black/80 h-1/2 mb-1 p-6 overflow-hidden pointer-events-auto">
-        <ChartCarousel data={ChartData} />
+        <ChartNotCarousel data={props.data} />
 
         {/* 차트 이름 */}
         <div className="absolute top-3 left-5">
           <ChartName text={props.chartName} />
         </div>
-
       </div>
     </div>
   );

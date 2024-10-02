@@ -16,8 +16,22 @@ export type ButtonProps = {
   color: string;
 };
 
+// 예약
+export type ReservationItem = {
+  number: number;
+  title: string;
+  singer: string;
+  nickname: string;
+  groupId: number | null;
+  type: string;
+};
+
+export type Reservation = ReservationItem[];
+
 // 차트
 export type ChartTemplateProps = {
   chartName: string;
   closeChart: () => void;
+  isLoading: boolean;
+  data: Reservation | [];
 };
