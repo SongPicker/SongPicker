@@ -3,6 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import RecentSearch from '../organisms/search/RecentSearch';
 import MusicItem from '../organisms/commons/MusicItem';
 
+interface SearchResultItem {
+  songId: number;
+  number: string;
+  title: string;
+  singer: string;
+  coverImage: string;
+  isLike: boolean;
+  likeId: number | null;
+}
+
 type Props = {
   keyword: string;
   searchResults: {
@@ -10,7 +20,7 @@ type Props = {
     singerSearchList: Array<any>;
   };
   onShowConnectionModal: (message: string) => void;
-  onItemClick: (music: { id: string; title: string; artist: string; imageUrl: string }) => void;
+  onItemClick: (music: SearchResultItem) => void;
   isLoading: boolean;
   error: string | null;
   activeTab: 'all' | 'song' | 'singer';

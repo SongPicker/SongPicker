@@ -1,27 +1,40 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import MainLayout from '../layouts/MainLayout';
 import SearchMain from '../components/template/SearchMain';
 import SearchBar from '../components/molecules/search/SearchBar';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { searchSongs } from '../services/songservices';
+import { getSongDetail, searchSongs, SongDetail } from '../services/songservices';
 import axios from 'axios';
 import MusicDetailModal from '../components/template/commons/MusicDetailModal';
 import CustomAlert from '../components/template/commons/CustomAlertModal';
 
 type Tab = 'all' | 'song' | 'singer';
 
+interface Music {
+  songId: number;
+  number: string;
+  title: string;
+  singer: string;
+  coverImage: string;
+  isLike: boolean;
+  likeId: number | null;
+}
+
 const SearchPage = () => {
   const [searchKeyword, setSearchKeyword] = useState<string>('');
-  const [songSearchResults, setSongSearchResults] = useState<any[]>([]);
-  const [singerSearchResults, setSingerSearchResults] = useState<any[]>([]);
+  const [songSearchResults, setSongSearchResults] = useState<unknown[]>([]);
+  const [singerSearchResults, setSingerSearchResults] = useState<unknown[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>('all');
   const navigate = useNavigate();
   const location = useLocation();
-  const [isDetailModalOpen, setDetailModalOpen] = useState(false);
   const [isAlertModalOpen, setAlertModalOpen] = useState(false);
-  const [selectedMusic, setSelectedMusic] = useState(null);
+  const [selectedMusic, setSelectedMusic] = useState<Music | null>(null);
+  const [detailError, setDetailError] = useState<string | null>(null);
+  const [selectedSongDetail, setSelectedSongDetail] = useState<SongDetail | null>(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [isDetailLoading, setIsDetailLoading] = useState(false);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -75,15 +88,24 @@ const SearchPage = () => {
     console.log('Show connection modal:', message);
   };
 
-  const handleItemClick = (music: {
-    id: string;
-    title: string;
-    artist: string;
-    imageUrl: string;
-  }) => {
-    setSelectedMusic(music);
-    setDetailModalOpen(true);
-  };
+  const handleItemClick = useCallback(async (music: Music) => {
+    setIsDetailLoading(true);
+    try {
+      const response = await getSongDetail(music.songId);
+      console.log('Song detail response:', response);
+      if (response.code === 'SO100') {
+        setSelectedSongDetail(response.data);
+        setIsDetailModalOpen(true);
+      } else {
+        throw new Error(response.message || '노래 상세 정보를 불러오는데 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('Failed to fetch song details:', error);
+      // 에러 처리 (예: 알림 표시)
+    } finally {
+      setIsDetailLoading(false);
+    }
+  }, []);
 
   const handleWishlistClick = () => {
     setAlertModalOpen(true);
@@ -132,12 +154,12 @@ const SearchPage = () => {
       </div>
 
       {/* MusicDetailModal */}
-      {isDetailModalOpen && selectedMusic && (
+      {isDetailModalOpen && selectedSongDetail && (
         <MusicDetailModal
           isOpen={isDetailModalOpen}
-          onClose={() => setDetailModalOpen(false)}
-          songDetail={selectedMusic}
-          isLoading={false}
+          onClose={() => setIsDetailModalOpen(false)}
+          songDetail={selectedSongDetail}
+          isLoading={isDetailLoading}
           height="80vh"
         />
       )}
