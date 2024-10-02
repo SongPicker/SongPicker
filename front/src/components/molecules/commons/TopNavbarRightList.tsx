@@ -2,13 +2,17 @@ import React from 'react';
 import BellAlertIcon from '../../atoms/commons/BellAlertIcon';
 import PlayListIcon from '../../atoms/commons/PlayListIcon';
 
-type Props = {}
+type Props = {
+  onPlayListClick: () => void;
+};
 
-const TopNavbarRightList = (props: Props) => {
+const TopNavbarRightList = ({ onPlayListClick }: Props) => {
   return (
     <div className="flex items-center">
       <BellAlertIcon />
-      <PlayListIcon />
+      <div onClick={onPlayListClick}>
+        <PlayListIcon />
+      </div>
     </div>
   );
 };
