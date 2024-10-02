@@ -11,9 +11,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-@Builder
 @Getter
 public class PersonalSingHistory {
 

@@ -3,7 +3,6 @@ package com.fastarm.back.history.entity;
 import com.fastarm.back.song.entity.Song;
 import com.fastarm.back.team.entity.Team;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -13,7 +12,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class TeamSingHistory {

@@ -10,9 +10,7 @@ import java.util.Objects;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @Getter
-@Builder
 public class Likes {
 
     @Id
@@ -27,12 +25,23 @@ public class Likes {
     @JoinColumn(name = "song_id")
     private Song song;
 
+    @Builder
+    public Likes(Member member, Song song) {
+        this.member = member;
+        this.song = song;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         Likes likes = (Likes) o;
-        return Objects.equals(this, likes);
+        return Objects.equals(this.getMember(), likes.getMember());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(member);
     }
 
 }
