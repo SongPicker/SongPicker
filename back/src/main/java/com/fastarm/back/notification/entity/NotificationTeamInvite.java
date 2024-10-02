@@ -3,18 +3,19 @@ package com.fastarm.back.notification.entity;
 import com.fastarm.back.notification.enums.Status;
 import com.fastarm.back.team.entity.Team;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class NotificationTeamInvite {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@SuperBuilder
+@DiscriminatorValue("NOTIFICATIONTEAMINVITE")
+public class NotificationTeamInvite extends Notification{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id", nullable = false)
@@ -23,23 +24,12 @@ public class NotificationTeamInvite {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @OneToOne
-    @JoinColumn(name = "notification_id", nullable = false)
-    private Notification notification;
-
     public void accept() {
         this.status = Status.ACCEPT;
     }
 
     public void reject() {
         this.status = Status.REJECT;
-    }
-
-    @Builder
-    public NotificationTeamInvite(Team team, Notification notification) {
-        this.team = team;
-        this.notification = notification;
-        this.status = Status.WAIT;
     }
 
 }

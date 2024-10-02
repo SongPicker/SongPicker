@@ -14,8 +14,8 @@ import java.util.Optional;
 
 public interface NotificationTeamInviteRepository  extends JpaRepository<NotificationTeamInvite, Long> {
 
-    boolean existsByTeamAndNotificationReceiverIdAndStatus(Team team, Long receiverId, Status status);
-    Optional<NotificationTeamInvite> findByNotificationId(Long notificationId);
+    boolean existsByTeamAndReceiverIdAndStatus(Team team, Long receiverId, Status status);
+    Optional<NotificationTeamInvite> findById(Long notificationId);
 
     @Query("""
            SELECT CASE WHEN COUNT(nt) > 0 THEN TRUE ELSE FALSE END 

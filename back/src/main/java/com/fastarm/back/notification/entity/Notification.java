@@ -3,9 +3,10 @@ package com.fastarm.back.notification.entity;
 import com.fastarm.back.member.entity.Member;
 import com.fastarm.back.notification.enums.Type;
 import jakarta.persistence.*;
-import lombok.Builder;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -13,10 +14,13 @@ import org.hibernate.annotations.Where;
 import java.time.LocalDateTime;
 
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@SuperBuilder
 @SQLDelete(sql = "UPDATE notification SET is_deleted = true WHERE id = ?")
 @Where(clause = "is_deleted = false")
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "DTYPE")
 public class Notification {
 
     @Id
@@ -39,31 +43,18 @@ public class Notification {
     private LocalDateTime createdAt;
 
     @Column(name="is_read", nullable = false)
-    private Boolean isRead;
+    private Boolean isRead = false;
 
     @Column(name="is_deleted", nullable = false)
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
 
     @Enumerated(EnumType.STRING)
     private Type type;
-
-    @OneToOne(mappedBy = "notification", fetch = FetchType.LAZY)
-    private NotificationTeamInvite notificationTeamInvite;
 
     public void read() {
         this.isRead = true;
     }
     public void delete() {
         this.isDeleted = true;
-    }
-
-    @Builder
-    public Notification(Member receiver, Member sender, String content,Type type) {
-        this.receiver = receiver;
-        this.sender = sender;
-        this.content = content;
-        this.type = type;
-        this.isRead = false;
-        this.isDeleted = false;
     }
 }

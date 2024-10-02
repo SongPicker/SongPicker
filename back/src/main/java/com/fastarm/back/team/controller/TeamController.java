@@ -66,7 +66,7 @@ public class TeamController {
 
     @DeleteMapping
     public ResponseEntity<?> teamWithdraw(@NotNull @RequestParam Long teamId,
-                                          @AuthenticationPrincipal LoginMemberInfo loginMemberInfo){
+                                          @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) throws URISyntaxException {
 
         teamService.withdrawTeam(TeamWithdrawDto.builder()
                 .loginId(loginMemberInfo.getLoginId())

@@ -30,10 +30,10 @@ public class NotificationService {
 
     @Transactional
     public void respondTeamInvitation(TeamInviteNotificationDto dto){
-        NotificationTeamInvite notificationInvite = notificationTeamInviteRepository.findByNotificationId(dto.getNotificationId())
+        NotificationTeamInvite notificationInvite = notificationTeamInviteRepository.findById(dto.getNotificationId())
                 .orElseThrow(TeamInviteNotificationNotFoundException::new);
 
-        Member receiver = notificationInvite.getNotification().getReceiver();
+        Member receiver = notificationInvite.getReceiver();
 
         if (dto.getAccept() != null && dto.getAccept()){
             notificationInvite.accept();
