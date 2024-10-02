@@ -18,36 +18,38 @@ public interface PersonalSingHistoryRepository extends JpaRepository<PersonalSin
             SELECT new com.fastarm.back.history.controller.dto.MostSongsResponse(s.title, s.singer, s.coverImage, COUNT(s))
             FROM PersonalSingHistory ph
             JOIN ph.song s
-            WHERE ph.member.loginId = :loginId
+            WHERE ph.member = :member
             GROUP BY s.id
             ORDER BY COUNT(s) DESC
             LIMIT 3
             """
     )
-    List<MostSongsResponse> personalMostSongsInfo(String loginId);
+    List<MostSongsResponse> personalMostSongsInfo(Member member);
 
     @Query(
             """
             SELECT new com.fastarm.back.history.controller.dto.MostSingersResponse(s.singer, COUNT(s))
             FROM PersonalSingHistory ph
             JOIN ph.song s
+            WHERE ph.member = :member
             GROUP BY s.singer
             ORDER BY COUNT(s) DESC
             """
     )
-    List<MostSingersResponse> personalMostSingersInfo(String loginId);
+    List<MostSingersResponse> personalMostSingersInfo(Member member);
 
     @Query(
             """
             SELECT s.genre
             FROM PersonalSingHistory ph
             JOIN ph.song s
+            WHERE ph.member = :member
             GROUP BY s.genre
             ORDER BY COUNT(s) DESC
             LIMIT 3
             """
     )
-    List<String> personalMostGenreInfo(String loginId);
+    List<String> personalMostGenreInfo(Member member);
 
     @Query(
             """

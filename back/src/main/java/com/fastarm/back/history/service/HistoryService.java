@@ -12,7 +12,6 @@ import com.fastarm.back.member.entity.Member;
 import com.fastarm.back.member.exception.MemberNotFoundException;
 import com.fastarm.back.member.repository.MemberRepository;
 import com.fastarm.back.song.entity.Song;
-import com.fastarm.back.song.repository.SongRepository;
 import com.fastarm.back.team.entity.Team;
 import com.fastarm.back.team.exception.TeamNotFoundException;
 import com.fastarm.back.team.repository.TeamRepository;
@@ -35,21 +34,26 @@ public class HistoryService {
     private final LikesRepository likesRepository;
     private final TeamRepository teamRepository;
     private final TeamService teamService;
-    private final SongRepository songRepository;
 
     @Transactional(readOnly = true)
     public List<MostSongsResponse> findMostSongsList(String loginId) {
-        return personalSingHistoryRepository.personalMostSongsInfo(loginId);
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(MemberNotFoundException::new);
+        return personalSingHistoryRepository.personalMostSongsInfo(member);
     }
 
     @Transactional(readOnly = true)
     public List<MostSingersResponse> findMostSingersList(String loginId) {
-        return personalSingHistoryRepository.personalMostSingersInfo(loginId);
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(MemberNotFoundException::new);
+        return personalSingHistoryRepository.personalMostSingersInfo(member);
     }
 
     @Transactional(readOnly = true)
     public List<String> findMostGenreList(String loginId) {
-        return personalSingHistoryRepository.personalMostGenreInfo(loginId);
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(MemberNotFoundException::new);
+        return personalSingHistoryRepository.personalMostGenreInfo(member);
     }
 
     @Transactional(readOnly = true)
@@ -66,21 +70,11 @@ public class HistoryService {
 
         for (Song data : songs) {
             map.put(data.getId(), MyRecentSongsResponse.from(data));
+        }
 
-            boolean isLike = false;
-            Long likeId = null;
-
-            for (Likes like : likes) {
-                if (like.getSong().getId().equals(data.getId())) {
-                    isLike = true;
-                    likeId = like.getId();
-                    break;
-                }
-            }
-
-            map.get(data.getId()).setIsLike(isLike);
-            map.get(data.getId()).setLikeId(likeId);
-
+        for (Likes like : likes) {
+            map.get(like.getSong().getId()).setIsLike(true);
+            map.get(like.getSong().getId()).setLikeId(like.getId());
         }
 
         return map.values().stream().toList();
@@ -105,21 +99,11 @@ public class HistoryService {
 
         for (Song data : songs) {
             map.put(data.getId(), TeamRecentSongsResponse.from(data));
+        }
 
-            boolean isLike = false;
-            Long likeId = null;
-
-            for (Likes like : likes) {
-                if (like.getSong().getId().equals(data.getId())) {
-                    isLike = true;
-                    likeId = like.getId();
-                    break;
-                }
-            }
-
-            map.get(data.getId()).setIsLike(isLike);
-            map.get(data.getId()).setLikeId(likeId);
-
+        for (Likes like : likes) {
+            map.get(like.getSong().getId()).setIsLike(true);
+            map.get(like.getSong().getId()).setLikeId(like.getId());
         }
 
         return map.values().stream().toList();
@@ -158,21 +142,11 @@ public class HistoryService {
 
         for (Song data : songs) {
             map.put(data.getId(), DateSongsResponse.from(data));
+        }
 
-            boolean isLike = false;
-            Long likeId = null;
-
-            for (Likes like : likes) {
-                if (like.getSong().getId().equals(data.getId())) {
-                    isLike = true;
-                    likeId = like.getId();
-                    break;
-                }
-            }
-
-            map.get(data.getId()).setIsLike(isLike);
-            map.get(data.getId()).setLikeId(likeId);
-
+        for (Likes like : likes) {
+            map.get(like.getSong().getId()).setIsLike(true);
+            map.get(like.getSong().getId()).setLikeId(like.getId());
         }
 
         return map.values().stream().toList();

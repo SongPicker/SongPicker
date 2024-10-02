@@ -10,15 +10,18 @@ import lombok.*;
 @Builder
 public class MyRecentSongsResponse {
 
+    private Long songId;
     private int number;
     private String coverImage;
     private String title;
     private String singer;
-    private Boolean isLike;
+    @Builder.Default
+    private Boolean isLike = false;
     private Long likeId;
 
     public static MyRecentSongsResponse from(Song song) {
         return MyRecentSongsResponse.builder()
+                .songId(song.getId())
                 .number(song.getNumber())
                 .coverImage(song.getCoverImage())
                 .title(song.getTitle())
