@@ -45,7 +45,7 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Column(length = 256)
+    @Column(length = 512)
     private String profileImage;
 
     @Column(nullable = false)

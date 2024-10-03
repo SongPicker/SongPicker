@@ -10,8 +10,9 @@ import com.fastarm.back.history.entity.TeamSingHistory;
 import com.fastarm.back.history.repository.PersonalSingHistoryRepository;
 import com.fastarm.back.history.repository.TeamSingHistoryRepository;
 import com.fastarm.back.karaoke.constants.KaraokeConstants;
+import com.fastarm.back.karaoke.controller.dto.ConnectionFindResponse;
 import com.fastarm.back.karaoke.dto.ChargeDto;
-import com.fastarm.back.karaoke.dto.StartSongDto;
+import com.fastarm.back.karaoke.dto.SongStartDto;
 import com.fastarm.back.karaoke.entity.Machine;
 import com.fastarm.back.karaoke.exception.CannotStartSongException;
 import com.fastarm.back.karaoke.exception.NotFoundMachineException;
@@ -29,7 +30,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -57,24 +61,20 @@ public class KaraokeService {
         machine.chargeCoin(chargeDto.getCoin());
     }
 
-    public void findRecommendations(String serialNumber) {
-
-    }
-
     @Transactional
-    public void startSong(StartSongDto startSongDto) {
-        Machine machine = machineRepository.findBySerialNumber(startSongDto.getSerialNumber())
+    public void startSong(SongStartDto songStartDto) {
+        Machine machine = machineRepository.findBySerialNumber(songStartDto.getSerialNumber())
                 .orElseThrow(NotFoundMachineException::new);
 
         if (machine.getCoin() == 0) {
             throw new CannotStartSongException();
         }
 
-        Song song = songRepository.findByNumber(startSongDto.getNumber())
+        Song song = songRepository.findByNumber(songStartDto.getNumber())
                 .orElseThrow(NotFoundSongException::new);
 
-        if (startSongDto.getMode() == Mode.INDIVIDUAL) {
-            Member member = memberRepository.findByNickname(startSongDto.getNickname())
+        if (songStartDto.getMode() == Mode.INDIVIDUAL) {
+            Member member = memberRepository.findByNickname(songStartDto.getNickname())
                     .orElseThrow(MemberNotFoundException::new);
             PersonalSingHistory personalSingHistory = PersonalSingHistory.builder()
                     .member(member)
@@ -82,7 +82,7 @@ public class KaraokeService {
                     .build();
             personalSingHistoryRepository.save(personalSingHistory);
         } else {
-            Team team = teamRepository.findById(startSongDto.getTeamId())
+            Team team = teamRepository.findById(songStartDto.getTeamId())
                     .orElseThrow(TeamNotFoundException::new);
             TeamSingHistory teamSingHistory = TeamSingHistory.builder()
                     .team(team)
@@ -116,5 +116,34 @@ public class KaraokeService {
         }
     }
 
+    @Transactional
+    public Set<ConnectionFindResponse> findConnections(String serialNumber) {
+        Machine machine = machineRepository.findBySerialNumber(serialNumber)
+                .orElseThrow(NotFoundMachineException::new);
+
+        List<ConnectionInfo> connectionInfoList = connectionInfoRepository.findByMachine(machine);
+
+        Set<ConnectionFindResponse> result = new HashSet<>();
+
+        for (ConnectionInfo connectionInfo : connectionInfoList) {
+            if (connectionInfo.getMode() == Mode.INDIVIDUAL) {
+                ConnectionFindResponse connectionFindResponse = ConnectionFindResponse.builder()
+                        .mode(Mode.INDIVIDUAL)
+                        .nickname(connectionInfo.getMember().getNickname())
+                        .loginId(connectionInfo.getMember().getLoginId())
+                        .build();
+
+                result.add(connectionFindResponse);
+            } else {
+                ConnectionFindResponse connectionFindResponse = ConnectionFindResponse.builder()
+                        .mode(Mode.TEAM)
+                        .teamId(connectionInfo.getTeam().getId())
+                        .teamName(connectionInfo.getTeam().getName())
+                        .build();
+                result.add(connectionFindResponse);
+            }
+        }
+        return result;
+    }
 
 }

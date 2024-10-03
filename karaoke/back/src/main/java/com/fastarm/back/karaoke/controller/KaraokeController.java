@@ -1,14 +1,16 @@
 package com.fastarm.back.karaoke.controller;
 
 import com.fastarm.back.common.controller.dto.ApiResponse;
+import com.fastarm.back.karaoke.controller.dto.ConnectionFindResponse;
 import com.fastarm.back.karaoke.dto.ChargeDto;
-import com.fastarm.back.karaoke.dto.StartSongDto;
+import com.fastarm.back.karaoke.dto.SongStartDto;
 import com.fastarm.back.karaoke.service.KaraokeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,16 +30,16 @@ public class KaraokeController {
         return ResponseEntity.ok(new ApiResponse<>("KA101", "예약 리스트 조회 성공", result));
     }
 
-    @GetMapping("/recommendations")
-    public ResponseEntity<?> recommendationList(@RequestParam("serialNumber") String serialNumber) {
-        karaokeService.findRecommendations(serialNumber);
-        return ResponseEntity.ok(new ApiResponse<>("KA102", "추천 차트 조회 성공", null));
+    @PostMapping("/start-song")
+    public ResponseEntity<?> songStart(@RequestBody SongStartDto songStartDto) {
+        karaokeService.startSong(songStartDto);
+        return ResponseEntity.ok(new ApiResponse<>("KA103", "노래 시작 성공", null));
     }
 
-    @PostMapping("/start-song")
-    public ResponseEntity<?> songStart(@RequestBody StartSongDto startSongDto) {
-        karaokeService.startSong(startSongDto);
-        return ResponseEntity.ok(new ApiResponse<>("KA103", "노래 시작 성공", null));
+    @GetMapping("/connections")
+    public ResponseEntity<?> connectionList(@RequestParam("serialNumber") String serialNumber) {
+        Set<ConnectionFindResponse> result = karaokeService.findConnections(serialNumber);
+        return ResponseEntity.ok(new ApiResponse<>("KA104", "연결 인원 조회 성공", result));
     }
 
 }

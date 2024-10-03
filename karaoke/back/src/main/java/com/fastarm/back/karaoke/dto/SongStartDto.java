@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class StartSongDto {
+public class SongStartDto {
     private String serialNumber;
     private int number;
     private String nickname;
