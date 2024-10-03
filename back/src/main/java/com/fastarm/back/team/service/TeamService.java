@@ -145,7 +145,7 @@ public class TeamService {
         checkPermission(member,team);
 
         String imagPath=null;
-        if(dto.getTeamImage().isEmpty()){
+        if(dto.getTeamImage().isEmpty() || dto.getTeamImage()==null){
             if(team.getTeamImage()!=null) imagPath=team.getTeamImage();
 
         }

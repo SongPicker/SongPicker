@@ -18,6 +18,9 @@ public class NotificationController {
 
     private final NotificationService notificationService;
 
+//    @GetMapping
+//    public ResponseEntity<?> team
+
     @PostMapping("/response")
     public ResponseEntity<?> teamInvitationRespond(@RequestBody TeamInviteNotificationRequest teamInviteNotificationRequest,
                                                    @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
