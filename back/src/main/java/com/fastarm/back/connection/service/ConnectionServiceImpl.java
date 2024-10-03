@@ -97,7 +97,7 @@ public class ConnectionServiceImpl implements ConnectionService {
             ConnectionInfo connectionInfo = ConnectionInfo.builder()
                     .machine(machine)
                     .member(teamMember.getMember())
-                    .mode(Mode.INDIVIDUAL)
+                    .mode(Mode.TEAM)
                     .team(teamMember.getTeam())
                     .build();
 
