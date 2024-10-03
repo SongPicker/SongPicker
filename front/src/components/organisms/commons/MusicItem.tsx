@@ -7,7 +7,8 @@ type Props = {
   title: string;
   artist: string;
   imageUrl: string;
-  onLike: () => void;
+  isLiked: boolean;
+  onLikeToggle: () => void;
   onShowConnectionModal: (message: string) => void;
   onItemClick: (music: { id: string; title: string; artist: string; imageUrl: string }) => void;
 };
@@ -17,7 +18,8 @@ const MusicItem = ({
   title,
   artist,
   imageUrl,
-  onLike,
+  isLiked,
+  onLikeToggle,
   onShowConnectionModal,
   onItemClick,
 }: Props) => {
@@ -30,7 +32,11 @@ const MusicItem = ({
         <LeftMusicItem title={title} artist={artist} imageUrl={imageUrl} number={id} />
       </div>
       <div className="flex-shrink-0">
-        <RightMusicItem onLike={onLike} onShowConnectionModal={onShowConnectionModal} />
+        <RightMusicItem
+          isLiked={isLiked}
+          onLikeToggle={onLikeToggle}
+          onShowConnectionModal={onShowConnectionModal}
+        />
       </div>
     </div>
   );

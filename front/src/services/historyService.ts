@@ -2,6 +2,7 @@ import axiosInstance from './axiosInstance';
 
 // 최근 부른 곡 인터페이스
 export interface RecentSong {
+  songId(arg0: string, songId: unknown): unknown;
   number: number;
   coverImage: string;
   title: string;

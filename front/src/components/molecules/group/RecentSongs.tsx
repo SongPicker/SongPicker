@@ -101,6 +101,10 @@ const RecentSongs: React.FC<RecentSongsProps> = ({ teamId, teamName }) => {
     );
   }
 
+  function handleLikeToggle(song: RecentSong): void {
+    throw new Error('Function not implemented.');
+  }
+
   return (
     <div className="w-full h-screen">
       <div className="flex justify-between items-center mb-4">
@@ -118,7 +122,8 @@ const RecentSongs: React.FC<RecentSongsProps> = ({ teamId, teamName }) => {
               title={song.title}
               artist={song.singer}
               imageUrl={song.coverImage}
-              onLike={handleLike}
+              isLiked={song.isLike}
+              onLikeToggle={() => handleLikeToggle(song)}
               onShowConnectionModal={() => {}}
               onItemClick={() => handleItemClick(song.number)}
             />

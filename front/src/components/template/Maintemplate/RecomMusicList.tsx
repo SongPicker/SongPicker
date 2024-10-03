@@ -7,7 +7,10 @@ import { TbMoodSadSquint } from 'react-icons/tb';
 import {
   getPersonalRecommendations,
   getSongDetail,
+  registerLike,
+  deleteLike,
   SongDetail,
+  getLikedSongs,
 } from '../../../services/songService';
 
 // Props 타입 정의
@@ -27,17 +30,10 @@ interface RecommendedSong {
   likeId: number | null;
 }
 
-// 에러 처리를 위한 유틸리티 함수
-const handleApiError = (error: unknown, message: string) => {
-  console.error(message, error);
-  return message;
-};
-
 const RecomMusicList = ({ onShowNotification, onShowConnectionModal }: Props) => {
   const [currentPage, setCurrentPage] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedMusic, setSelectedMusic] = useState<RecommendedSong | null>(null);
   const [recommendedSongs, setRecommendedSongs] = useState<RecommendedSong[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -70,31 +66,74 @@ const RecomMusicList = ({ onShowNotification, onShowConnectionModal }: Props) =>
 
   // 추천 곡 목록을 가져오는 함수
   const fetchRecommendations = useCallback(async () => {
-    setIsRefreshing(true);
-    setError(null);
     try {
       const response = await getPersonalRecommendations();
-      if (response.code === 'SO102') {
-        if (Array.isArray(response.data) && response.data.length > 0) {
-          setRecommendedSongs(prevSongs => {
-            if (JSON.stringify(prevSongs) !== JSON.stringify(response.data)) {
-              return response.data;
-            }
-            return prevSongs;
-          });
-          setCurrentPage(0);
-        } else {
-          setError('현재 추천할 노래가 없어요.\n잠시 후 다시 시도해 주세요!');
-        }
-      } else {
-        setError('노래 정보를 불러오는 데 문제가 발생했어요.\n다시 시도해 볼까요?');
+      if (response.code === 'SO102' && Array.isArray(response.data)) {
+        setRecommendedSongs(response.data);
       }
     } catch (err) {
-      setError('일시적으로 노래 정보를 불러올 수 없어요.\n잠시 후 다시 시도해 주세요!');
-    } finally {
-      setIsRefreshing(false);
+      console.error('일시적으로 노래 정보를 불러올 수 없습니다.');
     }
   }, []);
+
+  // 좋아요 토글 핸들러 (찜 등록/해제)
+  // 좋아요 토글 핸들러 (찜 등록/해제)
+  const handleLikeToggle = useCallback(
+    async (song: RecommendedSong) => {
+      try {
+        if (song.isLike) {
+          // 찜 해제 API 호출
+          if (song.number) {
+            const result = await deleteLike(Number(song.number));
+            if (result.code === 'LI101' || result.message === '찜 삭제 성공') {
+              setRecommendedSongs(prevSongs =>
+                prevSongs.map(item =>
+                  item.songId === song.songId ? { ...item, isLike: false, likeId: null } : item
+                )
+              );
+              onShowNotification('찜 해제', `${song.title}이(가) 찜 보관함에서 제거되었습니다.`);
+            } else {
+              console.warn('Unexpected API response:', result);
+              onShowNotification('알림', '찜 해제 상태를 확인할 수 없습니다.');
+            }
+          } else {
+            console.warn('Invalid song number');
+            onShowNotification('알림', '찜 해제할 수 없습니다.');
+          }
+        } else {
+          // 찜 등록 API 호출
+          const result = await registerLike(song.songId);
+          if (result.code === 'LI100' || result.message === '찜 등록 성공') {
+            setRecommendedSongs(prevSongs =>
+              prevSongs.map(item =>
+                item.songId === song.songId
+                  ? { ...item, isLike: true, likeId: result.likeId || result.body }
+                  : item
+              )
+            );
+            onShowNotification('찜 완료', `${song.title}이(가) 찜 보관함에 추가되었습니다.`);
+          } else if (result.code === 'LI000') {
+            console.log('Song was already liked');
+            onShowNotification('알림', `${song.title}은(는) 이미 찜 보관함에 있습니다.`);
+          } else {
+            console.warn('Unexpected API response:', result);
+            onShowNotification('알림', '찜 등록 상태를 확인할 수 없습니다.');
+          }
+        }
+      } catch (error) {
+        console.error('찜 등록/해제 중 오류 발생:', error);
+        onShowNotification('오류 발생', '찜 등록/해제 중 문제가 발생했습니다. 다시 시도해 주세요.');
+
+        // API 요청 실패 시 상태를 원래대로 되돌립니다.
+        setRecommendedSongs(prevSongs =>
+          prevSongs.map(item =>
+            item.songId === song.songId ? { ...item, isLike: !song.isLike } : item
+          )
+        );
+      }
+    },
+    [onShowNotification]
+  );
 
   // 컴포넌트 마운트 시 추천 곡 목록 가져오기
   useEffect(() => {
@@ -118,14 +157,6 @@ const RecomMusicList = ({ onShowNotification, onShowConnectionModal }: Props) =>
     }
   }, [fetchRecommendations, onShowNotification, isRefreshing]);
 
-  // 좋아요 버튼 핸들러
-  const handleLike = useCallback(() => {
-    onShowNotification(
-      '찜 완료!',
-      '찜한곡 리스트에 추가되었습니다!\n찜보관함에서 목록을 확인하실 수 있습니다.'
-    );
-  }, [onShowNotification]);
-
   // 곡 선택 핸들러
   const handleItemClick = useCallback(
     async (music: RecommendedSong) => {
@@ -139,8 +170,7 @@ const RecomMusicList = ({ onShowNotification, onShowConnectionModal }: Props) =>
           throw new Error(response.message || '노래 상세 정보를 불러오는데 실패했습니다.');
         }
       } catch (error) {
-        const errorMessage = handleApiError(error, '노래 상세 정보를 불러오는데 실패했습니다.');
-        onShowNotification('오류 발생', errorMessage);
+        onShowNotification('오류 발생', '노래 상세 정보를 불러오는데 실패했습니다.');
       } finally {
         setIsLoadingDetail(false);
       }
@@ -203,7 +233,8 @@ const RecomMusicList = ({ onShowNotification, onShowConnectionModal }: Props) =>
                     title={item.title}
                     artist={item.singer}
                     imageUrl={item.coverImage}
-                    onLike={handleLike}
+                    isLiked={item.isLike}
+                    onLikeToggle={() => handleLikeToggle(item)}
                     onShowConnectionModal={onShowConnectionModal}
                     onItemClick={() => handleItemClick(item)}
                   />
@@ -212,7 +243,7 @@ const RecomMusicList = ({ onShowNotification, onShowConnectionModal }: Props) =>
           </div>
         </div>
       )),
-    [recommendedSongs, totalPages, handleLike, onShowConnectionModal, handleItemClick]
+    [recommendedSongs, totalPages, handleLikeToggle, onShowConnectionModal, handleItemClick]
   );
 
   return (

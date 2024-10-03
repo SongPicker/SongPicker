@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { RiCloseFill } from 'react-icons/ri';
 import PlayListIcon from '../../atoms/commons/PlayListIcon';
 import TabList from '../../organisms/MainOrganism/TabList';
@@ -11,6 +11,24 @@ type PlayListModalProps = {
 
 const PlayListModal = ({ closeModal }: PlayListModalProps) => {
   const [activeTab, setActiveTab] = useState<'liked' | 'recent'>('liked');
+
+  useEffect(() => {
+    // 브라우저의 히스토리에 가짜 상태를 추가
+    window.history.pushState(null, '', window.location.href);
+
+    // 뒤로가기 이벤트 핸들러
+    const handlePopState = () => {
+      closeModal();
+    };
+
+    // 뒤로가기 이벤트 리스너 추가
+    window.addEventListener('popstate', handlePopState);
+
+    // 컴포넌트 언마운트 시 리스너 제거
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [closeModal]);
 
   return (
     <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-[9998]">

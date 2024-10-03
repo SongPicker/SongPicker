@@ -1,24 +1,23 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 type Props = {
-  initialLiked?: boolean;
-  onToggle?: (isLiked: boolean) => void;
-  onLike?: () => void;
+  isLiked: boolean;
+  onToggle: () => void;
 };
 
-const LikeButton = ({ initialLiked = false, onToggle, onLike }: Props) => {
-  const [isLiked, setIsLiked] = useState(initialLiked);
+const LikeButton = ({ onToggle, isLiked }: Props) => {
+  // const [isLiked, setIsLiked] = useState(initialLiked);
 
-  const handleClick = () => {
-    const newLikedState = !isLiked;
-    setIsLiked(newLikedState);
-    if (onToggle) {
-      onToggle(newLikedState);
-    }
-    if (newLikedState && onLike) {
-      onLike();
-    }
-  };
+  // const handleClick = () => {
+  //   const newLikedState = !isLiked;
+  //   setIsLiked(newLikedState);
+  //   if (onToggle) {
+  //     onToggle(newLikedState);
+  //   }
+  //   if (newLikedState && onLike) {
+  //     onLike();
+  //   }
+  // };
 
   return (
     <button
@@ -28,7 +27,7 @@ const LikeButton = ({ initialLiked = false, onToggle, onLike }: Props) => {
             ? 'bg-gray-200 text-gray-500'
             : 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
         }`}
-      onClick={handleClick}
+      onClick={onToggle}
       aria-pressed={isLiked}
     >
       {isLiked ? '찜해제' : '찜하기'}

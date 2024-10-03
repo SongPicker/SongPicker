@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import RecentSearch from '../organisms/search/RecentSearch';
 import MusicItem from '../organisms/commons/MusicItem';
+import { deleteLike, registerLike } from '../../services/songService';
 
 interface SearchResultItem {
   songId: number;
@@ -38,6 +39,49 @@ const SearchMain = ({
   onTabChange,
 }: Props) => {
   const navigate = useNavigate();
+  const [songs, setSongs] = useState<SearchResultItem[]>(searchResults.songSearchList);
+
+  const handleLikeToggle = useCallback(async (song: SearchResultItem) => {
+    const newIsLike = !song.isLike;
+
+    // 즉시 UI 업데이트
+    setSongs(prevSongs =>
+      prevSongs.map(item => (item.songId === song.songId ? { ...item, isLike: newIsLike } : item))
+    );
+
+    try {
+      if (newIsLike) {
+        // 찜 등록 API 호출
+        const result = await registerLike(song.songId);
+        setSongs(prevSongs =>
+          prevSongs.map(item =>
+            item.songId === song.songId
+              ? { ...item, isLike: true, likeId: result.likeId || result.body }
+              : item
+          )
+        );
+      } else {
+        // 찜 해제 API 호출
+        if (song.likeId) {
+          await deleteLike(song.likeId);
+          setSongs(prevSongs =>
+            prevSongs.map(item =>
+              item.songId === song.songId ? { ...item, isLike: false, likeId: null } : item
+            )
+          );
+        }
+      }
+    } catch (error) {
+      console.error('찜 등록/해제 중 오류 발생:', error);
+
+      // 실패 시 원래 상태로 되돌립니다.
+      setSongs(prevSongs =>
+        prevSongs.map(item =>
+          item.songId === song.songId ? { ...item, isLike: !newIsLike } : item
+        )
+      );
+    }
+  }, []);
 
   const renderMusicItems = (items: Array<any>, limit?: number) => {
     const itemsToRender = limit ? items.slice(0, limit) : items;
@@ -48,7 +92,8 @@ const SearchMain = ({
         title={item.title}
         artist={item.singer}
         imageUrl={item.coverImage}
-        onLike={() => {}}
+        isLiked={item.isLike}
+        onLikeToggle={() => handleLikeToggle(item)}
         onShowConnectionModal={onShowConnectionModal}
         onItemClick={() => onItemClick(item)}
       />

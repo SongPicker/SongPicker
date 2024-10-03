@@ -97,3 +97,22 @@ export const getLikedSongs = async () => {
   });
   return response.data.data;
 };
+
+// 찜 등록 API
+export const registerLike = async (songId: number) => {
+  const response = await axiosInstance({
+    method: 'POST',
+    url: '/api/likes',
+    data: { songId },
+  });
+  return response.data;
+};
+
+// 찜 삭제 API
+export const deleteLike = async (songNumber: number) => {
+  const response = await axiosInstance({
+    method: 'DELETE',
+    url: `/api/likes/${songNumber}`,
+  });
+  return response.data;
+};
