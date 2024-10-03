@@ -27,10 +27,10 @@ public class LikesController {
         return ResponseEntity.ok(new ApiResponse<>("LI100", "찜 등록 성공", null));
     }
 
-    @DeleteMapping("/{likeId}")
-    public ResponseEntity<?> likesRemove(@PathVariable Long likeId,
+    @DeleteMapping("/{songNumber}")
+    public ResponseEntity<?> likesRemove(@PathVariable int songNumber,
                                          @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
-        likesService.removeLikes(new LikesRemoveDto(likeId, loginMemberInfo.getLoginId()));
+        likesService.removeLikes(new LikesRemoveDto(songNumber, loginMemberInfo.getLoginId()));
         return ResponseEntity.ok(new ApiResponse<>("LI101", "찜 삭제 성공", null));
     }
 

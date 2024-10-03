@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class LikesRemoveDto {
 
-    private Long likeId;
+    private int songNumber;
     private String loginId;
 
 }

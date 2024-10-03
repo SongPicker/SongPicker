@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface LikesRepository extends JpaRepository<Likes, Long> {
 
-    Optional<Likes> findByMemberIdAndSongId(Long memberId, Long songId);
+    Optional<Likes> findByMemberAndSong(Member member, Song song);
 
     @Query(
             """
@@ -27,7 +27,5 @@ public interface LikesRepository extends JpaRepository<Likes, Long> {
     List<LikesListResponse> likesListInfo(String loginId);
 
     List<Likes> findByMemberAndSongIn(Member member, List<Song> song);
-
-//    Optional<List<Likes>> findByMember(Member member);
 
 }
