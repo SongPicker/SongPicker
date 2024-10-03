@@ -3,6 +3,7 @@ package com.fastarm.back.notification.service;
 import com.fastarm.back.member.entity.Member;
 import com.fastarm.back.member.exception.MemberNotFoundException;
 import com.fastarm.back.member.repository.MemberRepository;
+import com.fastarm.back.notification.controller.dto.NotificationResponse;
 import com.fastarm.back.notification.dto.NotificationDto;
 import com.fastarm.back.notification.dto.TeamInviteNotificationDto;
 import com.fastarm.back.notification.entity.Notification;
@@ -19,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
@@ -27,6 +30,13 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final NotificationTeamInviteRepository notificationTeamInviteRepository;
     private final MemberRepository memberRepository;
+
+    @Transactional
+    public List<NotificationResponse> findNotificationList(String loginId){
+        Member member = memberRepository.findByLoginId(loginId).orElseThrow(MemberNotFoundException::new);
+        return notificationRepository.findAllByReceiver(member);
+    }
+
 
     @Transactional
     public void respondTeamInvitation(TeamInviteNotificationDto dto){

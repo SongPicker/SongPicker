@@ -95,7 +95,7 @@ public class TeamService {
             NotificationTeamInvite teamInvite = NotificationTeamInvite.builder()
                     .receiver(member)
                     .sender(sender)
-                    .content(team.getName() + " 팀에 초대되었습니다.")
+                    .content(team.getName() + " 팀 초대장이 왔어요!")
                     .type(Type.TEAM_INVITE)
                     .team(team)
                     .isDeleted(false)

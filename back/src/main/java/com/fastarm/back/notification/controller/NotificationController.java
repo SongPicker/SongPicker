@@ -3,6 +3,7 @@ package com.fastarm.back.notification.controller;
 import com.fastarm.back.auth.security.dto.LoginMemberInfo;
 import com.fastarm.back.common.controller.dto.ApiResponse;
 import com.fastarm.back.notification.controller.dto.NotificationRequest;
+import com.fastarm.back.notification.controller.dto.NotificationResponse;
 import com.fastarm.back.notification.controller.dto.TeamInviteNotificationRequest;
 import com.fastarm.back.notification.dto.NotificationDto;
 import com.fastarm.back.notification.service.NotificationService;
@@ -11,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/notifications")
@@ -18,8 +21,11 @@ public class NotificationController {
 
     private final NotificationService notificationService;
 
-//    @GetMapping
-//    public ResponseEntity<?> team
+    @GetMapping
+    public ResponseEntity<?> notificationListFind(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
+        List<NotificationResponse> notifications = notificationService.findNotificationList(loginMemberInfo.getLoginId());
+        return ResponseEntity.ok(new ApiResponse<>("NO103","알림 목록 조회 성공",notifications));
+    }
 
     @PostMapping("/response")
     public ResponseEntity<?> teamInvitationRespond(@RequestBody TeamInviteNotificationRequest teamInviteNotificationRequest,
