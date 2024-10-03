@@ -19,6 +19,7 @@ import com.fastarm.back.member.repository.MemberRepository;
 import com.fastarm.back.song.entity.Song;
 import com.fastarm.back.song.exception.NotFoundSongException;
 import com.fastarm.back.song.repository.SongRepository;
+import com.fastarm.back.team.entity.Team;
 import com.fastarm.back.team.entity.TeamMember;
 import com.fastarm.back.team.exception.TeamNotFoundException;
 import com.fastarm.back.team.repository.TeamMemberRepository;
@@ -60,7 +61,7 @@ public class ConnectionServiceImpl implements ConnectionService {
             throw new AlreadyExistConnectionException();
         }
 
-        ConnectionInfo connectionInfo = ConnectionInfo.individualConnectionInfoBuilder()
+        ConnectionInfo connectionInfo = ConnectionInfo.builder()
                 .machine(machine)
                 .member(member)
                 .mode(Mode.INDIVIDUAL)
@@ -93,12 +94,13 @@ public class ConnectionServiceImpl implements ConnectionService {
                 throw new AlreadyExistConnectionException();
             }
 
-            ConnectionInfo connectionInfo = ConnectionInfo.teamConnectionInfoBuilder()
+            ConnectionInfo connectionInfo = ConnectionInfo.builder()
                     .machine(machine)
                     .member(teamMember.getMember())
+                    .mode(Mode.INDIVIDUAL)
                     .team(teamMember.getTeam())
-                    .mode(Mode.TEAM)
                     .build();
+
             connectionInfoRepository.save(connectionInfo);
         }
     }
