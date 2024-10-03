@@ -116,9 +116,8 @@ public class TeamService {
     @Transactional
     public Long createTeam(TeamAddDto dto) throws IOException {
 
-        String imagePath;
-        if(dto.getTeamImage().isEmpty()) imagePath = "https://songpicker.s3.ap-northeast-2.amazonaws.com/cb4a9f84-c6d5-4b8c-a545-295b52808f95_%EB%AF%B8%EB%9F%AC%EB%B3%BC.jpg";
-         else imagePath = s3Service.uploadFile(dto.getTeamImage());
+        String imagePath = null;
+        if(!dto.getTeamImage().isEmpty()) imagePath = s3Service.uploadFile(dto.getTeamImage());
 
 
         Team team = dto.toEntity(imagePath);
@@ -145,16 +144,18 @@ public class TeamService {
 
         checkPermission(member,team);
 
-        String imagPath;
+        String imagPath=null;
         if(dto.getTeamImage().isEmpty()){
-            imagPath=team.getTeamImage();
+            if(team.getTeamImage()!=null) imagPath=team.getTeamImage();
+
         }
         else{
-            s3Service.deleteFile(team.getTeamImage());
+            if(team.getTeamImage()!=null) s3Service.deleteFile(team.getTeamImage());
             imagPath = s3Service.uploadFile(dto.getTeamImage());
         }
 
-        team.changeTeam(dto.getTeamName(), imagPath);
+        if(imagPath==null) team.changeTeamName(dto.getTeamName());
+        else{team.changeTeam(dto.getTeamName(), imagPath);}
         teamRepository.save(team);
     }
 

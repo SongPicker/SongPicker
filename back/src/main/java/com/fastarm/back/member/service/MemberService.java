@@ -116,7 +116,7 @@ public class MemberService {
 
         MultipartFile profileImage = profileImageModifyDto.getProfileImage();
 
-        if (profileImage != null) {
+        if (!profileImage.isEmpty()) {
             if (member.getProfileImage() != null) {
                 s3Service.deleteFile(member.getProfileImage());
             }

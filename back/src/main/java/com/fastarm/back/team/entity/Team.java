@@ -28,6 +28,9 @@ public class Team {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    public void changeTeamName(String newName) {
+        this.name = newName;
+    }
     public void changeTeam(String name, String teamImage){
         this.name = name;
         this.teamImage = teamImage;
