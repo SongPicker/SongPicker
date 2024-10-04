@@ -32,8 +32,8 @@ const PlayListModal = ({ closeModal }: PlayListModalProps) => {
 
   return (
     <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-[9998]">
-      <div className="mx-auto w-screen max-w-[640px] h-[80%] bg-[#333] text-white px-4 pb-6 rounded-b-sm shadow-lg transition-transform transform translate-y-0">
-        <div className="flex flex-col">
+      <div className="mx-auto w-screen max-w-[640px]  bg-[#333] text-white px-2 pb-4 rounded-b-sm shadow-lg transition-transform transform translate-y-0">
+        <div className="flex flex-col h-[75vh] w-full">
           {/* 상단 제목 */}
           <div className="flex gap-2 items-center w-full h-[60px]">
             <PlayListIcon />
@@ -44,7 +44,7 @@ const PlayListModal = ({ closeModal }: PlayListModalProps) => {
           <TabList activeTab={activeTab} setActiveTab={setActiveTab} />
 
           {/* 노래리스트 */}
-          <div className="w-full h-[calc(100%-120px)] overflow-y-auto py-3">
+          <div className="w-full px-1 mt-3 overflow-y-scroll h-[calc(100%-120px)]">
             {activeTab === 'liked' ? <LikedSongList /> : <RecentSongList />}
           </div>
         </div>
