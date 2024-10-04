@@ -42,11 +42,17 @@ const EditGroupModal = ({ isOpen, onClose, group, onGroupEdited }: EditGroupModa
   const handleSubmit = async () => {
     if (isGroupNameValid) {
       const formData = new FormData();
-      formData.append('teamName', groupName);
+
+      // 이미지 처리
       if (groupImage) {
         formData.append('teamImage', groupImage);
+      } else {
+        // 이미지를 변경하지 않았을 때 빈 File 객체를 보냅니다.
+        const emptyFile = new File([], 'empty.jpg', { type: 'image/jpeg' });
+        formData.append('teamImage', emptyFile);
       }
 
+      formData.append('teamName', groupName);
       try {
         const response = await editGroup(group.teamId, formData);
 

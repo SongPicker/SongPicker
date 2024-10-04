@@ -23,3 +23,10 @@ export const getMyRecentSongs = async (): Promise<RecentSong[]> => {
 };
 
 // 최근 노래 조회(그룹) API
+export const getGroupRecentSongs = async (teamId: number) => {
+  const response = await axiosInstance({
+    method: 'GET',
+    url: `/api/histories/team/recent-songs?teamId=${teamId}`,
+  });
+  return response.data;
+};

@@ -6,11 +6,11 @@ interface GroupImageProps {
 }
 
 const GroupImage = ({ src, alt }: GroupImageProps) => (
-  <div className="w-4/5 aspect-w-1 aspect-h-1 bg-[#CDA7FF] min-h-24 max-h-full mb-3 flex items-center justify-center rounded">
+  <div className="w-4/5 aspect-square bg-[#CDA7FF] mb-3 flex items-center justify-center rounded overflow-hidden">
     {src ? (
       <img src={src} alt={alt} className="w-full h-full object-cover rounded-md" />
     ) : (
-      <span className="text-gray-400 text-sm">{alt}</span>
+      <img src="basicImg.png" alt="SongPicker" className="w-full h-full object-cover rounded-md" />
     )}
   </div>
 );

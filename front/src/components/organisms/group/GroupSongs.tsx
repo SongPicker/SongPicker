@@ -12,7 +12,7 @@ const GroupSongs: React.FC<GroupSongsProps> = ({ teamId, teamName }) => {
 
   return (
     <div
-      className="h-full"
+      className="flex flex-col w-full h-full"
       style={{
         background: 'linear-gradient(to bottom, #452074, #000000, #575ED2)',
       }}
@@ -45,9 +45,9 @@ const GroupSongs: React.FC<GroupSongsProps> = ({ teamId, teamName }) => {
       </div>
 
       {/* 콘텐츠 영역 */}
-      <div className="h-64 overflow-y-auto p-4" style={{ backgroundColor: 'transparent' }}>
+      <div className="p-4" style={{ backgroundColor: 'transparent' }}>
         {activeTab === 'recommended' ? (
-          <RecommendedSongs />
+          <RecommendedSongs teamId={teamId} teamName={teamName} />
         ) : (
           <RecentSongs teamId={teamId} teamName={teamName} />
         )}
