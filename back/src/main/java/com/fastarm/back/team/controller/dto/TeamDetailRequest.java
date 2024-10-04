@@ -10,7 +10,7 @@ import lombok.*;
 @Builder
 public class TeamDetailRequest {
 
-    private Long teamId;
+  private Long teamId;
     private String loginId;
 
     public static TeamDetailRequest from(Long teamId, String loginId) {

@@ -18,4 +18,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
             ORDER BY n.createdAt ASC
             """)
     List<NotificationResponse> findAllByReceiver(@Param("member") Member member);
+
+    boolean existsByReceiverAndIsReadFalse(Member receiver);
 }

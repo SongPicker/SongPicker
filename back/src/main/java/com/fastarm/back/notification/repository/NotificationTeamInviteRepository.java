@@ -16,7 +16,6 @@ public interface NotificationTeamInviteRepository  extends JpaRepository<Notific
 
     boolean existsByTeamAndReceiverIdAndStatus(Team team, Long receiverId, Status status);
     Optional<NotificationTeamInvite> findById(Long notificationId);
-
     @Query("""
            SELECT CASE WHEN COUNT(nt) > 0 THEN TRUE ELSE FALSE END 
            FROM Notification n JOIN NotificationTeamInvite nt ON n.id = nt.id
