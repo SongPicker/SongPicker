@@ -17,7 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from songs.views import (
-    recommend_songs_api ,
+    individual_recommend_songs_api,
+    # team_recommend_songs_api,
     recommend_songs_test,
     recommend_songs_cosine, 
     recommend_songs_mf, 
@@ -26,7 +27,8 @@ from songs.views import (
 )
 
 urlpatterns = [
-    path('api/recommend_songs/', recommend_songs_api, name='recommend_songs_api'),
+    path('individual/recommends', individual_recommend_songs_api, name='individual_recommend_songs_api'),
+    # path('team/recommends', team_recommend_songs_api, name='team_recommend_songs_api'),
     path('admin/', admin.site.urls),
     path('recommend/test/', recommend_songs_test),
     path('recommend/cosine/', recommend_songs_cosine, name='recommend_songs_cosine'),

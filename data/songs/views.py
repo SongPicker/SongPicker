@@ -12,20 +12,37 @@ from sklearn.neural_network import MLPRegressor
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-@api_view(['POST'])
-def recommend_songs_api(request):
-    input_data = request.data
-    song_numbers = input_data.get('song_numbers', [])
+@api_view(['GET'])
+def individual_recommend_songs_api(request):
+    memberId = request.GET.get('memberId')
+
+    sing_history = PersonalSingHistory.objects.filter(member_id=memberId)
+
+    # 데이터 직렬화
+    sing_history_list = [
+        {
+            'id': history.id,  # ID 등 필요한 필드 추가
+            'song_id': history.song_id,  # 필드명은 모델에 따라 다름
+            'sing_at': history.sing_at,  # 필드명은 모델에 따라 다름
+        }
+        for history in sing_history
+    ]
+
+    # if (len(sing_history_list) < 5) {
+
+    # }
+
+    # song_numbers = input_data.get('song_numbers', [])
     
-    df, df_encoded, X_scaled = preprocess_data()
+    # df, df_encoded, X_scaled = preprocess_data()
     # if df.isnull().values.any():
     #     return Response({'error': 'Input contains NaN.'}, status=400)
 
     # # 이곳에서 추천 알고리즘 호출 (예: 코사인 유사도)
-    recommended_songs = get_recommendations_cosine(song_numbers, df, df_encoded, X_scaled)
+    # recommended_songs = get_recommendations_cosine(song_numbers, df, df_encoded, X_scaled)
 
     # # 추천 곡을 리스트 형태로 변환하여 반환
-    recommended_songs_list = recommended_songs.to_dict('records')
+    # recommended_songs_list = recommended_songs.to_dict('records')
 
     recommended_songs_list = [
         {'number': 1, 'title': 'Song Title 1', 'singer': 'Singer 1', 'similarity_score': 0.95},
@@ -34,7 +51,7 @@ def recommend_songs_api(request):
         {'number': 4, 'title': 'Song Title 4', 'singer': 'Singer 4', 'similarity_score': 0.80},
         {'number': 5, 'title': 'Song Title 5', 'singer': 'Singer 5', 'similarity_score': 0.75},
     ]
-    return Response(recommended_songs_list)
+    return Response(sing_history_list)
 
 
 def preprocess_data():
