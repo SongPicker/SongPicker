@@ -141,6 +141,7 @@ const MainPage = () => {
         {/* 사용자 맞춤 추천곡 */}
         <div className="px-2 mb-8">
           <RecomMusicList
+            isConnected={isConnected}
             onShowNotification={handleShowNotification}
             onShowConnectionModal={handleShowConnectionModal}
           />

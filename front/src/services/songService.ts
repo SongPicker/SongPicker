@@ -107,3 +107,13 @@ export const deleteLike = async (songNumber: number) => {
   });
   return response.data;
 };
+
+// 노래 예약 API
+export const reserveSong = async (number: number) => {
+  const response = await axiosInstance({
+    method: 'POST',
+    url: '/api/connections/reservations',
+    data: { number },
+  });
+  return response.data;
+};

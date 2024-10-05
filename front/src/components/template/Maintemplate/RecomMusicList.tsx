@@ -17,6 +17,7 @@ import {
 type Props = {
   onShowNotification: (title: string, description: string) => void;
   onShowConnectionModal: (message: string) => void;
+  isConnected: boolean;
 };
 
 // 추천 곡 인터페이스 정의
@@ -30,7 +31,7 @@ interface RecommendedSong {
   likeId: number | null;
 }
 
-const RecomMusicList = ({ onShowNotification, onShowConnectionModal }: Props) => {
+const RecomMusicList = ({ onShowNotification, onShowConnectionModal, isConnected }: Props) => {
   const [currentPage, setCurrentPage] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -230,6 +231,7 @@ const RecomMusicList = ({ onShowNotification, onShowConnectionModal }: Props) =>
                 <div key={item.number} className={index !== 0 ? 'mt-3' : ''}>
                   <MusicItem
                     id={item.number.toString()}
+                    number={item.number}
                     title={item.title}
                     artist={item.singer}
                     imageUrl={item.coverImage}
@@ -237,13 +239,21 @@ const RecomMusicList = ({ onShowNotification, onShowConnectionModal }: Props) =>
                     onLikeToggle={() => handleLikeToggle(item)}
                     onShowConnectionModal={onShowConnectionModal}
                     onItemClick={() => handleItemClick(item)}
+                    isConnected={isConnected}
                   />
                 </div>
               ))}
           </div>
         </div>
       )),
-    [recommendedSongs, totalPages, handleLikeToggle, onShowConnectionModal, handleItemClick]
+    [
+      recommendedSongs,
+      totalPages,
+      handleLikeToggle,
+      onShowConnectionModal,
+      handleItemClick,
+      isConnected,
+    ]
   );
 
   return (

@@ -3,12 +3,20 @@ import LikeButton from '../../atoms/commons/LikeButton';
 import ReservationButton from '../../atoms/commons/ReservationButton';
 
 type Props = {
+  number: string;
   isLiked: boolean;
   onLikeToggle: () => void;
   onShowConnectionModal: (message: string) => void;
+  isConnected: boolean;
 };
 
-const RightMusicItem = ({ isLiked, onLikeToggle, onShowConnectionModal }: Props) => {
+const RightMusicItem = ({
+  number,
+  isLiked,
+  onLikeToggle,
+  onShowConnectionModal,
+  isConnected,
+}: Props) => {
   return (
     <div className="flex">
       {/* 찜하기 버튼 */}
@@ -18,7 +26,11 @@ const RightMusicItem = ({ isLiked, onLikeToggle, onShowConnectionModal }: Props)
 
       {/* 예약하기 버튼 */}
       <div className="flex-shrink-0">
-        <ReservationButton onShowConnectionModal={onShowConnectionModal} songId={''} />
+        <ReservationButton
+          onShowConnectionModal={onShowConnectionModal}
+          number={number}
+          isConnected={isConnected}
+        />
       </div>
     </div>
   );
