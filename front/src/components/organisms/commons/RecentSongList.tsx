@@ -3,8 +3,21 @@ import MusicItem from './MusicItem';
 import { RecentSong, getMyRecentSongs } from '../../../services/historyService';
 import { deleteLike, registerLike } from '../../../services/songService';
 
-const RecentSongList = () => {
+type RecentSongListProps = {
+  isConnected: boolean;
+  onShowConnectionModal: (
+    message: string,
+    icon: 'link' | 'spinner' | 'reservation',
+    autoCloseDelay?: number
+  ) => void;
+};
+
+const RecentSongList = ({ isConnected, onShowConnectionModal }: RecentSongListProps) => {
   const [recentSongs, setRecentSongs] = useState<RecentSong[]>([]);
+
+  const handleShowConnectionModal = (message: string) => {
+    onShowConnectionModal(message, 'link');
+  };
 
   useEffect(() => {
     async function fetchRecentSongs() {
@@ -77,12 +90,14 @@ const RecentSongList = () => {
           <MusicItem
             key={song.likeId ?? song.number} // likeId가 null일 수 있으므로 number를 대체로 사용
             id={song.number.toString()}
+            number={song.number.toString()}
             title={song.title}
             artist={song.singer}
             imageUrl={song.coverImage}
             isLiked={song.isLike}
             onLikeToggle={() => handleLikeToggle(song)}
-            onShowConnectionModal={message => console.log(message)}
+            isConnected={isConnected}
+            onShowConnectionModal={handleShowConnectionModal}
             onItemClick={music => console.log(`Clicked on: ${music.title}`)}
           />
         ))

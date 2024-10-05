@@ -10,6 +10,12 @@ import MusicDetailModal from '../../template/commons/MusicDetailModal';
 interface RecentSongsProps {
   teamId: number;
   teamName: string;
+  isConnected: boolean;
+  onShowConnectionModal: (
+    message: string,
+    icon: 'link' | 'spinner' | 'reservation',
+    delay?: number
+  ) => void;
 }
 
 interface RecentSong {
@@ -22,7 +28,12 @@ interface RecentSong {
   likeId: number | null;
 }
 
-const RecentSongs = ({ teamId, teamName }: RecentSongsProps) => {
+const RecentSongs = ({
+  teamId,
+  teamName,
+  isConnected,
+  onShowConnectionModal,
+}: RecentSongsProps) => {
   const [recentSongs, setRecentSongs] = useState<RecentSong[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -33,6 +44,10 @@ const RecentSongs = ({ teamId, teamName }: RecentSongsProps) => {
   const [currentPage, setCurrentPage] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const [itemsPerPage, setItemsPerPage] = useState(5);
+
+  const handleShowConnectionModal = (message: string) => {
+    onShowConnectionModal(message, 'link');
+  };
 
   const adjustItemsPerPage = useCallback(() => {
     const height = window.innerHeight;
@@ -194,19 +209,29 @@ const RecentSongs = ({ teamId, teamName }: RecentSongsProps) => {
             <MusicItem
               key={song.songId}
               id={song.songId.toString()}
+              number={song.number.toString()}
               title={song.title}
               artist={song.singer}
               imageUrl={song.coverImage}
               isLiked={song.isLike}
               onLikeToggle={() => handleLikeToggle(song)}
-              onShowConnectionModal={() => {}}
+              onShowConnectionModal={handleShowConnectionModal}
               onItemClick={() => handleItemClick(song.songId)}
+              isConnected={isConnected}
             />
           ))}
         </div>
       </div>
     ));
-  }, [recentSongs, totalPages, itemsPerPage, handleLikeToggle, handleItemClick]);
+  }, [
+    recentSongs,
+    totalPages,
+    itemsPerPage,
+    handleLikeToggle,
+    handleItemClick,
+    isConnected,
+    onShowConnectionModal,
+  ]);
 
   if (isLoading) {
     return <div className="text-center py-4">로딩 중...</div>;

@@ -46,7 +46,7 @@ const ConnectionModal = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[999] max-w-[640px] mx-auto">
-      <div className="bg-[#333] p-8 rounded-lg shadow-xl flex flex-col items-center">
+      <div className="bg-[#333] p-8 rounded-lg shadow-xl flex flex-col items-center min-w-[260px]">
         <IconComponent
           className={`text-6xl text-primary mb-6 ${icon === 'spinner' ? 'animate-spin' : ''}`}
         />

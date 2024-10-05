@@ -26,6 +26,7 @@ type Props = {
   error: string | null;
   activeTab: 'all' | 'song' | 'singer';
   onTabChange: (tab: 'all' | 'song' | 'singer') => void;
+  isConnected: boolean;
 };
 
 const SearchMain = ({
@@ -37,6 +38,7 @@ const SearchMain = ({
   error,
   activeTab,
   onTabChange,
+  isConnected,
 }: Props) => {
   const navigate = useNavigate();
   const [songs, setSongs] = useState<SearchResultItem[]>(searchResults.songSearchList);
@@ -89,12 +91,14 @@ const SearchMain = ({
       <MusicItem
         key={item.number}
         id={item.number.toString()}
+        number={item.number.toString()}
         title={item.title}
         artist={item.singer}
         imageUrl={item.coverImage}
         isLiked={item.isLike}
         onLikeToggle={() => handleLikeToggle(item)}
         onShowConnectionModal={onShowConnectionModal}
+        isConnected={isConnected}
         onItemClick={() => onItemClick(item)}
       />
     ));

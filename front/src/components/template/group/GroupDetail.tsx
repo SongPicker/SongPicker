@@ -17,8 +17,16 @@ interface Group {
   teamMemberCount: number;
   members?: Array<{ profileImage: string | null; nickname: string }>;
 }
+interface GroupConnect {
+  isConnected: boolean;
+  onShowConnectionModal: (
+    message: string,
+    icon: 'link' | 'spinner' | 'reservation',
+    delay?: number
+  ) => void;
+}
 
-const GroupDetail = () => {
+const GroupDetail = ({ isConnected, onShowConnectionModal  }: GroupConnect) => {
   const { teamId } = useParams<{ teamId: string }>();
   const navigate = useNavigate();
   const location = useLocation();
@@ -156,7 +164,14 @@ const GroupDetail = () => {
         {groupDetail && groupDetail.members && (
           <GroupMembers members={groupDetail.members} onAddMemberClick={handleAddMemberClick} />
         )}
-        {groupDetail && <GroupSongs teamId={groupDetail.teamId} teamName={groupDetail.teamName} />}
+        {groupDetail && (
+          <GroupSongs
+            teamId={groupDetail.teamId}
+            teamName={groupDetail.teamName}
+            isConnected={isConnected}
+            onShowConnectionModal={onShowConnectionModal}
+          />
+        )}
       </div>
 
       {groupDetail && (

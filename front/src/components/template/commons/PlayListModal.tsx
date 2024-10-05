@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { RiCloseFill } from 'react-icons/ri';
 import PlayListIcon from '../../atoms/commons/PlayListIcon';
 import TabList from '../../organisms/MainOrganism/TabList';
 import RecentSongList from '../../organisms/commons/RecentSongList';
 import LikedSongList from '../../organisms/commons/LikedSongList';
+import { checkConnectionStatus } from '../../../services/connectionService';
+import ConnectionModal from './ConnectionModal';
 
 type PlayListModalProps = {
   closeModal: () => void;
@@ -11,7 +13,50 @@ type PlayListModalProps = {
 
 const PlayListModal = ({ closeModal }: PlayListModalProps) => {
   const [activeTab, setActiveTab] = useState<'liked' | 'recent'>('liked');
+  const [isConnected, setIsConnected] = useState(false);
 
+  // ConnectionModal 관련 상태
+  const [showConnectionModal, setShowConnectionModal] = useState(false);
+  const [connectionModalMessage, setConnectionModalMessage] = useState('');
+  const [modalIcon, setModalIcon] = useState<'link' | 'spinner' | 'reservation'>('link');
+  const [autoCloseDelay, setAutoCloseDelay] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    const fetchConnectionStatus = async () => {
+      try {
+        const response = await checkConnectionStatus();
+        setIsConnected(response.data);
+      } catch (error) {
+        console.error('Failed to fetch connection status:', error);
+        setIsConnected(false);
+      }
+    };
+
+    fetchConnectionStatus();
+  }, []);
+
+  const handleShowConnectionModal = useCallback(
+    (message: string, icon: 'link' | 'spinner' | 'reservation' = 'link', delay?: number) => {
+      setConnectionModalMessage(message);
+      setModalIcon(icon);
+      setAutoCloseDelay(delay);
+      setShowConnectionModal(true);
+    },
+    []
+  );
+
+  const handleCloseConnectionModal = () => {
+    setShowConnectionModal(false);
+  };
+
+  const handleReservationComplete = useCallback(
+    (message: string) => {
+      handleShowConnectionModal(message, 'reservation', 2000);
+    },
+    [handleShowConnectionModal]
+  );
+
+  // 모달 닫히기
   useEffect(() => {
     // 브라우저의 히스토리에 가짜 상태를 추가
     window.history.pushState(null, '', window.location.href);
@@ -45,7 +90,18 @@ const PlayListModal = ({ closeModal }: PlayListModalProps) => {
 
           {/* 노래리스트 */}
           <div className="w-full px-1 mt-3 overflow-y-scroll h-[calc(100%-120px)]">
-            {activeTab === 'liked' ? <LikedSongList /> : <RecentSongList />}
+            {activeTab === 'liked' ? (
+              <LikedSongList
+                isConnected={isConnected}
+                // onShowConnectionModal={handleShowConnectionModal}
+                onShowConnectionModal={handleReservationComplete}
+              />
+            ) : (
+              <RecentSongList
+                isConnected={isConnected}
+                onShowConnectionModal={handleReservationComplete}
+              />
+            )}
           </div>
         </div>
       </div>
@@ -55,6 +111,14 @@ const PlayListModal = ({ closeModal }: PlayListModalProps) => {
       >
         <RiCloseFill />
       </button>
+
+      <ConnectionModal
+        isVisible={showConnectionModal}
+        onClose={handleCloseConnectionModal}
+        message={connectionModalMessage}
+        icon={modalIcon}
+        autoCloseDelay={autoCloseDelay}
+      />
     </div>
   );
 };

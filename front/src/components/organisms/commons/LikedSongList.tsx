@@ -2,8 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { getLikedSongs, LikedSong, deleteLike } from '../../../services/songService';
 import MusicItem from './MusicItem';
 
-const LikedSongList = () => {
+type LikedSongListProps = {
+  isConnected: boolean;
+  onShowConnectionModal: (
+    message: string,
+    icon: 'link' | 'spinner' | 'reservation',
+    autoCloseDelay?: number
+  ) => void;
+};
+
+const LikedSongList = ({ isConnected, onShowConnectionModal }: LikedSongListProps) => {
   const [likedSongs, setLikedSongs] = useState<LikedSong[]>([]);
+
+  const handleShowConnectionModal = (message: string) => {
+    onShowConnectionModal(message, 'link');
+  };
 
   useEffect(() => {
     async function fetchLikedSongs() {
@@ -45,12 +58,14 @@ const LikedSongList = () => {
           <MusicItem
             key={song.likeId ?? song.number}
             id={song.number.toString()}
+            number={song.number.toString()}
             title={song.title}
             artist={song.singer}
             imageUrl={song.coverImage}
-            isLiked={true} // 항상 찜된 상태로 시작
+            isLiked={true}
             onLikeToggle={() => handleLikeToggle(song)}
-            onShowConnectionModal={message => console.log(message)}
+            isConnected={isConnected}
+            onShowConnectionModal={handleShowConnectionModal}
             onItemClick={music => console.log(`Clicked on: ${music.title}`)}
           />
         ))

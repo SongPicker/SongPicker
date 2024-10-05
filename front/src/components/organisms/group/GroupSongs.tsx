@@ -5,9 +5,20 @@ import RecentSongs from '../../molecules/group/RecentSongs';
 interface GroupSongsProps {
   teamId: number;
   teamName: string;
+  isConnected: boolean;
+  onShowConnectionModal: (
+    message: string,
+    icon: 'link' | 'spinner' | 'reservation',
+    delay?: number
+  ) => void;
 }
 
-const GroupSongs: React.FC<GroupSongsProps> = ({ teamId, teamName }) => {
+const GroupSongs: React.FC<GroupSongsProps> = ({
+  teamId,
+  teamName,
+  isConnected,
+  onShowConnectionModal,
+}) => {
   const [activeTab, setActiveTab] = useState<'recommended' | 'recent'>('recommended');
 
   return (
@@ -47,9 +58,19 @@ const GroupSongs: React.FC<GroupSongsProps> = ({ teamId, teamName }) => {
       {/* 콘텐츠 영역 */}
       <div className="p-4" style={{ backgroundColor: 'transparent' }}>
         {activeTab === 'recommended' ? (
-          <RecommendedSongs teamId={teamId} teamName={teamName} />
+          <RecommendedSongs
+            teamId={teamId}
+            teamName={teamName}
+            isConnected={isConnected}
+            onShowConnectionModal={onShowConnectionModal}
+          />
         ) : (
-          <RecentSongs teamId={teamId} teamName={teamName} />
+          <RecentSongs
+            teamId={teamId}
+            teamName={teamName}
+            isConnected={isConnected}
+            onShowConnectionModal={onShowConnectionModal}
+          />
         )}
       </div>
     </div>

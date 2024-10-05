@@ -7,6 +7,8 @@ import { getSongDetail, searchSongs, SongDetail } from '../services/songService'
 import axios from 'axios';
 import MusicDetailModal from '../components/template/commons/MusicDetailModal';
 import CustomAlert from '../components/template/commons/CustomAlertModal';
+import { checkConnectionStatus } from '../services/connectionService';
+import ConnectionModal from '../components/template/commons/ConnectionModal';
 
 type Tab = 'all' | 'song' | 'singer';
 
@@ -30,11 +32,29 @@ const SearchPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isAlertModalOpen, setAlertModalOpen] = useState(false);
-  const [selectedMusic, setSelectedMusic] = useState<Music | null>(null);
-  const [detailError, setDetailError] = useState<string | null>(null);
   const [selectedSongDetail, setSelectedSongDetail] = useState<SongDetail | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isDetailLoading, setIsDetailLoading] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+  const [showConnectionModal, setShowConnectionModal] = useState(false);
+  const [connectionModalMessage, setConnectionModalMessage] = useState('');
+  const [modalIcon, setModalIcon] = useState<'link' | 'spinner' | 'reservation'>('link');
+  const [autoCloseDelay, setAutoCloseDelay] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    const fetchConnectionStatus = async () => {
+      try {
+        const response = await checkConnectionStatus();
+        setIsConnected(response.data);
+      } catch (error) {
+        console.error('Failed to fetch connection status:', error);
+        setIsConnected(false);
+      }
+    };
+
+    fetchConnectionStatus();
+    // 필요에 따라 주기적으로 상태를 체크하는 로직을 추가할 수 있습니다.
+  }, []);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -83,11 +103,6 @@ const SearchPage = () => {
     }
   };
 
-  const handleShowConnectionModal = (message: string) => {
-    // Implement the logic to show the connection modal
-    console.log('Show connection modal:', message);
-  };
-
   const handleItemClick = useCallback(async (music: Music) => {
     setIsDetailLoading(true);
     try {
@@ -107,10 +122,6 @@ const SearchPage = () => {
     }
   }, []);
 
-  const handleWishlistClick = () => {
-    setAlertModalOpen(true);
-  };
-
   const TabButton = ({ tab, label }: { tab: Tab; label: string }) => (
     <button
       className={`text-center w-14 py-1 rounded-full ${activeTab === tab ? 'bg-[#9747FF]' : 'bg-[#1F222A]'}`}
@@ -124,6 +135,20 @@ const SearchPage = () => {
     setActiveTab(tab);
     navigate(`/search?keyword=${encodeURIComponent(searchKeyword)}&tab=${tab}`);
   };
+
+  const handleShowConnectionModal = useCallback(
+    (message: string, icon: 'link' | 'spinner' | 'reservation' = 'link', delay?: number) => {
+      setConnectionModalMessage(message);
+      setModalIcon(icon);
+      setAutoCloseDelay(delay);
+      setShowConnectionModal(true);
+    },
+    []
+  );
+
+  const handleCloseConnectionModal = useCallback(() => {
+    setShowConnectionModal(false);
+  }, []);
 
   return (
     <MainLayout title="노래 검색">
@@ -149,6 +174,7 @@ const SearchPage = () => {
             onItemClick={handleItemClick}
             activeTab={activeTab}
             onTabChange={handleTabChange}
+            isConnected={isConnected}
           />
         </div>
       </div>
@@ -172,6 +198,14 @@ const SearchPage = () => {
           onClose={() => setAlertModalOpen(false)}
         />
       )}
+
+      <ConnectionModal
+        isVisible={showConnectionModal}
+        onClose={handleCloseConnectionModal}
+        message={connectionModalMessage}
+        icon={modalIcon}
+        autoCloseDelay={autoCloseDelay}
+      />
     </MainLayout>
   );
 };
