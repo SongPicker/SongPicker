@@ -12,11 +12,10 @@ import lombok.NoArgsConstructor;
 public class TeamDto {
     private Long teamId;
     private String teamImage;
-
     private String teamName;
-    private Long teamMemberCount;
+    private int teamMemberCount;
 
-    public static TeamDto from(Long teamId, String teamImage, String teamName, Long teamMemberCount) {
+    public static TeamDto from(Long teamId, String teamImage, String teamName, int teamMemberCount) {
         return TeamDto.builder()
                 .teamId(teamId)
                 .teamImage(teamImage)

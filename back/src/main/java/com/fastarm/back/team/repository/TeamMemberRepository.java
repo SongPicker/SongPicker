@@ -26,15 +26,15 @@ public interface TeamMemberRepository extends JpaRepository<TeamMember, Long> {
                 t.id,
                 t.teamImage,
                 t.name,
-                COUNT(tm)
-            ) 
-            FROM TeamMember tm 
-            JOIN tm.team t 
-            WHERE tm.member.id = :memberId 
-            GROUP BY t.id
+                size(t.teamMembers)
+            )
+            FROM TeamMember tm
+            JOIN tm.team t
+            WHERE tm.member.id = :memberId
     """
     )
     List<TeamDto> findTeamsWithMemberCountByMemberId(@Param("memberId") Long memberId);
+
 
     @Query("""
         SELECT new com.fastarm.back.team.dto.TeamDetailMemberDto(m.profileImage, m.nickname)
