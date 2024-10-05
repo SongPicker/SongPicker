@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Recommended Songs</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Input Songs</h1>
+    <table>
+        <tr>
+            <th>Number</th>
+            <th>Title</th>
+            <th>Singer</th>
+        </tr>
+        {% for song in input_songs %}
+        <tr>
+            <td>{{ song.number }}</td>
+            <td>{{ song.title }}</td>
+            <td>{{ song.singer }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h1>Recommended Songs ({{ method }})</h1>
+    <table>
+        <tr>
+            <th>Number</th>
+            <th>Title</th>
+            <th>Singer</th>
+            <th>{% if method == 'K-Nearest Neighbors' %}Distance{% else %}Similarity Score{% endif %}</th>
+        </tr>
+        {% for song in songs %}
+        <tr>
+            <td>{{ song.number }}</td>
+            <td>{{ song.title }}</td>
+            <td>{{ song.singer }}</td>
+            <td>{% if method == 'K-Nearest Neighbors' %}{{ song.distance|floatformat:4 }}{% else %}{{ song.similarity_score|floatformat:4 }}{% endif %}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

@@ -13,11 +13,15 @@ import com.fastarm.back.song.exception.NotFoundSongDetailException;
 import com.fastarm.back.song.repository.SongRepository;
 import com.fastarm.back.member.exception.MemberNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -27,9 +31,8 @@ public class SongService {
     private final SongRepository songRepository;
     private final MemberRepository memberRepository;
     private final RestTemplate restTemplate;
-    private static final String DJANGO_API_URL = "http://django-server/recommendations";
-
-
+//    private static final String DJANGO_API_URL = "http://localhost:8000/api/recommend_songs/";
+    private static final String DJANGO_API_URL = "https://songpicker.kro.kr/api/data/individual/recommends";
     @Transactional
     public List<SongDto> recommendMySong(String loginId){
 
@@ -43,6 +46,29 @@ public class SongService {
 
         return songDtoList;
 
+    }
+
+    @Transactional
+    public void recommendMySongTest(String loginId) {
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(MemberNotFoundException::new);
+
+        List<Integer> songNumbers = Arrays.asList(1, 2, 4, 3, 5, 6, 7, 8, 9, 10);
+
+        String songNumbersParam = songNumbers.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining("&song_numbers="));
+
+        String djangoApiUrl = DJANGO_API_URL + "?song_numbers=" + songNumbersParam;
+
+        ResponseEntity<List> responseEntity = restTemplate.getForEntity(djangoApiUrl, List.class);
+
+        if (responseEntity.getStatusCode().is2xxSuccessful()) {
+            List songs = responseEntity.getBody();
+            System.out.println("응답 받은 노래 리스트: " + songs);
+        } else {
+            System.out.println("API 호출 실패: " + responseEntity.getStatusCode());
+        }
     }
 
     @Transactional
