@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, RefObject } from 'react';
 import TopNavbarLeftList from '../../molecules/commons/TopNavbarLeftList';
 import TopNavbarRightList from '../../molecules/commons/TopNavbarRightList';
 import PlayListModal from '../../template/commons/PlayListModal';
@@ -7,9 +7,10 @@ type Props = {
   title?: string;
   onAlarmClick: () => void;
   onGroupInvite: () => void;
+  bellIconRef: RefObject<HTMLDivElement>;
 };
 
-const TopNavbar = ({ title, onAlarmClick, onGroupInvite }: Props) => {
+const TopNavbar = ({ title, onAlarmClick, onGroupInvite, bellIconRef }: Props) => {
   const [isPlayListModalOpen, setIsPlayListModalOpen] = useState(false);
 
   const togglePlayListModal = () => {
@@ -23,6 +24,7 @@ const TopNavbar = ({ title, onAlarmClick, onGroupInvite }: Props) => {
         onPlayListClick={togglePlayListModal}
         onAlarmClick={onAlarmClick}
         onGroupInvite={onGroupInvite}
+        bellIconRef={bellIconRef}
       />
       {isPlayListModalOpen && <PlayListModal closeModal={togglePlayListModal} />}
     </nav>
