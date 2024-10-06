@@ -1,10 +1,14 @@
 package com.fastarm.back.notification.service;
 
+import com.fastarm.back.common.constants.RedisConstants;
+import com.fastarm.back.common.constants.RedisFieldConstants;
+import com.fastarm.back.common.service.RedisService;
 import com.fastarm.back.member.entity.Member;
 import com.fastarm.back.member.exception.MemberNotFoundException;
 import com.fastarm.back.member.repository.MemberRepository;
 import com.fastarm.back.notification.controller.dto.NotificationDetailRequest;
 import com.fastarm.back.notification.controller.dto.NotificationResponse;
+import com.fastarm.back.notification.dto.FCMTokenDto;
 import com.fastarm.back.notification.dto.NotificationDetailDto;
 import com.fastarm.back.notification.dto.NotificationDto;
 import com.fastarm.back.notification.dto.TeamInviteNotificationDto;
@@ -15,23 +19,27 @@ import com.fastarm.back.notification.exception.AlreadyInviteException;
 import com.fastarm.back.notification.exception.NotificationNotFoundException;
 import com.fastarm.back.notification.repository.NotificationRepository;
 import com.fastarm.back.notification.repository.NotificationTeamInviteRepository;
-import com.fastarm.back.team.dto.TeamDetailDto;
 import com.fastarm.back.team.dto.TeamDetailMemberDto;
 import com.fastarm.back.team.entity.Team;
 import com.fastarm.back.team.entity.TeamMember;
 import com.fastarm.back.team.exception.TeamNotFoundException;
 import com.fastarm.back.team.repository.TeamMemberRepository;
 import com.fastarm.back.notification.exception.TeamInviteNotificationNotFoundException;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.Message;
 import com.fastarm.back.team.repository.TeamRepository;
 import com.fastarm.back.team.service.TeamService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
-import static java.security.AccessController.checkPermission;
+import static com.google.firebase.messaging.Notification.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
@@ -40,8 +48,8 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final NotificationTeamInviteRepository notificationTeamInviteRepository;
     private final MemberRepository memberRepository;
-    private final TeamRepository teamRepository;
-    private final TeamService teamService;
+    private final RedisService redisService;
+
 
     @Transactional(readOnly = true)
     public List<NotificationResponse> findNotificationList(String loginId){
@@ -141,4 +149,25 @@ public class NotificationService {
         if(!notification.getReceiver().getId().equals(member.getId()))
             throw new NotificationNotFoundException();
     }
+
+    @Transactional
+    public void sendNotification(String targetToken, String title, String body) throws ExecutionException, InterruptedException {
+
+        Message message = Message.builder()
+                .setToken(targetToken)
+                .setNotification(builder()
+                        .setTitle(title)
+                        .setBody(body)
+                        .build())
+                .build();
+            String response = FirebaseMessaging.getInstance().sendAsync(message).get();
+            log.info("Successfully sent message: {}", response);
+    }
+
+    @Transactional
+    public void saveFcmToken(FCMTokenDto dto){
+        redisService.setHashData(RedisConstants.TOKEN+dto.getLoginId(), RedisFieldConstants.FCM, dto.getToken());
+    }
+
+
 }

@@ -1,24 +1,28 @@
 package com.fastarm.back.team.service;
 
-import com.fastarm.back.common.constants.S3Constants;
+
+import com.fastarm.back.common.constants.RedisConstants;
+import com.fastarm.back.common.constants.RedisFieldConstants;
+import com.fastarm.back.common.service.RedisService;
 import com.fastarm.back.common.service.S3Service;
 import com.fastarm.back.notification.entity.NotificationTeamInvite;
 import com.fastarm.back.notification.enums.Status;
 import com.fastarm.back.notification.enums.Type;
 import com.fastarm.back.notification.repository.NotificationRepository;
 import com.fastarm.back.notification.repository.NotificationTeamInviteRepository;
+import com.fastarm.back.notification.service.NotificationService;
 import com.fastarm.back.team.controller.dto.TeamDetailRequest;
 import com.fastarm.back.team.controller.dto.TeamInviteResponse;
 import com.fastarm.back.team.dto.*;
 import com.fastarm.back.team.entity.Team;
 import com.fastarm.back.team.entity.TeamMember;
-import com.fastarm.back.team.exception.TeamImageUploadException;
 import com.fastarm.back.team.exception.TeamMemberNotFoundException;
 import com.fastarm.back.team.repository.TeamRepository;
 import com.fastarm.back.team.repository.TeamMemberRepository;
 import com.fastarm.back.member.entity.Member;
 import com.fastarm.back.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.fastarm.back.member.exception.MemberNotFoundException;
@@ -28,7 +32,10 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TeamService {
@@ -39,7 +46,8 @@ public class TeamService {
     private final NotificationTeamInviteRepository notificationTeamInviteRepository;
     private final NotificationRepository notificationRepository;
     private final S3Service s3Service;
-
+    private final RedisService redisService;
+    private final NotificationService notificationService;
 
     @Transactional(readOnly = true)
     public List<TeamDto> getMyTeams(String loginId){
@@ -65,7 +73,7 @@ public class TeamService {
     }
 
     @Transactional
-    public TeamInviteResponse inviteTeam(TeamInviteDto dto){
+    public TeamInviteResponse inviteTeam(TeamInviteDto dto) throws ExecutionException, InterruptedException {
         Member sender = memberRepository.findByLoginId(dto.getLoginId()).orElseThrow(MemberNotFoundException::new);
         Team team = teamRepository.findById(dto.getTeamId()).orElseThrow(TeamNotFoundException::new);
         checkPermission(sender,team);
@@ -92,6 +100,7 @@ public class TeamService {
 
             successfulInvites.add(receiverNickName);
 
+
             NotificationTeamInvite teamInvite = NotificationTeamInvite.builder()
                     .receiver(member)
                     .sender(sender)
@@ -103,6 +112,16 @@ public class TeamService {
                     .status(Status.WAIT)
                     .build();
             notificationTeamInviteRepository.save(teamInvite);
+
+
+            String fcmToken = (String) redisService.getHashData(RedisConstants.TOKEN+member.getLoginId(), RedisFieldConstants.FCM);
+            if(fcmToken != null){
+                String message = team.getName() + "팀에 초대되었습니다.";
+                notificationService.sendNotification(fcmToken, "팀 초대", message);
+            }else{
+                log.warn("사용자 {}의 FCM 토큰이 없습니다.", receiverNickName);
+            }
+
         }
 
         return TeamInviteResponse.builder()

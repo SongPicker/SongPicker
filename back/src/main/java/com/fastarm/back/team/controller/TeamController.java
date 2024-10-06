@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequiredArgsConstructor
@@ -43,7 +44,7 @@ public class TeamController {
 
     @PostMapping("/invite")
     public ResponseEntity<?> teamInvite(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo,
-                                        @RequestBody TeamInviteRequest teamInviteRequest){
+                                        @RequestBody TeamInviteRequest teamInviteRequest) throws ExecutionException, InterruptedException {
         TeamInviteResponse teamInviteResponse = teamService.inviteTeam(teamInviteRequest.toDto(loginMemberInfo.getLoginId()));
         return ResponseEntity.ok(new ApiResponse<>("TE101", "그룹 초대 성공",teamInviteResponse));
     }

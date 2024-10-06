@@ -2,13 +2,10 @@ package com.fastarm.back.notification.controller;
 
 import com.fastarm.back.auth.security.dto.LoginMemberInfo;
 import com.fastarm.back.common.controller.dto.ApiResponse;
-import com.fastarm.back.notification.controller.dto.NotificationDetailRequest;
-import com.fastarm.back.notification.controller.dto.NotificationRequest;
-import com.fastarm.back.notification.controller.dto.NotificationResponse;
-import com.fastarm.back.notification.controller.dto.TeamInviteNotificationRequest;
+import com.fastarm.back.notification.controller.dto.*;
+import com.fastarm.back.notification.dto.FCMTokenDto;
 import com.fastarm.back.notification.dto.NotificationDetailDto;
 import com.fastarm.back.notification.dto.NotificationDto;
-import com.fastarm.back.notification.enums.Type;
 import com.fastarm.back.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -67,6 +64,14 @@ public class NotificationController {
                                                 @AuthenticationPrincipal LoginMemberInfo loginMemberInfo){
         notificationService.removeNotification(NotificationDto.of(notificationId,loginMemberInfo.getLoginId()));
         return ResponseEntity.ok(new ApiResponse<>("NO102","알림 삭제 성공",null));
+    }
+
+    @PostMapping("/fcm")
+    public ResponseEntity<?> fcmTokenSave(@RequestBody FCMTokenRequest fcmTokenRequest,
+                                          @AuthenticationPrincipal LoginMemberInfo loginMemberInfo){
+        notificationService.saveFcmToken(fcmTokenRequest.toDto(loginMemberInfo.getLoginId()));
+        return ResponseEntity.ok(new ApiResponse<>("NO106", "FCMToken 저장 성공",null));
+
     }
 
 }
