@@ -5,6 +5,8 @@ import LoginButton from '../../atoms/login/LoginButton';
 import PasswordVisibilityToggle from '../../atoms/commons/PasswordVisibilityToggle';
 import axiosInstance from '../../../services/axiosInstance';
 import useAuthStore from '../../../stores/useAuthStore';
+import { getToken } from 'firebase/messaging';
+import { messaging } from '../../../firebaseConfig';
 
 const LoginForm = () => {
   const [userId, setUserId] = useState('');
@@ -23,6 +25,40 @@ const LoginForm = () => {
       return () => clearTimeout(timer);
     }
   }, [errorMessage]);
+
+  const requestNotificationPermissionAndSendToken = async () => {
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') {
+        console.log('알림 권한이 거부되었습니다.');
+        return;
+      }
+
+      const token = await getToken(messaging, {
+        vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
+      });
+      console.log('FCM 토큰:', token);
+
+      if (token) {
+        await sendTokenToServer(token);
+      }
+    } catch (error) {
+      console.error('알림 권한 요청 또는 FCM 토큰 수신 중 오류 발생:', error);
+    }
+  };
+
+  const sendTokenToServer = async (token: string) => {
+    try {
+      const response = await axiosInstance.post('/api/notifications/fcm', { token });
+      if (response.data.code === 'NO106') {
+        console.log('토큰이 서버로 전송되었습니다.');
+      } else {
+        throw new Error('토큰 전송 실패');
+      }
+    } catch (error) {
+      console.error('토큰 전송 중 오류 발생:', error);
+    }
+  };
 
   const handleLogin = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -44,6 +80,10 @@ const LoginForm = () => {
           login(userId, authToken);
           const isSongSelected = response.data.data;
           setSongSelected(isSongSelected);
+
+          // 로그인 성공 후 알림 권한 요청 및 FCM 토큰 전송
+          await requestNotificationPermissionAndSendToken();
+
           navigate(isSongSelected ? '/' : '/song-select');
         } else {
           setErrorMessage('인증 토큰을 받지 못했습니다.');

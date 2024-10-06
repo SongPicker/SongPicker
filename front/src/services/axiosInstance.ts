@@ -109,6 +109,7 @@ axiosInstance.interceptors.response.use(
       } else if (response.data.code === 'AU007') {
         // 리프레시 토큰 만료 처리
         clearAuthState();
+        window.location.href = '/login';
         return Promise.reject(new Error('Refresh token expired'));
       }
     }

@@ -4,7 +4,7 @@ import App from './App.tsx';
 import './index.css';
 
 // Firebase 설정 및 서비스 워커 등록
-import { app, messaging } from './firebaseConfig';
+import './firebaseConfig';
 
 // 서비스 워커 등록
 if ('serviceWorker' in navigator) {

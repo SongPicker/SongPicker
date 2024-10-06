@@ -10,33 +10,41 @@ interface Notification {
 interface NotificationStore {
   notifications: Notification[];
   currentNotificationId: number | null;
+  hasUnreadNotifications: boolean;
   setNotifications: (notifications: Notification[]) => void;
   setCurrentNotificationId: (id: number | null) => void;
   markAsRead: (id: number) => void;
   deleteNotification: (id: number) => Promise<void>;
+  updateUnreadStatus: () => void;
 }
 
 export const useNotificationStore = create<NotificationStore>((set, get) => ({
   notifications: [],
   currentNotificationId: null,
-  setNotifications: notifications => set({ notifications }),
+  hasUnreadNotifications: false,
+  setNotifications: notifications => {
+    set({ notifications });
+    get().updateUnreadStatus();
+  },
   setCurrentNotificationId: id => set({ currentNotificationId: id }),
-  markAsRead: id =>
+  markAsRead: id => {
     set(state => ({
       notifications: state.notifications.map(notification =>
         notification.notificationId === id ? { ...notification, isRead: true } : notification
       ),
-    })),
+    }));
+    get().updateUnreadStatus();
+  },
   deleteNotification: async id => {
     try {
       const response = await alarmService.deleteNotification(id);
       if (response.code === 'NO102') {
-        // 성공 코드를 적절히 수정하세요
         set(state => ({
           notifications: state.notifications.filter(
             notification => notification.notificationId !== id
           ),
         }));
+        get().updateUnreadStatus();
       } else {
         throw new Error('Failed to delete notification');
       }
@@ -44,5 +52,9 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
       console.error('Failed to delete notification:', error);
       throw error;
     }
+  },
+  updateUnreadStatus: () => {
+    const hasUnread = get().notifications.some(notification => !notification.isRead);
+    set({ hasUnreadNotifications: hasUnread });
   },
 }));
