@@ -4,7 +4,6 @@ import com.fastarm.back.auth.security.dto.LoginMemberInfo;
 import com.fastarm.back.common.controller.dto.ApiResponse;
 import com.fastarm.back.history.controller.dto.*;
 import com.fastarm.back.history.dto.DateSongsDto;
-import com.fastarm.back.history.dto.DateSongsListDto;
 import com.fastarm.back.history.dto.SingDateDto;
 import com.fastarm.back.history.dto.TeamRecentSongsDto;
 import com.fastarm.back.history.service.HistoryService;

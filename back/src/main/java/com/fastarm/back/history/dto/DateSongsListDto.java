@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 @Builder
 public class DateSongsListDto {
+    private Long songId;
     private int number;
     private String coverImage;
     private String title;
@@ -19,6 +20,7 @@ public class DateSongsListDto {
 
     public static DateSongsListDto from(Song song) {
         return DateSongsListDto.builder()
+                .songId(song.getId())
                 .number(song.getNumber())
                 .coverImage(song.getCoverImage())
                 .title(song.getTitle())
