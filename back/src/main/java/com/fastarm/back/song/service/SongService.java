@@ -13,10 +13,8 @@ import com.fastarm.back.song.exception.NotFoundSongDetailException;
 import com.fastarm.back.song.repository.SongRepository;
 import com.fastarm.back.member.exception.MemberNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -52,27 +50,32 @@ public class SongService {
     public List<Object> recommendMySongTest(String loginId) {
         Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(MemberNotFoundException::new);
+        String djangoApiUrl = DJANGO_API_URL + "?memberId=" + member.getId();
 
-        List<Integer> songNumbers = Arrays.asList(1, 2, 4, 3, 5, 6, 7, 8, 9, 10);
+        ResponseEntity<List<Map<String, Object>>> responseEntity = restTemplate.exchange(
+                djangoApiUrl,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Map<String, Object>>>() {});
 
-        String songNumbersParam = songNumbers.stream()
-                .map(String::valueOf)
-                .collect(Collectors.joining("&song_numbers="));
+        if (responseEntity.getStatusCode().is2xxSuccessful()) {
+            List<Map<String, Object>> responseBody = responseEntity.getBody();
+            if (responseBody != null) {
+                return responseBody.stream().map(songData ->
+                        SongDto.builder()
+                                .songId(Long.valueOf((Integer) songData.get("songId")))
+                                .number((Integer) songData.get("number"))
+                                .title((String) songData.get("title"))
+                                .singer((String) songData.get("singer"))
+                                .coverImage((String) songData.get("coverImage"))
+                                .isLike((Boolean) songData.get("isLike"))
+                                .likeId(songData.get("likeId") != null ? Long.valueOf((Integer) songData.get("likeId")) : null)
+                                .build()
+                ).collect(Collectors.toList());
+            }
+        }
+        throw new RuntimeException("Failed to fetch song recommendations from Django API");
 
-        String djangoApiUrl = DJANGO_API_URL + "?song_numbers=" + songNumbersParam;
-
-        ResponseEntity<List> responseEntity = restTemplate.getForEntity(djangoApiUrl, List.class);
-
-        List<Object> songs = responseEntity.getBody();
-        System.out.println("응답 받은 노래 리스트: " + songs);
-        return songs;
-//        if (responseEntity.getStatusCode().is2xxSuccessful()) {
-//            List<Object> songs = responseEntity.getBody();
-//            System.out.println("응답 받은 노래 리스트: " + songs);
-//            return songs;
-//        } else {
-//            System.out.println("API 호출 실패: " + responseEntity.getStatusCode());
-//        }
     }
 
     @Transactional
