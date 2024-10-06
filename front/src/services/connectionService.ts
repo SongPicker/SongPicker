@@ -14,13 +14,13 @@ export const connectService = async (serialNumber: string) => {
 // 서비스연동 (그룹)
 export interface ConnectGroupServiceRequest {
   serialNumber: string;
-  groupId: number;
+  teamId: number;
 }
 
 export const connectGroupService = async (data: ConnectGroupServiceRequest) => {
   const response = await axiosInstance({
     method: 'POST',
-    url: '/api/connections/group',
+    url: '/api/connections/team',
     data,
   });
   return response.data;

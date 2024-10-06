@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import FooterButtonLayout from '../../layouts/FooterButtonLayout';
+import GroupListContent from '../../components/organisms/group/GroupListContent';
+import { getGroupList } from '../../services/groupService';
 
 interface Group {
-  id: number;
-  name: string;
-  imageUrl: string;
-  memberCount: number;
+  teamId: number;
+  teamImage: string | null;
+  teamName: string;
+  teamMemberCount: number;
 }
 
 const GroupSelectPage = () => {
@@ -14,21 +16,25 @@ const GroupSelectPage = () => {
   const [selectedGroup, setSelectedGroup] = useState<number | null>(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // TODO: API를 통해 그룹 목록을 가져오는 로직 구현
-    // 예시 데이터:
-    setGroups([
-      { id: 1, name: '버니즈 친구들', imageUrl: '/path/to/image1.jpg', memberCount: 3 },
-      { id: 2, name: '동창 동호회', imageUrl: '/path/to/image2.jpg', memberCount: 6 },
-      { id: 3, name: '삐삐 1학기 친구들', imageUrl: '/path/to/image3.jpg', memberCount: 8 },
-      { id: 4, name: '삐삐 공홈 친구들', imageUrl: '/path/to/image4.jpg', memberCount: 8 },
-      { id: 5, name: '삐삐 특화 친구들', imageUrl: '/path/to/image5.jpg', memberCount: 8 },
-      { id: 6, name: '삐삐 자율 친구들', imageUrl: '/path/to/image6.jpg', memberCount: 5 },
-    ]);
+  // 그룹 목록을 불러오는 함수
+  const fetchGroups = useCallback(async () => {
+    try {
+      const response = await getGroupList();
+      if (response.code === 'TE103') {
+        setGroups(response.data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch groups:', error);
+    }
   }, []);
 
-  const handleGroupSelect = (groupId: number) => {
-    setSelectedGroup(groupId);
+  useEffect(() => {
+    fetchGroups(); // 컴포넌트가 마운트될 때 그룹 목록을 불러옵니다.
+  }, [fetchGroups]);
+
+  const handleGroupSelect = (event: React.MouseEvent, groupId: number) => {
+    event.stopPropagation(); // 기본 동작 막기
+    setSelectedGroup(groupId); // 그룹 선택 상태 업데이트
   };
 
   const handleNext = () => {
@@ -44,27 +50,19 @@ const GroupSelectPage = () => {
       onButtonClick={handleNext}
       isButtonValid={selectedGroup !== null}
     >
-      <div className="p-4">
-        <button className="w-full bg-purple-600 text-white py-2 rounded-md mb-4">
-          새그룹 만들기
-        </button>
-        <div className="grid grid-cols-2 gap-4">
-          {groups.map(group => (
-            <div
-              key={group.id}
-              onClick={() => handleGroupSelect(group.id)}
-              className={`relative aspect-square bg-gray-200 rounded-md overflow-hidden ${
-                selectedGroup === group.id ? 'ring-2 ring-purple-500' : ''
-              }`}
-            >
-              <img src={group.imageUrl} alt={group.name} className="w-full h-full object-cover" />
-              <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2">
-                <p className="text-sm font-bold">{group.name}</p>
-                <p className="text-xs">({group.memberCount}/8)</p>
-              </div>
-            </div>
-          ))}
-        </div>
+      <div className="flex-1">
+        <GroupListContent
+          groups={groups}
+          onGroupEdited={updatedGroup => {
+            setGroups(prevGroups =>
+              prevGroups.map(group => (group.teamId === updatedGroup.teamId ? updatedGroup : group))
+            );
+          }}
+          onGroupLeft={teamId => {
+            setGroups(prevGroups => prevGroups.filter(group => group.teamId !== teamId));
+          }}
+          onGroupClick={handleGroupSelect} // 그룹 클릭 시 선택하도록 핸들러 추가
+        />
       </div>
     </FooterButtonLayout>
   );

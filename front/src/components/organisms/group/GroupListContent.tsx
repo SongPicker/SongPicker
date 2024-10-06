@@ -15,9 +15,15 @@ interface GroupListContentProps {
   groups: Group[];
   onGroupEdited: (updatedGroup: Group) => void;
   onGroupLeft: (teamId: number) => void;
+  onGroupClick?: (event: React.MouseEvent, groupId: number) => void; // 그룹 클릭 시 호출되는 함수 추가 (선택적 props)
 }
 
-const GroupListContent = ({ groups, onGroupEdited, onGroupLeft }: GroupListContentProps) => {
+const GroupListContent = ({
+  groups,
+  onGroupEdited,
+  onGroupLeft,
+  onGroupClick,
+}: GroupListContentProps) => {
   const navigate = useNavigate();
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -30,10 +36,14 @@ const GroupListContent = ({ groups, onGroupEdited, onGroupLeft }: GroupListConte
   }, [groups]);
 
   const handleGroupClick = useCallback(
-    (teamId: number) => {
-      navigate(`/group/${teamId}`);
+    (event: React.MouseEvent, teamId: number) => {
+      if (onGroupClick) {
+        onGroupClick(event, teamId); // onGroupClick props가 있을 경우 호출 (예: QR 페이지로 이동)
+      } else {
+        navigate(`/group/${teamId}`); // 없을 경우 기본 동작 (그룹 상세 페이지로 이동)
+      }
     },
-    [navigate]
+    [navigate, onGroupClick]
   );
 
   const toggleMenu = useCallback((e: React.MouseEvent | null, teamId: number) => {
@@ -101,7 +111,7 @@ const GroupListContent = ({ groups, onGroupEdited, onGroupLeft }: GroupListConte
             teamMemberCount={group.teamMemberCount}
             openMenuId={openMenuId}
             onMenuToggle={toggleMenu}
-            onGroupClick={() => handleGroupClick(group.teamId)}
+            onGroupClick={e => handleGroupClick(e, group.teamId)}
             onAddMemberClick={() => handleAddMemberClick(group)} // 멤버 추가 클릭 시 호출
             onEditClick={e => handleEditClick(e, group)}
             onGroupLeft={() => handleGroupLeftInternal(group.teamId)}

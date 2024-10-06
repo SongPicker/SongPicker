@@ -12,7 +12,7 @@ interface GroupCardProps {
   teamMemberCount: number;
   openMenuId: number | null;
   onMenuToggle: (e: React.MouseEvent | null, teamId: number) => void;
-  onGroupClick: () => void;
+  onGroupClick: (e: React.MouseEvent) => void;
   onAddMemberClick: (e: React.MouseEvent) => void;
   onEditClick: (e: React.MouseEvent) => void;
   onGroupLeft: (teamId: number) => void;
@@ -34,9 +34,9 @@ const GroupCard = ({
 }: GroupCardProps) => (
   <div
     className="bg-gray-800 rounded-lg p-3 cursor-pointer relative flex flex-col justify-between"
-    onClick={() => {
+    onClick={e => {
       if (!isOpen) {
-        onGroupClick();
+        onGroupClick(e); // 클릭 이벤트 객체를 전달하도록 수정
       }
     }}
   >

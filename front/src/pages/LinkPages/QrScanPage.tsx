@@ -4,7 +4,6 @@ import QrScanner from 'react-qr-scanner';
 import SubTopNavbar from '../../components/molecules/commons/SubTopNavbar';
 import ConnectionModal from '../../components/template/commons/ConnectionModal';
 import { connectGroupService, connectService } from '../../services/connectionService';
-import axios from 'axios';
 
 type QrScanResult = string | { text: string };
 
@@ -29,13 +28,21 @@ const QrScanPage = () => {
       const { serialNumber } = JSON.parse(scanResult);
       let response;
 
+      // 디버깅 로그 추가
+      console.log('groupId:', groupId);
+      console.log('serialNumber:', serialNumber);
+
       if (groupId) {
-        response = await connectGroupService({ serialNumber, groupId });
+        console.log('Sending group connection request with payload:', {
+          serialNumber,
+          teamId: groupId,
+        });
+        response = await connectGroupService({ serialNumber, teamId: groupId });
       } else {
+        console.log('Sending individual connection request with serial number:', serialNumber);
         response = await connectService(serialNumber);
       }
 
-      // 요청한 콘솔 로그만 남김
       console.log('Connection response:', response);
 
       if (response.code === 'CO100') {

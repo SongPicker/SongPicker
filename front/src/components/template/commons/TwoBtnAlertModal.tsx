@@ -21,7 +21,10 @@ const TwoBtnAlertModal = ({ isVisible, onClose, onConfirm, message }: TwoBtnAler
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[999] max-w-[640px] mx-auto">
-      <div className="bg-[#333] p-8 rounded-lg shadow-xl flex flex-col items-center">
+      <div
+        className="bg-[#333] p-8 rounded-lg shadow-xl flex flex-col items-center"
+        style={{ maxWidth: '280px', width: '80%' }}
+      >
         <MdLinkOff className={`text-6xl text-primary mb-6`} />
         <p className="text-xl font-semibold text-center text-white mb-4">{message}</p>
 

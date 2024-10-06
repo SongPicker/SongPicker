@@ -2,16 +2,41 @@ import React from 'react';
 
 interface LinkModeSubtextProps {
   isConnected: boolean;
-  selectedMode: string;
+  mode: string | null;
+  teamName: string | null;
 }
 
-const LinkModeSubtext = ({ isConnected, selectedMode }: LinkModeSubtextProps) => {
-  const getSubtext = () => {
-    if (!isConnected) return '연결하고 더 많은 서비스를 이용해보세요 ';
-    return `${selectedMode} 이용중`;
-  };
+const LinkModeSubtext = ({ isConnected, mode, teamName }: LinkModeSubtextProps) => {
+  if (!isConnected) {
+    return (
+      <>
+        <p>연결모드 이용전</p>
+      </>
+    );
+  }
 
-  return <div>{getSubtext()}</div>;
+  if (mode === 'INDIVIDUAL') {
+    return (
+      <p>
+        <span className="text-[#9747FF] mr-1 font-semibold">개인모드</span>이용중
+      </p>
+    );
+  }
+
+  if (mode === 'TEAM' && teamName) {
+    return (
+      <>
+        <div className="flex">
+          <p>
+            <span className="text-[#9747FF] mr-1 font-semibold">{teamName}</span>
+            그룹 이용중
+          </p>
+        </div>
+      </>
+    );
+  }
+
+  return null; // 기본적으로 렌더링할 내용이 없는 경우
 };
 
 export default LinkModeSubtext;

@@ -25,8 +25,8 @@ const DisconnectButton = ({ onDisconnect }: DisconnectButtonProps) => {
   return (
     <>
       <div className="flex items-center" onClick={handleDisconnectClick}>
-        <MdOutlineLinkOff className="text-red-400" />
-        <div className="text-red-400 text-sm ms-2">연결해제</div>
+        <MdOutlineLinkOff className="text-gray-500" />
+        <div className="text-gray-500 text-sm ms-1 cursor-pointer">연결해제</div>
       </div>
 
       {isModalVisible && (

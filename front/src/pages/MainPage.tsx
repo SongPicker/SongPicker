@@ -7,8 +7,9 @@ import ConnectionModal from '../components/template/commons/ConnectionModal';
 import UserStatisticsBanner from '../components/template/Maintemplate/UserStatisticsBanner';
 import RecomThemeBanner from '../components/template/Maintemplate/RecomThemeBanner';
 import { checkConnectionStatus, disconnectService } from '../services/connectionService';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { fetchNickname } from '../services/memberSevice';
+import TwoBtnAlertModal from '../components/template/commons/TwoBtnAlertModal';
 
 const MainPage = () => {
   const [showNotification, setShowNotification] = useState(false);
@@ -18,9 +19,12 @@ const MainPage = () => {
   const [modalIcon, setModalIcon] = useState<'link' | 'spinner' | 'reservation'>('link');
   const [autoCloseDelay, setAutoCloseDelay] = useState<number | undefined>(undefined);
   const [isConnected, setIsConnected] = useState(false); // 연결 상태 관리
-  const [selectedMode, setSelectedMode] = useState('');
+  const [showDisconnectModal, setShowDisconnectModal] = useState(false);
   const [nickname, setNickname] = useState<string>('');
   const location = useLocation();
+  const [mode, setMode] = useState<string | null>(null);
+  const [teamName, setTeamName] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   // 닉네임 가져오는 api
   useEffect(() => {
@@ -42,17 +46,14 @@ const MainPage = () => {
     try {
       const response = await checkConnectionStatus();
       console.log('Fetched connection status:', response);
-
-      if (response && typeof response.data === 'boolean') {
-        setIsConnected(response.data);
-        // 모드 정보는 QrScanPage에서 전달받은 것을 사용
-      } else {
-        console.error('Unexpected response format:', response);
-        setIsConnected(false);
-      }
+      setIsConnected(response.data.isConnected);
+      setMode(response.data.mode);
+      setTeamName(response.data.teamName);
     } catch (error) {
       console.error('Failed to fetch connection status:', error);
       setIsConnected(false);
+      setMode(null);
+      setTeamName(null);
     }
   }, []);
 
@@ -65,12 +66,15 @@ const MainPage = () => {
   useEffect(() => {
     // QrScanPage에서 전달받은 상태 확인
     if (location.state) {
-      const { isConnected: newIsConnected, mode: newMode } = location.state;
+      const { isConnected: newIsConnected, mode: newMode, teamName: newTeamName } = location.state;
       if (newIsConnected !== undefined) {
         setIsConnected(newIsConnected);
       }
       if (newMode) {
-        setSelectedMode(newMode);
+        setMode(newMode);
+      }
+      if (newTeamName) {
+        setTeamName(newTeamName);
       }
     }
   }, [location]);
@@ -80,13 +84,14 @@ const MainPage = () => {
       const response = await disconnectService();
       if (response.code === 'CO103') {
         setIsConnected(false);
-        setSelectedMode('');
         console.log('연결이 해제되었습니다.');
       } else {
         throw new Error('Disconnect failed');
       }
     } catch (error) {
       console.error('Failed to disconnect:', error);
+    } finally {
+      setShowDisconnectModal(false); // 모달 닫기
     }
   };
 
@@ -143,6 +148,14 @@ const MainPage = () => {
     setShowConnectionModal(false);
   };
 
+  const handleLinkmodeClick = () => {
+    if (isConnected) {
+      setShowDisconnectModal(true); // 연결 중일 때 모달 표시
+    } else {
+      navigate('/member-select'); // 연결이 되어 있지 않을 때만 '/member-select'로 이동
+    }
+  };
+
   return (
     <MainLayout>
       <div className="flex flex-col py-4 w-full">
@@ -150,8 +163,10 @@ const MainPage = () => {
         <div className="px-2 mb-8">
           <KaraokeLinkMode
             isConnected={isConnected}
-            selectedMode={selectedMode}
+            mode={mode}
+            teamName={teamName}
             onDisconnect={handleDisconnect}
+            onLinkmodeClick={handleLinkmodeClick}
           />
         </div>
 
@@ -192,6 +207,15 @@ const MainPage = () => {
         icon={modalIcon}
         autoCloseDelay={autoCloseDelay}
       />
+
+      {showDisconnectModal && (
+        <TwoBtnAlertModal
+          isVisible={showDisconnectModal}
+          onClose={() => setShowDisconnectModal(false)}
+          onConfirm={handleDisconnect}
+          message="기존의 연결을 해제하시겠습니까?"
+        />
+      )}
     </MainLayout>
   );
 };
