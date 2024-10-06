@@ -5,7 +5,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.decomposition import TruncatedSVD
 from django.shortcuts import render
 from django.http import JsonResponse
-from .models import Song, PersonalSingHistory
+from .models import Song, PersonalSingHistory, BaseData, TeamSingHistory
 from django.forms.models import model_to_dict
 from sklearn.neural_network import MLPRegressor
 
@@ -15,42 +15,90 @@ from rest_framework.response import Response
 @api_view(['GET'])
 def individual_recommend_songs_api(request):
     memberId = request.GET.get('memberId')
-
+ 
+    # 해당 멤버의 history 데이터 가져오기
     sing_history = PersonalSingHistory.objects.filter(member_id=memberId)
 
     # 데이터 직렬화
     sing_history_list = [
         {
-            'id': history.id,  # ID 등 필요한 필드 추가
             'song_id': history.song_id,  # 필드명은 모델에 따라 다름
             'sing_at': history.sing_at,  # 필드명은 모델에 따라 다름
         }
         for history in sing_history
     ]
 
-    # if (len(sing_history_list) < 5) {
+    # 최근 5곡을 선택하거나 base_data에서 데이터 가져오기
+    if len(sing_history_list) >= 5:
+        # sing_history에서 최근 5곡 가져오기
+        recent_songs = sorted(sing_history_list, key=lambda x: x['sing_at'], reverse=True)[:5]
+    else:
+        # sing_history 전체 곡과 base_data에서 추가 곡 가져오기
+        base_data = BaseData.objects.filter(member_id=memberId)
+        
+        # base_data 직렬화
+        base_data_list = [
+            {
+                'song_id': data.song_id,
+            }
+            for data in base_data
+        ]
+        
+        # sing_history와 base_data를 합쳐서 총 5곡이 되도록 선정
+        recent_songs = sing_history_list + base_data_list
 
-    # }
+    # song_ids 추출 (노래 ID 리스트)
+    song_ids = [song['song_id'] for song in recent_songs]
 
-    # song_numbers = input_data.get('song_numbers', [])
-    
-    # df, df_encoded, X_scaled = preprocess_data()
-    # if df.isnull().values.any():
-    #     return Response({'error': 'Input contains NaN.'}, status=400)
+    # 데이터 전처리
+    df, df_encoded, X_scaled = preprocess_data()
 
-    # # 이곳에서 추천 알고리즘 호출 (예: 코사인 유사도)
-    # recommended_songs = get_recommendations_cosine(song_numbers, df, df_encoded, X_scaled)
+    recommended_songs = get_recommendations_cosine(song_ids, df, df_encoded, X_scaled)
+        
+    # 추천 곡 리스트 직렬화
+    recommended_songs_list = recommended_songs.to_dict('records')
 
-    # # 추천 곡을 리스트 형태로 변환하여 반환
-    # recommended_songs_list = recommended_songs.to_dict('records')
+    return Response(recommended_songs_list)
 
-    recommended_songs_list = [
-        {'songId': 1, 'number': 1, 'title': 'Song Title 1', 'singer': 'Singer 1', 'coverImage': 'cover1.jpg', 'isLike': False, 'likeId': None},
-        {'songId': 2, 'number': 2, 'title': 'Song Title 2', 'singer': 'Singer 2', 'coverImage': 'cover2.jpg', 'isLike': False, 'likeId': None},
-        {'songId': 3, 'number': 3, 'title': 'Song Title 3', 'singer': 'Singer 3', 'coverImage': 'cover3.jpg', 'isLike': False, 'likeId': None},
-        {'songId': 4, 'number': 4, 'title': 'Song Title 4', 'singer': 'Singer 4', 'coverImage': 'cover4.jpg', 'isLike': False, 'likeId': None},
-        {'songId': 5, 'number': 5, 'title': 'Song Title 5', 'singer': 'Singer 5', 'coverImage': 'cover5.jpg', 'isLike': False, 'likeId': None},
+<<<<<<< data/songs/views.py
+@api_view(['GET'])
+def team_recommend_songs_api(request):
+    teamId = request.GET.get('teamId')
+ 
+    # 해당 멤버의 history 데이터 가져오기
+    sing_history = TeamSingHistory.objects.filter(team_id=teamId)
+
+    # 데이터 직렬화
+    sing_history_list = [
+        {
+            'song_id': history.song_id,  # 필드명은 모델에 따라 다름
+            'sing_at': history.sing_at,  # 필드명은 모델에 따라 다름
+        }
+        for history in sing_history
     ]
+
+    if len(sing_history_list) == 0:
+        return Response(None)
+
+    # 최근 5곡을 선택하거나 base_data에서 데이터 가져오기
+    if len(sing_history_list) >= 5:
+        # sing_history에서 최근 5곡 가져오기
+        recent_songs = sorted(sing_history_list, key=lambda x: x['sing_at'], reverse=True)[:5]
+    else:
+        # sing_history
+        recent_songs = sing_history_list
+
+    # song_ids 추출 (노래 ID 리스트)
+    song_ids = [song['song_id'] for song in recent_songs]
+
+    # 데이터 전처리
+    df, df_encoded, X_scaled = preprocess_data()
+
+    recommended_songs = get_recommendations_cosine(song_ids, df, df_encoded, X_scaled)
+        
+    # 추천 곡 리스트 직렬화
+    recommended_songs_list = recommended_songs.to_dict('records')
+
     return Response(recommended_songs_list)
 
 
@@ -58,10 +106,10 @@ def preprocess_data():
     songs = Song.objects.all().values()
 
     df = pd.DataFrame.from_records(songs)
-    # 예: 평균으로 대체
-    df.fillna(df.mean(), inplace=True)
-    df_encoded.fillna(df_encoded.mean(), inplace=True)
 
+    # 결측값 해결 (비어 있는 값)
+    # 결측값이 포함된 행 삭제
+    df.dropna(inplace=True)
     
     # Tune 순서 정의 (플랫과 샵 포함)
     tune_order = [
@@ -73,10 +121,7 @@ def preprocess_data():
         'A♭ Major', 'A♭ Minor', 'A Major', 'A Minor', 'A# Major', 'A# Minor', 
         'B♭ Major', 'B♭ Minor', 'B Major', 'B Minor'
     ]
-    
-    # Tune을 순서형 데이터로 변환
-    tune_map = {tune: i+1 for i, tune in enumerate(tune_order)}
-    
+
     # 동일음 처리 (예: C# = D♭)
     equivalent_tunes = {
         'C# Major': 'D♭ Major', 'C# Minor': 'D♭ Minor',
@@ -85,16 +130,20 @@ def preprocess_data():
         'G# Major': 'A♭ Major', 'G# Minor': 'A♭ Minor',
         'A# Major': 'B♭ Major', 'A# Minor': 'B♭ Minor'
     }
-    tune_map.update({key: tune_map[value] for key, value in equivalent_tunes.items()})
+
+    # 동일음을 기준으로 tune 컬럼을 업데이트
+    df['tune'] = df['tune'].replace(equivalent_tunes)
     
+    # Tune을 순서형 데이터로 변환
+    tune_map = {tune: i+1 for i, tune in enumerate(tune_order)}
     df['tune_encoded'] = df['tune'].map(tune_map)
     
     # 나머지 특성 처리
-    features = ['bpm', 'energy', 'danceability', 'happiness', 'acousticness', 'tune_encoded']
     df_encoded = pd.get_dummies(df, columns=['genre'])  # 'genre'만 원핫 인코딩
     df_encoded['release_year'] = pd.to_datetime(df_encoded['released_at']).dt.year
     
     # 원핫 인코딩된 'genre' 컬럼과 'release_year' 추가
+    features = ['bpm', 'energy', 'danceability', 'happiness', 'acousticness', 'tune_encoded']
     features += [col for col in df_encoded.columns if col.startswith('genre_')]
     features.append('release_year')
     
@@ -104,16 +153,16 @@ def preprocess_data():
     
     return df, df_encoded, X_scaled
 
-def get_recommendations_cosine(song_numbers, df, df_encoded, X_scaled, n_recommendations=20):
-    indices = [df[df['number'] == song_number].index[0] for song_number in song_numbers]
+def get_recommendations_cosine(song_ids, df, df_encoded, X_scaled, n_recommendations=20):
+    indices = [df[df['id'] == song_id].index[0] for song_id in song_ids]
     avg_features = np.mean(X_scaled[indices], axis=0)
     sim_scores = list(enumerate(cosine_similarity([avg_features], X_scaled)[0]))
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
     sim_scores = [score for score in sim_scores if score[0] not in indices]
     sim_scores = sim_scores[:n_recommendations]
     song_indices = [i[0] for i in sim_scores]
-    recommended_songs = df.iloc[song_indices][['number', 'title', 'singer']]
-    recommended_songs['similarity_score'] = [score[1] for score in sim_scores]
+    recommended_songs = df.iloc[song_indices][['id', 'number', 'title', 'singer']]
+    # recommended_songs['similarity_score'] = [score[1] for score in sim_scores]
     return recommended_songs
 
 
@@ -227,14 +276,3 @@ def recommend_songs_neural_network(request):
         'songs': recommended_songs.to_dict('records'), 
         'method': 'Neural Network'
     })
-
-
-def get_songs_json(request):
-    all_songs = Song.objects.all()
-    songs_data = [model_to_dict(song) for song in all_songs]
-    return JsonResponse({'songs': songs_data}, safe=False)
-
-def recommend_songs_test(request):
-    all_songs_history = PersonalSingHistory.objects.all()
-    all_songs_history_data = [model_to_dict(song) for song in all_songs_history]
-    return JsonResponse({'all_songs_history': all_songs_history_data}, safe=False)

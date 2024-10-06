@@ -1,13 +1,4 @@
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#   * Rearrange models' order
-#   * Make sure each model has one field with primary_key=True
-#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
-# Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
-
-
 class Song(models.Model):
     id = models.BigAutoField(primary_key=True)
     acousticness = models.IntegerField()
@@ -31,15 +22,6 @@ class Song(models.Model):
         managed = False
         db_table = 'song'
 
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#   * Rearrange models' order
-#   * Make sure each model has one field with primary_key=True
-#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
-# Feel free to rename the models, but don't rename db_table values or field names.
-
-
 class PersonalSingHistory(models.Model):
     id = models.BigAutoField(primary_key=True)
     sing_at = models.DateTimeField()
@@ -49,15 +31,6 @@ class PersonalSingHistory(models.Model):
     class Meta:
         managed = False
         db_table = 'personal_sing_history'
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#   * Rearrange models' order
-#   * Make sure each model has one field with primary_key=True
-#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
-# Feel free to rename the models, but don't rename db_table values or field names.
-from django.db import models
-
 
 class Member(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -77,3 +50,33 @@ class Member(models.Model):
     class Meta:
         managed = False
         db_table = 'member'
+
+class BaseData(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    member = models.ForeignKey('Member', models.DO_NOTHING, blank=True, null=True)
+    song = models.ForeignKey('Song', models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'base_data'
+
+class TeamSingHistory(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    sing_at = models.DateTimeField()
+    song = models.ForeignKey('Song', models.DO_NOTHING, blank=True, null=True)
+    team = models.ForeignKey('Team', models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'team_sing_history'
+
+class Team(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    created_at = models.DateTimeField()
+    name = models.CharField(max_length=32)
+    team_image = models.CharField(max_length=256, blank=True, null=True)
+    used_at = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'team'
