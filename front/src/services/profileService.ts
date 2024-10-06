@@ -4,7 +4,7 @@ import axiosInstance from './axiosInstance';
 export const getUserProfile = () => {
   return axiosInstance({
     method: 'GET',
-    url: '/api/members/profile-info',
+    url: '/members/profile-info',
   })
     .then(res => {
       return res.data.data;
@@ -33,7 +33,7 @@ export const getTopGenreList = () => {
 export const getTopSongList = () => {
   return axiosInstance({
     method: 'GET',
-    url: '/api/histories/most-songs',
+    url: '/histories/most-songs',
   })
     .then(res => {
       console.log(res);
@@ -86,7 +86,7 @@ export const getSongList = (selectedYear: number, selectedMonth: number, selecte
 export const getTopSingerList = () => {
   return axiosInstance({
     method: 'GET',
-    url: '/api/histories/most-singers',
+    url: '/histories/most-singers',
   })
     .then(res => {
       return res.data.data;
