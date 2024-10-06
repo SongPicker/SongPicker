@@ -8,6 +8,7 @@ import UserStatisticsBanner from '../components/template/Maintemplate/UserStatis
 import RecomThemeBanner from '../components/template/Maintemplate/RecomThemeBanner';
 import { checkConnectionStatus, disconnectService } from '../services/connectionService';
 import { useLocation } from 'react-router-dom';
+import { fetchNickname } from '../services/memberSevice';
 
 const MainPage = () => {
   const [showNotification, setShowNotification] = useState(false);
@@ -18,7 +19,23 @@ const MainPage = () => {
   const [autoCloseDelay, setAutoCloseDelay] = useState<number | undefined>(undefined);
   const [isConnected, setIsConnected] = useState(false); // 연결 상태 관리
   const [selectedMode, setSelectedMode] = useState('');
+  const [nickname, setNickname] = useState<string>('');
   const location = useLocation();
+
+  // 닉네임 가져오는 api
+  useEffect(() => {
+    const getNickname = async () => {
+      const responseData = await fetchNickname();
+
+      if (responseData.code === 'ME110') {
+        setNickname(responseData.data);
+      } else {
+        console.error('닉네임 조회 실패:', responseData);
+      }
+    };
+
+    getNickname();
+  }, []);
 
   // 연결 상태를 가져오는 함수
   const fetchConnectionStatus = useCallback(async () => {
@@ -141,6 +158,7 @@ const MainPage = () => {
         {/* 사용자 맞춤 추천곡 */}
         <div className="px-2 mb-8">
           <RecomMusicList
+            nickname={nickname}
             isConnected={isConnected}
             onShowNotification={handleShowNotification}
             onShowConnectionModal={handleShowConnectionModal}
@@ -155,7 +173,7 @@ const MainPage = () => {
 
         {/* 사용자 통계 배너 */}
         <div>
-          <UserStatisticsBanner />
+          <UserStatisticsBanner nickname={nickname} />
         </div>
       </div>
 

@@ -17,6 +17,7 @@ type Props = {
   onShowNotification: (title: string, description: string) => void;
   onShowConnectionModal: (message: string) => void;
   isConnected: boolean;
+  nickname: string;
 };
 
 // 추천 곡 인터페이스 정의
@@ -30,7 +31,12 @@ interface RecommendedSong {
   likeId: number | null;
 }
 
-const RecomMusicList = ({ onShowNotification, onShowConnectionModal, isConnected }: Props) => {
+const RecomMusicList = ({
+  onShowNotification,
+  onShowConnectionModal,
+  isConnected,
+  nickname,
+}: Props) => {
   const [currentPage, setCurrentPage] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -299,7 +305,9 @@ const RecomMusicList = ({ onShowNotification, onShowConnectionModal, isConnected
   return (
     <div className="w-full">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="w-full text-xl font-semibold">김해피님의 취향저격 선곡리스트</h3>
+        <h3 className="w-full text-xl font-semibold">
+          <span>{nickname}</span>님의 취향저격 선곡리스트
+        </h3>
         <IoMdRefreshCircle
           className={`size-8 cursor-pointer ${isRefreshing ? 'animate-spin' : ''}`}
           onClick={handleRefresh}
