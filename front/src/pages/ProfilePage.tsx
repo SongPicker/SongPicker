@@ -3,12 +3,12 @@ import MainLayout from '../layouts/MainLayout';
 import useAuthStore from '../stores/useAuthStore'; // useAuthStore 가져오기
 import MyCalendar from '../components/organisms/profile/MyCalendar';
 import { useQuery } from '@tanstack/react-query';
-import { getSingingDay, getUserProfile } from '../services/profileService';
+import { getSingingDay, getTopSongList, getUserProfile } from '../services/profileService';
 import CalendarModal from '../components/organisms/profile/CalendarModal';
 import ProfileCard from '../components/organisms/profile/ProfileCard';
+import TopSongList from '../components/organisms/profile/TopSongList';
 
 const ProfilePage = () => {
-
   // 로그아웃
   const { logout } = useAuthStore(); // useAuthStore에서 logout 함수 가져오기
   const handleLogout = async () => {
@@ -21,22 +21,29 @@ const ProfilePage = () => {
     }
   };
 
-  // 프로필 표시
+  // 프로필 표시 & 많이 부른 노래
   const [userProfile, setUserProfile] = useState({
     nickname: '',
     profileImage: '',
   });
+  const [topSongList, setTopSongList] = useState([]);
+
   useEffect(() => {
-    const fetchUserProfile = async () => {
+    const fetchProfileData = async () => {
       try {
-        const userData = await getUserProfile();
-        setUserProfile(userData);
+        const [userProfileResponse, topSongListResponse] = await Promise.all([
+          getUserProfile(),
+          getTopSongList(),
+        ]);
+
+        setUserProfile(userProfileResponse);
+        setTopSongList(topSongListResponse);
       } catch (error) {
         console.error(error);
       }
     };
 
-    fetchUserProfile();
+    fetchProfileData();
   }, []);
 
   // 노래 부른 날 색칠
@@ -69,13 +76,18 @@ const ProfilePage = () => {
 
   return (
     <MainLayout title="마이페이지">
-      
       {/* 프로필 */}
-      <ProfileCard userProfile={userProfile} handleLogout={handleLogout}/>
+      <ProfileCard userProfile={userProfile} handleLogout={handleLogout} />
 
-      <div className="flex flex-col px-4 items-center">
+      <div className="flex flex-col px-4 items-center gap-6 py-6">
+        {/* 가장 많이 부른 노래 */}
+        <div className="w-full ">
+          <p className="text-lg font-semibold p-2">가장 많이 부른 곡 Top 3</p>
+          <TopSongList topSongList={topSongList} />
+        </div>
+
         {/* 노래방 방문한 날 (캘린더) */}
-        <div className="flex flex-col w-full justify-start">
+        <div className="w-full">
           <p className="text-lg font-semibold p-2">노래방 방문한 날</p>
           <MyCalendar
             singingDayData={singingDayData || []}
@@ -84,6 +96,7 @@ const ProfilePage = () => {
           />
         </div>
 
+        {/* 캘린더 모달 */}
         {openCalendarModal && (
           <CalendarModal
             selectedYear={selectedYear}

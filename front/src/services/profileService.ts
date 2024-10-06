@@ -14,6 +14,21 @@ export const getUserProfile = () => {
     });
 };
 
+// 많이 부른 노래
+export const getTopSongList = () => {
+  return axiosInstance({
+    method: 'GET',
+    url: '/api/histories/most-songs',
+  })
+    .then(res => {
+      console.log(res);
+      return res.data.data;
+    })
+    .catch(err => {
+      console.log(err);
+    });
+};
+
 // 노래 부른 날
 export const getSingingDay = (currentYear: number) => {
   return axiosInstance({
