@@ -3,6 +3,7 @@ package com.fastarm.back.connection.service;
 import com.fastarm.back.common.constants.RedisConstants;
 import com.fastarm.back.common.constants.RedisExpiredTimeConstants;
 import com.fastarm.back.common.service.RedisService;
+import com.fastarm.back.connection.controller.dto.ConnectionStatusGetResponse;
 import com.fastarm.back.connection.entity.ConnectionInfo;
 import com.fastarm.back.connection.enums.Mode;
 import com.fastarm.back.connection.exception.AlreadyExistConnectionException;
@@ -19,7 +20,6 @@ import com.fastarm.back.member.repository.MemberRepository;
 import com.fastarm.back.song.entity.Song;
 import com.fastarm.back.song.exception.NotFoundSongException;
 import com.fastarm.back.song.repository.SongRepository;
-import com.fastarm.back.team.entity.Team;
 import com.fastarm.back.team.entity.TeamMember;
 import com.fastarm.back.team.exception.TeamNotFoundException;
 import com.fastarm.back.team.repository.TeamMemberRepository;
@@ -107,11 +107,22 @@ public class ConnectionServiceImpl implements ConnectionService {
 
     @Transactional(readOnly = true)
     @Override
-    public boolean getConnectionStatus(String loginId) {
+    public ConnectionStatusGetResponse getConnectionStatus(String loginId) {
         Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(MemberNotFoundException::new);
 
-        return connectionInfoRepository.findByMember(member).isPresent();
+        if (connectionInfoRepository.findByMember(member).isEmpty()) {
+            return ConnectionStatusGetResponse.builder()
+                    .isConnected(false)
+                    .build();
+        } else {
+            ConnectionInfo connectionInfo = connectionInfoRepository.findByMember(member).get();
+            ConnectionStatusGetResponse result = ConnectionStatusGetResponse.from(connectionInfo);
+            if (connectionInfo.getMode() == Mode.TEAM) {
+                result.setTeamName(connectionInfo.getTeam().getName());
+            }
+            return result;
+        }
     }
 
     @Transactional

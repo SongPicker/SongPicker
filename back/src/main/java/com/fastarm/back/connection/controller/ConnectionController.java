@@ -3,6 +3,7 @@ package com.fastarm.back.connection.controller;
 import com.fastarm.back.auth.security.dto.LoginMemberInfo;
 import com.fastarm.back.common.controller.dto.ApiResponse;
 import com.fastarm.back.connection.controller.dto.ConnectionRequest;
+import com.fastarm.back.connection.controller.dto.ConnectionStatusGetResponse;
 import com.fastarm.back.connection.controller.dto.TeamConnectionRequest;
 import com.fastarm.back.connection.controller.dto.ReservationRequest;
 import com.fastarm.back.connection.dto.ConnectionDto;
@@ -45,7 +46,7 @@ public class ConnectionController {
 
     @GetMapping
     public ResponseEntity<?> statusGet(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
-        boolean result = connectionService.getConnectionStatus(loginMemberInfo.getLoginId());
+        ConnectionStatusGetResponse result = connectionService.getConnectionStatus(loginMemberInfo.getLoginId());
         return ResponseEntity.ok(new ApiResponse<>("CO102", "서비스 연동 상태 조회 성공", result));
     }
 
