@@ -1,12 +1,17 @@
 import { getToken } from 'firebase/messaging';
 import { messaging } from './firebaseConfig';
+import axiosInstance from './services/axiosInstance';
 
 export const requestNotificationPermission = async () => {
   try {
-    await Notification.requestPermission();
+    const permission = await Notification.requestPermission();
+    if (permission !== 'granted') {
+      console.log('알림 권한이 거부되었습니다.');
+      return;
+    }
+
     const token = await getToken(messaging, { vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY });
     console.log('FCM 토큰:', token);
-    // 토큰을 서버로 전송하여 저장
     await sendTokenToServer(token);
   } catch (error) {
     console.error('알림 권한 요청 실패:', error);
@@ -15,17 +20,12 @@ export const requestNotificationPermission = async () => {
 
 const sendTokenToServer = async (token: string) => {
   try {
-    const response = await fetch('/api/notifications/fcm', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ token }),
-    });
-    if (!response.ok) {
+    const response = await axiosInstance.post('/api/notifications/fcm', { token });
+    if (response.data.code !== 'NO106') {
+      console.log('토큰이 서버로 전송되었습니다.');
+    } else {
       throw new Error('토큰 전송 실패');
     }
-    console.log('토큰이 서버로 전송되었습니다.');
   } catch (error) {
     console.error('토큰 전송 중 오류 발생:', error);
   }

@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import SearchPage from './pages/SearchPage';
 import ThemePage from './pages/ThemePage';
@@ -14,6 +14,9 @@ import FindAccountPage from './pages/FindAccountPage';
 import SongSelectPage from './pages/SongsSelectPage';
 import useAuthStore from './stores/useAuthStore';
 import './App.css';
+import { onMessage } from 'firebase/messaging';
+import { messaging } from './firebaseConfig';
+import { requestNotificationPermission } from './pushNotifications';
 
 interface PrivateRouteProps {
   children: ReactNode;
@@ -51,6 +54,31 @@ const PublicRoute: React.FC<PublicRouteProps> = ({ children }) => {
 const App = () => {
   const isAuthenticated = useAuthStore(state => state.isAuthenticated);
   const isSongSelected = useAuthStore(state => state.isSongSelected);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      requestNotificationPermission();
+    }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    const unsubscribe = onMessage(messaging, payload => {
+      console.log('Received foreground message ', payload);
+      // 포그라운드 알림 표시 로직
+      if (Notification.permission === 'granted' && payload.notification) {
+        const title = payload.notification.title || 'New Notification';
+        const body = payload.notification.body || 'You have a new message';
+        new Notification(title, {
+          body: body,
+          icon: '/songPickerLogo_favicon.png',
+        });
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   return (
     <Router>
