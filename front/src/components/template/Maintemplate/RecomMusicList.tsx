@@ -10,7 +10,6 @@ import {
   registerLike,
   deleteLike,
   SongDetail,
-  getLikedSongs,
 } from '../../../services/songService';
 
 // Props 타입 정의
@@ -65,19 +64,62 @@ const RecomMusicList = ({ onShowNotification, onShowConnectionModal, isConnected
     </div>
   );
 
-  // 추천 곡 목록을 가져오는 함수
-  const fetchRecommendations = useCallback(async () => {
-    try {
-      const response = await getPersonalRecommendations();
-      if (response.code === 'SO102' && Array.isArray(response.data)) {
-        setRecommendedSongs(response.data);
+  // 세션 스토리지에서 추천 곡 목록을 가져오는 함수
+  const getStoredRecommendations = useCallback(() => {
+    const storedData = sessionStorage.getItem('recommendedSongs');
+    if (storedData) {
+      const { songs, timestamp } = JSON.parse(storedData);
+      const now = new Date().getTime();
+      const hoursPassed = (now - timestamp) / (1000 * 60 * 60);
+
+      // 24시간이 지났다면 null을 반환하여 새로운 데이터를 fetch하도록 함
+      if (hoursPassed > 24) {
+        return null;
       }
-    } catch (err) {
-      console.error('일시적으로 노래 정보를 불러올 수 없습니다.');
+      return songs;
     }
+    return null;
   }, []);
 
-  // 좋아요 토글 핸들러 (찜 등록/해제)
+  // 세션 스토리지에 추천 곡 목록을 저장하는 함수
+  const storeRecommendations = useCallback((songs: RecommendedSong[]) => {
+    const data = {
+      songs,
+      timestamp: new Date().getTime(),
+    };
+    sessionStorage.setItem('recommendedSongs', JSON.stringify(data));
+  }, []);
+
+  // 추천 곡 목록을 가져오는 함수
+  const fetchRecommendations = useCallback(
+    async (forceRefresh: boolean = false) => {
+      if (!forceRefresh) {
+        const storedSongs = getStoredRecommendations();
+        if (storedSongs) {
+          setRecommendedSongs(storedSongs);
+          return;
+        }
+      }
+
+      try {
+        const response = await getPersonalRecommendations();
+        if (response.code === 'SO102' && Array.isArray(response.data)) {
+          setRecommendedSongs(response.data);
+          storeRecommendations(response.data);
+        }
+      } catch (err) {
+        console.error('일시적으로 노래 정보를 불러올 수 없습니다.');
+        setError('일시적으로 노래 정보를 불러올 수 없습니다.');
+      }
+    },
+    [getStoredRecommendations, storeRecommendations]
+  );
+
+  // 컴포넌트 마운트 시 추천 곡 목록 가져오기
+  useEffect(() => {
+    fetchRecommendations();
+  }, [fetchRecommendations]);
+
   // 좋아요 토글 핸들러 (찜 등록/해제)
   const handleLikeToggle = useCallback(
     async (song: RecommendedSong) => {
@@ -87,11 +129,11 @@ const RecomMusicList = ({ onShowNotification, onShowConnectionModal, isConnected
           if (song.number) {
             const result = await deleteLike(Number(song.number));
             if (result.code === 'LI101' || result.message === '찜 삭제 성공') {
-              setRecommendedSongs(prevSongs =>
-                prevSongs.map(item =>
-                  item.songId === song.songId ? { ...item, isLike: false, likeId: null } : item
-                )
+              const updatedSongs = recommendedSongs.map(item =>
+                item.songId === song.songId ? { ...item, isLike: false, likeId: null } : item
               );
+              setRecommendedSongs(updatedSongs);
+              storeRecommendations(updatedSongs);
               onShowNotification('찜 해제', `${song.title}이(가) 찜 보관함에서 제거되었습니다.`);
             } else {
               console.warn('Unexpected API response:', result);
@@ -105,13 +147,13 @@ const RecomMusicList = ({ onShowNotification, onShowConnectionModal, isConnected
           // 찜 등록 API 호출
           const result = await registerLike(song.songId);
           if (result.code === 'LI100' || result.message === '찜 등록 성공') {
-            setRecommendedSongs(prevSongs =>
-              prevSongs.map(item =>
-                item.songId === song.songId
-                  ? { ...item, isLike: true, likeId: result.likeId || result.body }
-                  : item
-              )
+            const updatedSongs = recommendedSongs.map(item =>
+              item.songId === song.songId
+                ? { ...item, isLike: true, likeId: result.likeId || result.body }
+                : item
             );
+            setRecommendedSongs(updatedSongs);
+            storeRecommendations(updatedSongs);
             onShowNotification('찜 완료', `${song.title}이(가) 찜 보관함에 추가되었습니다.`);
           } else if (result.code === 'LI000') {
             console.log('Song was already liked');
@@ -133,13 +175,8 @@ const RecomMusicList = ({ onShowNotification, onShowConnectionModal, isConnected
         );
       }
     },
-    [onShowNotification]
+    [onShowNotification, recommendedSongs, storeRecommendations]
   );
-
-  // 컴포넌트 마운트 시 추천 곡 목록 가져오기
-  useEffect(() => {
-    fetchRecommendations();
-  }, [fetchRecommendations]);
 
   // 페이지 변경 시 컨테이너 위치 조정
   useEffect(() => {
@@ -153,8 +190,11 @@ const RecomMusicList = ({ onShowNotification, onShowConnectionModal, isConnected
   // 새로고침 버튼 핸들러
   const handleRefresh = useCallback(() => {
     if (!isRefreshing) {
-      fetchRecommendations();
-      onShowNotification('♪ 추천리스트 갱신 중', '새로운 추천 목록을 불러오고 있어요.');
+      setIsRefreshing(true);
+      fetchRecommendations(true).then(() => {
+        setIsRefreshing(false);
+        onShowNotification('♪ 추천리스트 갱신 완료', '새로운 추천 목록을 불러왔습니다.');
+      });
     }
   }, [fetchRecommendations, onShowNotification, isRefreshing]);
 
