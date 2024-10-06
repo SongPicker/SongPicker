@@ -70,6 +70,16 @@ const CalendarModal = (props: CalendarModalProps) => {
                 imageUrl={item.coverImage}
                 isLiked={item.isLike}
                 id={item.likeId}
+                onLikeToggle={() => {
+                  console.log('좋아요');
+                }}
+                onShowConnectionModal={() => {
+                  console.log('모달');
+                }}
+                onItemClick={() => {
+                  console.log('클릭');
+                }}
+                isConnected={true}
               />
             );
           })}
