@@ -43,11 +43,8 @@ public interface SongRepository extends JpaRepository<Song, Long> , SongReposito
         """)
     List<Long> findSingerByKeyword(@Param("keyword") String keyword);
 
+    List<Song> findByNumberIn(List<Integer> numbers);
 
-
-    @Query("SELECT s FROM Song s ORDER BY RAND() LIMIT 20")
-    List<Song> findRandomSongs();
-    
     Optional<Song> findByNumber(int number);
 
     @Query("""

@@ -65,7 +65,7 @@ public class HistoryController {
     @GetMapping("/date/songs")
     public ResponseEntity<?> dateSongsList(@RequestParam int year, int month, int day,
                                            @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
-        List<DateSongsResponse> result = historyService.findDateSongsList(new DateSongsDto(year, month, day, loginMemberInfo.getLoginId()));
+        DateSongsResponse result = historyService.findDateSongsList(new DateSongsDto(year, month, day, loginMemberInfo.getLoginId()));
         return ResponseEntity.ok(new ApiResponse<>("HI104", "날짜별 부른 곡 조회 성공", result));
     }
 }
