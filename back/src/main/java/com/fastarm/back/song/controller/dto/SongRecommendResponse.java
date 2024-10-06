@@ -10,5 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SongRecommendResponse {
-    private Long songId;
+    private int number;
+    private String title;
+    private String singer;
 }

@@ -8,8 +8,11 @@ import com.fastarm.back.song.dto.SongDetailDto;
 import com.fastarm.back.song.dto.SongDto;
 import com.fastarm.back.song.entity.Song;
 import com.fastarm.back.song.exception.NotFoundSongDetailException;
+import com.fastarm.back.song.exception.NotFoundSongException;
 import com.fastarm.back.song.repository.SongRepository;
 import com.fastarm.back.member.exception.MemberNotFoundException;
+import com.fastarm.back.team.exception.TeamNotFoundException;
+import com.fastarm.back.team.repository.TeamRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
@@ -27,7 +30,7 @@ public class SongService {
     private final SongRepository songRepository;
     private final MemberRepository memberRepository;
     private final RestTemplate restTemplate;
-
+    private final TeamRepository teamRepository;
 
 
     @Transactional
@@ -38,33 +41,54 @@ public class SongService {
         ResponseEntity<List<SongRecommendResponse>> response = restTemplate.exchange(url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<List<SongRecommendResponse>>() {});
 
-        List<Long> songIds = response.getBody().stream()
-                .map(SongRecommendResponse::getSongId)
+        List<Integer> songNumbers = response.getBody().stream()
+                .map(SongRecommendResponse::getNumber)
+                .collect(Collectors.toList());
+
+        List<Song> songs = songRepository.findByNumberIn(songNumbers);
+        if (songs.isEmpty()) {
+            throw new NotFoundSongException();
+        }
+
+        List<Long> songIds = songs.stream()
+                .map(Song::getId)
                 .collect(Collectors.toList());
 
         List<SongDto> songDtoList = songRepository.findSongsWithLikeStatus(songIds, member.getId());
-
         return songDtoList;
-
     }
 
     @Transactional
     public List<SongDto> recommendTeamSong(TeamSongsRecommendRequest dto){
 
         Member member = memberRepository.findByLoginId(dto.getLoginId()).orElseThrow(MemberNotFoundException::new);
+        teamRepository.findById(dto.getTeamId()).orElseThrow(TeamNotFoundException::new);
+
+
         String url = SongConstants.PYTHON_SERVER_URL_TEAM + "?teamId=" + dto.getTeamId();
 
         ResponseEntity<List<SongRecommendResponse>> response = restTemplate.exchange(url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<List<SongRecommendResponse>>() {});
 
-        List<Long> songIds = response.getBody().stream()
-                .map(SongRecommendResponse::getSongId)
+        if (response == null || response.getBody() == null || response.getBody().isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<Integer> songNumbers = response.getBody().stream()
+                .map(SongRecommendResponse::getNumber)
+                .collect(Collectors.toList());
+
+        List<Song> songs = songRepository.findByNumberIn(songNumbers);
+        if (songs.isEmpty()) {
+            throw new NotFoundSongException();
+        }
+
+        List<Long> songIds = songs.stream()
+                .map(Song::getId)
                 .collect(Collectors.toList());
 
         List<SongDto> songDtoList = songRepository.findSongsWithLikeStatus(songIds, member.getId());
-
         return songDtoList;
-
     }
 
     @Transactional(readOnly = true)
