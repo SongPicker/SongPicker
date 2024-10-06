@@ -46,20 +46,6 @@ public class SongController {
     }
 
 
-
-//    @GetMapping("/my/recommendations")
-//    public ResponseEntity<?> mySongsRecommend(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo){
-//        List<SongRecommendDto> songRecommendDtoList = songService.recommendMySong(loginMemberInfo.getLoginId());
-//        return new ResponseEntity<>(new ApiResponse<>("SO102","선곡 추천 성공",songRecommendDtoList), HttpStatus.OK);
-//    }
-//
-//    @GetMapping("/team/recommendations")
-//    public ResponseEntity<?> teamSongsRecommend(@RequestParam Long teamId){
-//        List<SongRecommendDto> songRecommendDtoList = songService.recommendTeamSong(teamId);
-//        return new ResponseEntity<>(new ApiResponse<>("SO102","선곡 추천 성공",songRecommendDtoList), HttpStatus.OK);
-//    }
-
-
     @GetMapping("/search")
     public ResponseEntity<?> songsSearch(@RequestParam String keyword, @AuthenticationPrincipal LoginMemberInfo loginMemberInfo){
         SongSearchResponse songSearchResponse = songService.searchSongs(SongSearchRequest.from(keyword, loginMemberInfo.getLoginId()));
