@@ -66,3 +66,17 @@ export const getSongList = (selectedYear: number, selectedMonth: number, selecte
       return [];
     });
 };
+
+// 가장 많이 부른 가수
+export const getTopSingerList = () => {
+  return axiosInstance({
+    method: 'GET',
+    url: '/api/histories/most-singers',
+  })
+    .then(res => {
+      return res.data.data;
+    })
+    .catch(err => {
+      console.log(err);
+    });
+};

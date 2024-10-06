@@ -3,10 +3,16 @@ import MainLayout from '../layouts/MainLayout';
 import useAuthStore from '../stores/useAuthStore'; // useAuthStore 가져오기
 import MyCalendar from '../components/organisms/profile/MyCalendar';
 import { useQuery } from '@tanstack/react-query';
-import { getSingingDay, getTopSongList, getUserProfile } from '../services/profileService';
+import {
+  getSingingDay,
+  getTopSingerList,
+  getTopSongList,
+  getUserProfile,
+} from '../services/profileService';
 import CalendarModal from '../components/organisms/profile/CalendarModal';
 import ProfileCard from '../components/organisms/profile/ProfileCard';
 import TopSongList from '../components/organisms/profile/TopSongList';
+import TopSingerWordCloud from '../components/organisms/profile/TopSingerWordCloud';
 
 const ProfilePage = () => {
   // 로그아웃
@@ -21,23 +27,24 @@ const ProfilePage = () => {
     }
   };
 
-  // 프로필 표시 & 많이 부른 노래
+  // 프로필 표시 & 많이 부른 노래 & 많이 부른 가수
   const [userProfile, setUserProfile] = useState({
     nickname: '',
     profileImage: '',
   });
   const [topSongList, setTopSongList] = useState([]);
+  const [topSingerList, setTopSingerList] = useState([]);
 
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const [userProfileResponse, topSongListResponse] = await Promise.all([
-          getUserProfile(),
-          getTopSongList(),
-        ]);
+        const [userProfileResponse, topSongListResponse, topSingerListResponse] = await Promise.all(
+          [getUserProfile(), getTopSongList(), getTopSingerList()]
+        );
 
         setUserProfile(userProfileResponse);
         setTopSongList(topSongListResponse);
+        setTopSingerList(topSingerListResponse);
       } catch (error) {
         console.error(error);
       }
@@ -105,6 +112,12 @@ const ProfilePage = () => {
             handleModal={handleModal}
           />
         )}
+
+        {/* 내가 선호하는 아티스트 */}
+        <div className="w-full">
+          <p className="text-lg font-semibold p-2">선호하는 아티스트</p>
+          <TopSingerWordCloud topSingerList={topSingerList} />
+        </div>
       </div>
     </MainLayout>
   );
