@@ -18,7 +18,7 @@ import './firebaseConfig';
 // 서비스 워커 등록
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker
-    .register('/firebase-messaging-sw.js')
+    .register('/firebase-messaging-sw.js', { scope: '/' })
     .then(registration => {
       console.log('Service Worker registered with scope:', registration.scope);
     })

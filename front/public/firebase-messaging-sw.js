@@ -26,3 +26,23 @@ messaging.onBackgroundMessage(payload => {
 
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
+
+// 새로 추가된 'push' 이벤트 리스너
+self.addEventListener('push', function (event) {
+  if (event.data) {
+    const payload = event.data.json();
+    const title = payload.notification.title;
+    const options = {
+      body: payload.notification.body,
+      icon: payload.notification.icon || '/songPickerLogo_favicon.png',
+      data: payload.data,
+    };
+    event.waitUntil(self.registration.showNotification(title, options));
+  }
+});
+
+// 새로 추가된 'notificationclick' 이벤트 리스너
+self.addEventListener('notificationclick', function (event) {
+  event.notification.close();
+  event.waitUntil(clients.openWindow('/'));
+});

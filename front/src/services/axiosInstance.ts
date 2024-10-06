@@ -69,7 +69,7 @@ const refreshAccessToken = async (): Promise<string> => {
         return formattedToken;
       }
     }
-    throw new Error('Failed to refresh token');
+    throw new Error('Failed to refresh token ');
   } catch (error) {
     useAuthStore.getState().setAccessToken('');
     throw error;
