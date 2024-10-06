@@ -117,7 +117,16 @@ public class TeamService {
             String fcmToken = (String) redisService.getHashData(RedisConstants.TOKEN+member.getLoginId(), RedisFieldConstants.FCM);
             if(fcmToken != null){
                 String message = team.getName() + "팀에 초대되었습니다.";
-                notificationService.sendNotification(fcmToken, "팀 초대", message);
+                log.info("Sending notification to user with FCM token: {}", fcmToken);  // FCM 토큰 로그
+                try {
+                    notificationService.sendNotification(fcmToken, "팀 초대", message);
+                } catch (ExecutionException e) {
+                    log.error("ExecutionException occurred while sending notification: {}", e.getMessage());
+                    e.printStackTrace(); // 에러의 스택 추적 추가
+                } catch (InterruptedException e) {
+                    log.error("InterruptedException occurred while sending notification: {}", e.getMessage());
+                    e.printStackTrace(); // 에러의 스택 추적 추가
+                }
             }else{
                 log.warn("사용자 {}의 FCM 토큰이 없습니다.", receiverNickName);
             }

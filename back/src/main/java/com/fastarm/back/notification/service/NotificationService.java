@@ -152,7 +152,7 @@ public class NotificationService {
 
     @Transactional
     public void sendNotification(String targetToken, String title, String body) throws ExecutionException, InterruptedException {
-
+        log.info("Preparing to send notification. Title: {}, Body: {}, Target Token: {}", title, body, targetToken);  // 메세지 로그
         Message message = Message.builder()
                 .setToken(targetToken)
                 .setNotification(builder()
@@ -160,8 +160,16 @@ public class NotificationService {
                         .setBody(body)
                         .build())
                 .build();
+        try {
             String response = FirebaseMessaging.getInstance().sendAsync(message).get();
             log.info("Successfully sent message: {}", response);
+        } catch (ExecutionException e) {
+            log.error("Failed to send message: {}", e.getMessage());
+            throw e; // 에러를 다시 던져서 호출자에게 알려줍니다.
+        } catch (InterruptedException e) {
+            log.error("Notification sending was interrupted: {}", e.getMessage());
+            throw e; // 에러를 다시 던져서 호출자에게 알려줍니다.
+        }
     }
 
     @Transactional
