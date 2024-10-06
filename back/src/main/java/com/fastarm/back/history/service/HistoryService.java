@@ -152,9 +152,7 @@ public class HistoryService {
 
         List<DateSongsListDto> result = map.values().stream().toList();
 
-        DateSongsResponse response = DateSongsResponse.from(songs.size(), result);
-
-        return response;
+        return DateSongsResponse.from(songs.size(), result);
     }
 
 }
