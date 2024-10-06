@@ -1,11 +1,14 @@
 package com.fastarm.back.notification.controller.dto;
 
 import com.fastarm.back.notification.dto.FCMTokenDto;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
+import org.checkerframework.checker.units.qual.A;
 
 @Getter
 @Builder
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class FCMTokenRequest {
     private String token;
 
