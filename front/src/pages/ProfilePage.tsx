@@ -5,6 +5,7 @@ import MyCalendar from '../components/organisms/profile/MyCalendar';
 import { useQuery } from '@tanstack/react-query';
 import {
   getSingingDay,
+  getTopGenreList,
   getTopSingerList,
   getTopSongList,
   getUserProfile,
@@ -13,6 +14,7 @@ import CalendarModal from '../components/organisms/profile/CalendarModal';
 import ProfileCard from '../components/organisms/profile/ProfileCard';
 import TopSongList from '../components/organisms/profile/TopSongList';
 import TopSingerWordCloud from '../components/organisms/profile/TopSingerWordCloud';
+import TopGenreItem from '../components/atoms/profile/TopGenreItem';
 
 const ProfilePage = () => {
   // 로그아웃
@@ -34,17 +36,23 @@ const ProfilePage = () => {
   });
   const [topSongList, setTopSongList] = useState([]);
   const [topSingerList, setTopSingerList] = useState([]);
+  const [topGenreList, setTopGenreList] = useState([]);
 
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const [userProfileResponse, topSongListResponse, topSingerListResponse] = await Promise.all(
-          [getUserProfile(), getTopSongList(), getTopSingerList()]
-        );
+        const [userProfileResponse, topSongListResponse, topSingerListResponse, topGenreResponse] =
+          await Promise.all([
+            getUserProfile(),
+            getTopSongList(),
+            getTopSingerList(),
+            getTopGenreList(),
+          ]);
 
         setUserProfile(userProfileResponse);
         setTopSongList(topSongListResponse);
         setTopSingerList(topSingerListResponse);
+        setTopGenreList(topGenreResponse);
       } catch (error) {
         console.error(error);
       }
@@ -87,6 +95,19 @@ const ProfilePage = () => {
       <ProfileCard userProfile={userProfile} handleLogout={handleLogout} />
 
       <div className="flex flex-col px-4 items-center gap-6 py-6">
+        {/* 기본 분석 */}
+        <div className="w-full">
+          <p className="text-lg font-semibold p-2">{userProfile.nickname}님에 대한 분석</p>
+          <div className="flex flex-col gap-2">
+            <p className="text-md px-2">이번 달 SongPicker 사용 일수 : 10일</p>
+            <p className="text-md px-2">가장 많이 부른 노래 장르 Top 3</p>
+            <div className="flex gap-2">
+              {topGenreList.map((item, i) => {
+                return <TopGenreItem name={item} key={`${item}-${i}`} />;
+              })}
+            </div>
+          </div>
+        </div>
         {/* 가장 많이 부른 노래 */}
         <div className="w-full ">
           <p className="text-lg font-semibold p-2">가장 많이 부른 곡 Top 3</p>
@@ -95,7 +116,7 @@ const ProfilePage = () => {
 
         {/* 노래방 방문한 날 (캘린더) */}
         <div className="w-full">
-          <p className="text-lg font-semibold p-2">노래방 방문한 날</p>
+          <p className="text-lg font-semibold p-2">SongPicker 사용한 날</p>
           <MyCalendar
             singingDayData={singingDayData || []}
             handleSelectedDate={handleSelectedDate}

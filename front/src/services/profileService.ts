@@ -14,6 +14,21 @@ export const getUserProfile = () => {
     });
 };
 
+// 많이 부른 장르
+export const getTopGenreList = () => {
+  return axiosInstance({
+    method: 'GET',
+    url: '/api/histories/most-genre',
+  })
+    .then(res => {
+      console.log(res);
+      return res.data.data;
+    })
+    .catch(err => {
+      console.log(err);
+    });
+};
+
 // 많이 부른 노래
 export const getTopSongList = () => {
   return axiosInstance({
