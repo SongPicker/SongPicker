@@ -49,7 +49,7 @@ public class SongService {
     }
 
     @Transactional
-    public void recommendMySongTest(String loginId) {
+    public List<Object> recommendMySongTest(String loginId) {
         Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(MemberNotFoundException::new);
 
@@ -63,12 +63,16 @@ public class SongService {
 
         ResponseEntity<List> responseEntity = restTemplate.getForEntity(djangoApiUrl, List.class);
 
-        if (responseEntity.getStatusCode().is2xxSuccessful()) {
-            List songs = responseEntity.getBody();
-            System.out.println("응답 받은 노래 리스트: " + songs);
-        } else {
-            System.out.println("API 호출 실패: " + responseEntity.getStatusCode());
-        }
+        List<Object> songs = responseEntity.getBody();
+        System.out.println("응답 받은 노래 리스트: " + songs);
+        return songs;
+//        if (responseEntity.getStatusCode().is2xxSuccessful()) {
+//            List<Object> songs = responseEntity.getBody();
+//            System.out.println("응답 받은 노래 리스트: " + songs);
+//            return songs;
+//        } else {
+//            System.out.println("API 호출 실패: " + responseEntity.getStatusCode());
+//        }
     }
 
     @Transactional
