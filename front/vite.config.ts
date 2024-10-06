@@ -46,6 +46,9 @@ export default defineConfig(({ command }) => ({
   publicDir: 'public',
 
   server: {
+    headers: {
+      'Service-Worker-Allowed': '/',
+    },
     proxy: {
       '/api': {
         target: 'https://songpicker.kro.kr',
@@ -70,9 +73,16 @@ export default defineConfig(({ command }) => ({
   build: {
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
+      input: {
+        'main': path.resolve(__dirname, 'index.html'),
+        'firebase-messaging-sw': path.resolve(__dirname, 'public/firebase-messaging-sw.js'),
+      },
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
+            if (id.includes('firebase')) {
+              return 'firebase';
+            }
             return 'vendor';
           }
         },

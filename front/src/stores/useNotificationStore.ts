@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { create } from 'zustand';
 import { alarmService } from '../services/alarmService';
 
 interface Notification {
