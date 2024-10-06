@@ -2,6 +2,7 @@ package com.fastarm.back.history.service;
 
 import com.fastarm.back.history.controller.dto.*;
 import com.fastarm.back.history.dto.DateSongsDto;
+import com.fastarm.back.history.dto.DateSongsListDto;
 import com.fastarm.back.history.dto.SingDateDto;
 import com.fastarm.back.history.dto.TeamRecentSongsDto;
 import com.fastarm.back.history.repository.PersonalSingHistoryRepository;
@@ -127,7 +128,7 @@ public class HistoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<DateSongsResponse> findDateSongsList(DateSongsDto dateSongsDto) {
+    public DateSongsResponse findDateSongsList(DateSongsDto dateSongsDto) {
         Member member = memberRepository.findByLoginId(dateSongsDto.getLoginId())
                 .orElseThrow(MemberNotFoundException::new);
 
@@ -138,10 +139,10 @@ public class HistoryService {
 
         List<Likes> likes = likesRepository.findByMemberAndSongIn(member, songs);
 
-        Map<Long, DateSongsResponse> map = new LinkedHashMap<>();
+        Map<Long, DateSongsListDto> map = new LinkedHashMap<>();
 
         for (Song data : songs) {
-            map.put(data.getId(), DateSongsResponse.from(data));
+            map.put(data.getId(), DateSongsListDto.from(data));
         }
 
         for (Likes like : likes) {
@@ -149,7 +150,11 @@ public class HistoryService {
             map.get(like.getSong().getId()).setLikeId(like.getId());
         }
 
-        return map.values().stream().toList();
+        List<DateSongsListDto> result = map.values().stream().toList();
+
+        DateSongsResponse response = DateSongsResponse.from(songs.size(), result);
+
+        return response;
     }
 
 }
