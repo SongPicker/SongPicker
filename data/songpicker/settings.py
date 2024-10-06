@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-8)_wr^35u+&sgg5ey%m*u^*zfb0fa4qks8-7z^*bf3)uknu%pf
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['songpicker.kro.kr']
+ALLOWED_HOSTS = ['songpicker.kro.kr', '127.0.0.1']
 
 
 # Application definition

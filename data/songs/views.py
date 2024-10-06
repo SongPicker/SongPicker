@@ -60,7 +60,6 @@ def individual_recommend_songs_api(request):
 
     return Response(recommended_songs_list)
 
-<<<<<<< data/songs/views.py
 @api_view(['GET'])
 def team_recommend_songs_api(request):
     teamId = request.GET.get('teamId')
