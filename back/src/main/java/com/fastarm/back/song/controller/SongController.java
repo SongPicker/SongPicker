@@ -37,11 +37,6 @@ public class SongController {
         return ResponseEntity.ok(new ApiResponse<>("SO102","선곡 추천 성공",songRecommendDtos));
     }
 
-    @GetMapping("/my/recommendations/test")
-    public ResponseEntity<?> mySongsRecommendTest(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo){
-        List<Object> results = songService.recommendMySongTest(loginMemberInfo.getLoginId());
-        return ResponseEntity.ok(new ApiResponse<>("SO102","선곡 추천 성공",results));
-    }
 
     @GetMapping("/team/recommendations")
     public ResponseEntity<?> teamSongsRecommend(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo,
