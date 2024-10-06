@@ -11,6 +11,7 @@ import com.fastarm.back.history.repository.PersonalSingHistoryRepository;
 import com.fastarm.back.history.repository.TeamSingHistoryRepository;
 import com.fastarm.back.karaoke.constants.KaraokeConstants;
 import com.fastarm.back.karaoke.controller.dto.ConnectionFindResponse;
+import com.fastarm.back.karaoke.controller.dto.RecommendationResponse;
 import com.fastarm.back.karaoke.dto.ChargeDto;
 import com.fastarm.back.karaoke.dto.SongStartDto;
 import com.fastarm.back.karaoke.entity.Machine;
@@ -26,11 +27,15 @@ import com.fastarm.back.song.repository.SongRepository;
 import com.fastarm.back.team.entity.Team;
 import com.fastarm.back.team.exception.TeamNotFoundException;
 import com.fastarm.back.team.repository.TeamRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -47,6 +52,9 @@ public class KaraokeService {
     private final PersonalSingHistoryRepository personalSingHistoryRepository;
     private final TeamSingHistoryRepository teamSingHistoryRepository;
     private final RedisService redisService;
+    private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper;
+
 
     @Transactional
     public void charge(ChargeDto chargeDto) {
@@ -144,6 +152,32 @@ public class KaraokeService {
             }
         }
         return result;
+    }
+
+    @Transactional(readOnly = true)
+    public List<RecommendationResponse> findIndividualRecommendations(String loginId) {
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(MemberNotFoundException::new);
+
+        String url = KaraokeConstants.PYTHON_SERVER_URL_INDIVIDUAL + "?memberId=" + member.getId();
+
+        ResponseEntity<List<RecommendationResponse>> response = restTemplate.exchange(url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<List<RecommendationResponse>>() {});
+
+        return response.getBody();
+    }
+
+    @Transactional(readOnly = true)
+    public List<RecommendationResponse> findTeamRecommendations(Long teamId) {
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(TeamNotFoundException::new);
+
+        String url = KaraokeConstants.PYTHON_SERVER_URL_TEAM + "?teamId=" + team.getId();
+
+        ResponseEntity<List<RecommendationResponse>> response = restTemplate.exchange(url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<List<RecommendationResponse>>() {});
+
+        return response.getBody();
     }
 
 }
