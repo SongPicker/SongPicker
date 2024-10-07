@@ -16,6 +16,7 @@ import useAuthStore from './stores/useAuthStore';
 import './App.css';
 import { onMessage } from 'firebase/messaging';
 import { messaging } from './firebaseConfig';
+// import { requestNotificationPermission } from './pushNotifications';
 
 interface PrivateRouteProps {
   children: ReactNode;
@@ -57,8 +58,15 @@ const App = () => {
   useEffect(() => {
     const unsubscribe = onMessage(messaging, payload => {
       console.log('Received foreground message ', payload);
-      // 포그라운드에서는 알림을 표시하지 않고 다른 처리만 수행
-      // 예: 상태 업데이트, 소리 재생 등
+      // 포그라운드 알림 표시 로직
+      if (Notification.permission === 'granted' && payload.notification) {
+        const title = payload.notification.title || 'New Notification';
+        const body = payload.notification.body || 'You have a new message';
+        new Notification(title, {
+          body: body,
+          icon: '/icons/favicon-196x196.png',
+        });
+      }
     });
 
     return () => {
