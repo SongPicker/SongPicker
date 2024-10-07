@@ -1,5 +1,5 @@
 import React from 'react';
-import ThemeTab from '../../atoms/genre/themeTab';
+import ThemeTab from '../../atoms/genre/ThemeTab';
 import ThemeSongList from '../../organisms/genre/ThemeSongList';
 
 type Props = {};

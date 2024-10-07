@@ -6,10 +6,28 @@ interface MusicDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
   songDetail: SongDetail;
+  isLoading: boolean;
   height?: string;
 }
 
-const MusicDetailModal = ({ isOpen, onClose, songDetail, height }: MusicDetailModalProps) => {
+const MusicDetailModal = ({
+  isOpen,
+  onClose,
+  songDetail,
+  isLoading,
+  height,
+}: MusicDetailModalProps) => {
+  console.log('MusicDetailModal rendered:', { isOpen, songDetail, isLoading });
+  if (isLoading) {
+    return (
+      <BottomSlideModal isOpen={isOpen} onClose={onClose} height={height} title={songDetail.title}>
+        <div className="flex justify-center items-center h-full">
+          <p>로딩 중...</p>
+        </div>
+      </BottomSlideModal>
+    );
+  }
+
   const formatDate = (dateString: string | number | Date) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
