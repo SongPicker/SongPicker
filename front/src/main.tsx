@@ -15,6 +15,7 @@ const queryClient = new QueryClient({
 // Firebase 설정 및 서비스 워커 등록
 import './firebaseConfig';
 
+// 배포환경에서 되는거 보면 지우기!!
 // 서비스 워커 등록
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker

@@ -18,14 +18,49 @@ export default defineConfig(({ command }) => ({
         short_name: 'songPicker',
         icons: [
           {
-            src: '/src/assets/songPickerLogo.svg',
-            sizes: '192x192',
-            type: 'image/svg+xml',
+            src: '/icons/apple-touch-icon-57x57.png',
+            sizes: '57x57',
+            type: 'image/png',
           },
           {
-            src: '/src/assets/songPickerLogo.svg',
-            sizes: '512x512',
-            type: 'image/svg+xml',
+            src: '/icons/apple-touch-icon-60x60.png',
+            sizes: '60x60',
+            type: 'image/png',
+          },
+          {
+            src: '/icons/apple-touch-icon-72x72.png',
+            sizes: '72x72',
+            type: 'image/png',
+          },
+          {
+            src: '/icons/apple-touch-icon-76x76.png',
+            sizes: '76x76',
+            type: 'image/png',
+          },
+          {
+            src: '/icons/apple-touch-icon-114x114.png',
+            sizes: '114x114',
+            type: 'image/png',
+          },
+          {
+            src: '/icons/apple-touch-icon-120x120.png',
+            sizes: '120x120',
+            type: 'image/png',
+          },
+          {
+            src: '/icons/apple-touch-icon-144x144.png',
+            sizes: '144x144',
+            type: 'image/png',
+          },
+          {
+            src: '/icons/apple-touch-icon-152x152.png',
+            sizes: '152x152',
+            type: 'image/png',
+          },
+          {
+            src: '/icons/favicon-196x196.png',
+            sizes: '196x196',
+            type: 'image/png',
           },
         ],
         theme_color: '#9747FF',
@@ -33,8 +68,12 @@ export default defineConfig(({ command }) => ({
         display: 'standalone',
         start_url: '/',
       },
+      injectRegister: null,
+      registerType: 'autoUpdate',
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        // Firebase 메시징 서비스 워커와의 충돌 방지
+        navigateFallback: null,
       },
     }),
   ],

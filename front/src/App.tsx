@@ -16,7 +16,7 @@ import useAuthStore from './stores/useAuthStore';
 import './App.css';
 import { onMessage } from 'firebase/messaging';
 import { messaging } from './firebaseConfig';
-import { requestNotificationPermission } from './pushNotifications';
+// import { requestNotificationPermission } from './pushNotifications';
 
 interface PrivateRouteProps {
   children: ReactNode;
@@ -56,12 +56,6 @@ const App = () => {
   const isSongSelected = useAuthStore(state => state.isSongSelected);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      requestNotificationPermission();
-    }
-  }, [isAuthenticated]);
-
-  useEffect(() => {
     const unsubscribe = onMessage(messaging, payload => {
       console.log('Received foreground message ', payload);
       // 포그라운드 알림 표시 로직
@@ -70,7 +64,7 @@ const App = () => {
         const body = payload.notification.body || 'You have a new message';
         new Notification(title, {
           body: body,
-          icon: '/songPickerLogo_favicon.png',
+          icon: '/icons/favicon-196x196.png',
         });
       }
     });

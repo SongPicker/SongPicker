@@ -17,6 +17,7 @@ type Song = {
   singer: string;
   coverImage: string;
   isLike: boolean;
+  songId: string;
   // onLikeToggle: () => void;
   // onShowConnectionModal: (message: string) => void;
   // onItemClick: (music: { id: string; title: string; artist: string; imageUrl: string }) => void;
@@ -24,16 +25,18 @@ type Song = {
 };
 
 const CalendarModal = (props: CalendarModalProps) => {
-  const [selectedSongList, setSelectedSongList] = useState<Song[]>([]);
+  const [selectedSongList, setSelectedSongList] = useState<Song[]>([]); // 부른 노래 목록
+  const [selectedCount, setSelectedCount] = useState(0); // 부른 노래 곡 수
   useEffect(() => {
     const fetchSongList = async () => {
       try {
-        const songList = await getSongList(
+        const songDayList = await getSongList(
           props.selectedYear,
           props.selectedMonth,
           props.selectedDate
         );
-        setSelectedSongList(songList);
+        setSelectedSongList(songDayList.dateSongsListDto);
+        setSelectedCount(songDayList.count);
       } catch (err) {
         console.error(err);
       }
@@ -43,12 +46,12 @@ const CalendarModal = (props: CalendarModalProps) => {
   }, [props.selectedYear, props.selectedMonth, props.selectedDate]);
 
   return (
-    <div className="modal modal-open">
+    <div className={`modal ${selectedCount > 0 ? 'modal-open' : ''}`}>
       <div className="modal-box modal-scroll h-5/6 space-y-5 bg-gradient-to-b from-[#9747ff] to-[#565ed2] text-white">
         <div className="p-1 flex w-full justify-between items-center">
           <p className="font-bold text-lg">
-            {props.selectedYear}년 {props.selectedMonth}월 {props.selectedDate}일에는 n곡을
-            불렀어요!
+            {props.selectedYear}년 {props.selectedMonth}월 {props.selectedDate}일에는{' '}
+            {selectedCount}곡을 불렀어요!
           </p>
           <div
             className="flex border-none cursor-pointer"
@@ -64,12 +67,13 @@ const CalendarModal = (props: CalendarModalProps) => {
           {selectedSongList.map((item, i) => {
             return (
               <MusicItem
+                key={`thatDaySong-${item.songId}`}
                 number={item.number}
                 title={item.title}
                 artist={item.singer}
                 imageUrl={item.coverImage}
                 isLiked={item.isLike}
-                id={item.likeId}
+                id={item.songId}
                 onLikeToggle={() => {
                   console.log('좋아요');
                 }}

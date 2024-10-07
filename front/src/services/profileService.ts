@@ -4,7 +4,7 @@ import axiosInstance from './axiosInstance';
 export const getUserProfile = () => {
   return axiosInstance({
     method: 'GET',
-    url: '/members/profile-info',
+    url: '/api/members/profile-info',
   })
     .then(res => {
       return res.data.data;
@@ -21,7 +21,6 @@ export const getTopGenreList = () => {
     url: '/api/histories/most-genre',
   })
     .then(res => {
-      console.log(res);
       return res.data.data;
     })
     .catch(err => {
@@ -33,10 +32,9 @@ export const getTopGenreList = () => {
 export const getTopSongList = () => {
   return axiosInstance({
     method: 'GET',
-    url: '/histories/most-songs',
+    url: '/api/histories/most-songs',
   })
     .then(res => {
-      console.log(res);
       return res.data.data;
     })
     .catch(err => {
@@ -48,13 +46,12 @@ export const getTopSongList = () => {
 export const getSingingDay = (currentYear: number) => {
   return axiosInstance({
     method: 'GET',
-    url: '/histories/date',
+    url: '/api/histories/date',
     params: {
       year: currentYear,
     },
   })
     .then(res => {
-      console.log(res.data.data);
       return res.data.data.singAt;
     })
     .catch(err => {
@@ -66,7 +63,7 @@ export const getSingingDay = (currentYear: number) => {
 export const getSongList = (selectedYear: number, selectedMonth: number, selectedDay: number) => {
   return axiosInstance({
     method: 'GET',
-    url: '/histories/date/songs',
+    url: '/api/histories/date/songs',
     params: {
       year: selectedYear,
       month: selectedMonth,
@@ -86,7 +83,7 @@ export const getSongList = (selectedYear: number, selectedMonth: number, selecte
 export const getTopSingerList = () => {
   return axiosInstance({
     method: 'GET',
-    url: '/histories/most-singers',
+    url: '/api/histories/most-singers',
   })
     .then(res => {
       return res.data.data;
