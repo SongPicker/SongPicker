@@ -28,6 +28,13 @@ const MusicDetailModal = ({
     );
   }
 
+  const formatDate = (dateString: string | number | Date) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    return `${year}년 ${month}월`;
+  };
+
   return (
     <BottomSlideModal isOpen={isOpen} onClose={onClose} height={height} title={songDetail.title}>
       <div className="px-2 py-3">
@@ -57,7 +64,7 @@ const MusicDetailModal = ({
             {/* 곡번호 */}
             <div className="flex">
               <p className="w-[80px] font-semibold">발매</p>
-              <p className="font-medium">{songDetail.releasedAt}</p>
+              <p className="font-medium">{formatDate(songDetail.releasedAt)}</p>
             </div>
           </div>
         </div>
