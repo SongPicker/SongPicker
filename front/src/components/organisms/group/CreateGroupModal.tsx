@@ -34,7 +34,8 @@ const CreateGroupModal = ({ isOpen, onClose, onGroupCreated }: CreateGroupModalP
       formData.append('teamName', groupName);
 
       if (groupImage) {
-        formData.append('teamImage', groupImage);
+        const blob = new Blob([groupImage], { type: groupImage.type });
+        formData.append('teamImage', blob, groupImage.name);
       } else {
         // 이미지가 없을 경우 빈 파일을 추가
         const emptyBlob = new Blob([''], { type: 'application/octet-stream' });
