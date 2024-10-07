@@ -39,7 +39,7 @@ public class HistoryService {
                 .orElseThrow(MemberNotFoundException::new);
         List<MostSongsListDto> list = personalSingHistoryRepository.personalMostSongsInfo(member);
         int count = 0;
-        for (int i=0; i<3; i++) {
+        for (int i=0; i<list.size(); i++) {
             count += list.get(i).getCount();
         }
         return MostSongsResponse.from(count, list);
