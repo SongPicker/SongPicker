@@ -9,6 +9,7 @@ import com.fastarm.back.song.controller.dto.TeamSongsRecommendRequest;
 import com.fastarm.back.song.dto.SongDetailDto;
 import com.fastarm.back.song.dto.SongDto;
 
+import com.fastarm.back.song.dto.ThemeDto;
 import com.fastarm.back.song.service.SongService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -53,4 +54,9 @@ public class SongController {
     }
 
 
+    @GetMapping("/theme-total")
+    public ResponseEntity<?> themeTotalList(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
+        List<ThemeDto> result = songService.getThemeTotalList(loginMemberInfo.getLoginId());
+        return ResponseEntity.ok(new ApiResponse<>("SO104", "전체 테마 노래 추천 성공", result));
+    }
 }
