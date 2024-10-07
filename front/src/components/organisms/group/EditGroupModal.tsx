@@ -45,7 +45,8 @@ const EditGroupModal = ({ isOpen, onClose, group, onGroupEdited }: EditGroupModa
 
       // 이미지 처리
       if (groupImage) {
-        formData.append('teamImage', groupImage);
+        const blob = new Blob([groupImage], { type: groupImage.type });
+        formData.append('teamImage', blob, groupImage.name);
       } else {
         // 이미지를 변경하지 않았을 때 빈 File 객체를 보냅니다.
         const emptyFile = new File([], 'empty.jpg', { type: 'image/jpeg' });
