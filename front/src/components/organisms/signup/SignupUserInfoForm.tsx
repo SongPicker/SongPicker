@@ -97,6 +97,7 @@ const SignupUserInfoForm = ({ onValidChange, onSubmit }: UserInfoSignupFormProps
         onResetAuthCode={handleResetAuthCode}
         onChange={setPhone}
         onValidation={setIsPhoneValid}
+        purpose="SIGNUP"
       />
       {showAuthCode && (
         <UserInfoAuthCodeSignupForm
