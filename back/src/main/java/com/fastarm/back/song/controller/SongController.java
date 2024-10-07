@@ -2,14 +2,10 @@ package com.fastarm.back.song.controller;
 
 import com.fastarm.back.auth.security.dto.LoginMemberInfo;
 import com.fastarm.back.common.controller.dto.ApiResponse;
-import com.fastarm.back.song.controller.dto.SongDetailRequest;
-import com.fastarm.back.song.controller.dto.SongSearchRequest;
-import com.fastarm.back.song.controller.dto.SongSearchResponse;
-import com.fastarm.back.song.controller.dto.TeamSongsRecommendRequest;
+import com.fastarm.back.song.controller.dto.*;
 import com.fastarm.back.song.dto.SongDetailDto;
 import com.fastarm.back.song.dto.SongDto;
 
-import com.fastarm.back.song.dto.ThemeDto;
 import com.fastarm.back.song.service.SongService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -53,10 +49,22 @@ public class SongController {
         return ResponseEntity.ok(new ApiResponse<>("SO101","노래 검색 성공",songSearchResponse));
     }
 
+    @GetMapping("/themes-total")
+    public ResponseEntity<?> themeTotalList() {
+        List<String> result = songService.findThemeTotalList();
+        return ResponseEntity.ok(new ApiResponse<>("SO104", "테마 리스트 전체 조회 성공", result));
+    }
 
-    @GetMapping("/theme-total")
-    public ResponseEntity<?> themeTotalList(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
-        List<ThemeDto> result = songService.getThemeTotalList(loginMemberInfo.getLoginId());
-        return ResponseEntity.ok(new ApiResponse<>("SO104", "전체 테마 노래 추천 성공", result));
+    @GetMapping
+    public ResponseEntity<?> themeSongsList(@RequestParam("theme") String genre,
+                                            @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
+        ThemeSongsListResponse result = songService.findThemeSongsList(genre, loginMemberInfo.getLoginId());
+        return ResponseEntity.ok(new ApiResponse<>("SO105", "테마별 노래 리스트 조회 성공", result));
+    }
+
+    @GetMapping("/themes-random")
+    public ResponseEntity<?> themeRandomList() {
+        List<String> result = songService.findThemeRandomList();
+        return ResponseEntity.ok(new ApiResponse<>("SO106", "테마 리스트 랜덤 조회 성공", result));
     }
 }

@@ -19,4 +19,13 @@ public enum Theme {
 
     final String genre;
     final String themeTitle;
+
+    public static String getThemeTitleByGenre(String genre) {
+        for (Theme theme : Theme.values()) {
+            if (theme.genre.equalsIgnoreCase(genre)) {
+                return theme.themeTitle;
+            }
+        }
+        return null;
+    }
 }

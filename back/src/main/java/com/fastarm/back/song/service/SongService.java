@@ -8,7 +8,6 @@ import com.fastarm.back.song.constants.SongConstants;
 import com.fastarm.back.song.controller.dto.*;
 import com.fastarm.back.song.dto.SongDetailDto;
 import com.fastarm.back.song.dto.SongDto;
-import com.fastarm.back.song.dto.ThemeDto;
 import com.fastarm.back.song.entity.Song;
 import com.fastarm.back.song.enums.Theme;
 import com.fastarm.back.song.exception.NotFoundSongDetailException;
@@ -36,6 +35,7 @@ public class SongService {
     private final RestTemplate restTemplate;
     private final TeamRepository teamRepository;
     private final LikesRepository likesRepository;
+    private final Random random = new Random();
 
     @Transactional
     public List<SongDto> recommendMySong(String loginId) {
@@ -126,37 +126,46 @@ public class SongService {
         return SongSearchResponse.from(songResults, singerResults);
     }
 
-    @Transactional(readOnly = true)
-    public List<ThemeDto> getThemeTotalList(String loginId) {
+    public List<String> findThemeTotalList() {
+        return Arrays.stream(Theme.values())
+                .map(Theme::getGenre)
+                .collect(Collectors.toList());
+    }
 
+    @Transactional(readOnly = true)
+    public ThemeSongsListResponse findThemeSongsList(String genre, String loginId) {
         Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(MemberNotFoundException::new);
 
-        List<ThemeDto> result = new ArrayList<>();
+        List<Song> songs = songRepository.findByGenre(genre);
+        List<Likes> likes = likesRepository.findByMemberAndSongIn(member, songs);
 
-        List<Theme> themeList = Arrays.stream(Theme.values()).toList();
+        Map<Long, SongDto> map = new LinkedHashMap<>();
 
-        for (int i=0; i<themeList.size(); i++) {
-            List<Song> songs = songRepository.findByGenre(themeList.get(i).getGenre());
-            String themTitle = themeList.get(i).getThemeTitle();
-
-            List<Likes> likes = likesRepository.findByMemberAndSongIn(member, songs);
-
-            Map<Long, SongDto> map = new LinkedHashMap<>();
-
-            for (Song data : songs) {
-                map.put(data.getId(), SongDto.from(data));
-            }
-
-            for (Likes like : likes) {
-                map.get(like.getSong().getId()).setIsLike(true);
-                map.get(like.getSong().getId()).setLikeId(like.getId());
-            }
-
-            List<SongDto> list = map.values().stream().toList();
-
-            result.add(ThemeDto.from(themTitle, list));
+        for (Song data : songs) {
+            map.put(data.getId(), SongDto.from(data));
         }
-        return result;
+
+        for (Likes like : likes) {
+            map.get(like.getSong().getId()).setIsLike(true);
+            map.get(like.getSong().getId()).setLikeId(like.getId());
+        }
+
+        List<SongDto> list = map.values().stream().toList();
+
+        String themeTitle = Theme.getThemeTitleByGenre(genre);
+
+        return new ThemeSongsListResponse(themeTitle, list);
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> findThemeRandomList() {
+        List<String> allGenres = findThemeTotalList();
+
+        return random.ints(0, allGenres.size())
+                .distinct()
+                .limit(2)
+                .mapToObj(allGenres::get)
+                .collect(Collectors.toList());
     }
 }
