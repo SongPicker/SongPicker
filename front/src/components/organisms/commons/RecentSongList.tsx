@@ -23,7 +23,6 @@ const RecentSongList = ({ isConnected, onShowConnectionModal }: RecentSongListPr
     async function fetchRecentSongs() {
       try {
         const recentSongsData = await getMyRecentSongs();
-        console.log('API 응답 데이터:', recentSongsData);
 
         if (recentSongsData && Array.isArray(recentSongsData)) {
           setRecentSongs(recentSongsData);
@@ -39,49 +38,61 @@ const RecentSongList = ({ isConnected, onShowConnectionModal }: RecentSongListPr
     fetchRecentSongs();
   }, []);
 
-  const handleLikeToggle = useCallback(async (song: RecentSong) => {
-    const newIsLike = !song.isLike;
+  const handleLikeToggle = useCallback(
+    async (song: RecentSong) => {
+      const newIsLike = !song.isLike;
 
-    // 즉시 UI 업데이트
-    setRecentSongs(prevSongs =>
-      prevSongs.map(item => (item.number === song.number ? { ...item, isLike: newIsLike } : item))
-    );
+      // 즉시 UI 업데이트
+      setRecentSongs(prevSongs =>
+        prevSongs.map(item => (item.number === song.number ? { ...item, isLike: newIsLike } : item))
+      );
 
-    try {
-      if (newIsLike) {
-        console.log('찜 등록 요청 songId:', song.number); // songId가 제대로 전달되는지 확인
-        // 찜 등록 API 호출
-        const result = await registerLike(song.number);
-        console.log('Register like API response:', result);
+      try {
+        if (newIsLike) {
+          // 찜 등록 API 호출
+          const result = await registerLike(Number(song.songId));
 
+          if (result.code === 'LI100' || result.message === '찜 등록 성공') {
+            setRecentSongs(prevSongs =>
+              prevSongs.map(item =>
+                item.songId === song.songId
+                  ? { ...item, isLike: true, likeId: result.likeId || result.body }
+                  : item
+              )
+            );
+            onShowConnectionModal('찜 목록에 추가되었습니다.', 'reservation', 2000);
+          } else {
+            throw new Error('찜 등록 실패');
+          }
+        } else {
+          // 찜 해제 API 호출
+          if (song.number) {
+            const result = await deleteLike(Number(song.number));
+            if (result.code === 'LI101' || result.message === '찜 삭제 성공') {
+              setRecentSongs(prevSongs =>
+                prevSongs.map(item =>
+                  item.number === song.number ? { ...item, isLike: false, likeId: null } : item
+                )
+              );
+              onShowConnectionModal('찜 목록에서 제거되었습니다.', 'reservation', 2000);
+            } else {
+              throw new Error('찜 해제 실패');
+            }
+          }
+        }
+      } catch (error) {
+        console.error('찜 등록/해제 중 오류 발생:', error);
+        // 실패 시 원래 상태로 되돌립니다.
         setRecentSongs(prevSongs =>
           prevSongs.map(item =>
-            item.number === song.number
-              ? { ...item, isLike: true, likeId: result.likeId || result.body }
-              : item
+            item.number === song.number ? { ...item, isLike: !newIsLike } : item
           )
         );
-      } else {
-        // 찜 해제 API 호출
-        if (song.likeId) {
-          await deleteLike(song.likeId);
-          setRecentSongs(prevSongs =>
-            prevSongs.map(item =>
-              item.number === song.number ? { ...item, isLike: false, likeId: null } : item
-            )
-          );
-        }
+        onShowConnectionModal('찜 등록/해제 중 오류가 발생했습니다.', 'link', 2000);
       }
-    } catch (error) {
-      console.error('찜 등록/해제 중 오류 발생:', error);
-      // 실패 시 원래 상태로 되돌립니다.
-      setRecentSongs(prevSongs =>
-        prevSongs.map(item =>
-          item.number === song.number ? { ...item, isLike: !newIsLike } : item
-        )
-      );
-    }
-  }, []);
+    },
+    [onShowConnectionModal]
+  );
 
   return (
     <>

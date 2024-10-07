@@ -22,7 +22,6 @@ const LikedSongList = ({ isConnected, onShowConnectionModal }: LikedSongListProp
     async function fetchLikedSongs() {
       try {
         const likedSongsData = await getLikedSongs();
-        console.log('API 응답 데이터:', likedSongsData);
 
         // 응답 데이터가 배열인지 확인 후 설정
         if (likedSongsData && Array.isArray(likedSongsData)) {
@@ -44,7 +43,6 @@ const LikedSongList = ({ isConnected, onShowConnectionModal }: LikedSongListProp
       if (song.likeId) {
         await deleteLike(Number(song.number));
         setLikedSongs(prevSongs => prevSongs.filter(item => item.likeId !== song.likeId));
-        console.log('찜 해제 성공:', song.title);
       }
     } catch (error) {
       console.error('찜 해제 실패:', error);

@@ -13,7 +13,7 @@ const BottomSlideModal = ({
   isOpen,
   onClose,
   children,
-  height = '70vh',
+  height = '68vh',
   title,
 }: BottomSlideModalProps) => {
   const [isAnimating, setIsAnimating] = useState(false);
@@ -49,12 +49,12 @@ const BottomSlideModal = ({
     <div className="w-screen max-w-[640px] mx-auto fixed inset-0 z-[9989] flex items-end justify-center">
       <div
         className={`fixed inset-0 bg-black transition-opacity duration-300 ${
-          isOpen ? 'opacity-50' : 'opacity-0'
+          isOpen ? 'opacity-70' : 'opacity-0'
         }`}
         onClick={onClose}
       />
       <div
-        className={`bg-[#222] w-full rounded-t-xl overflow-hidden transform transition-all duration-300 ease-out ${
+        className={`bg-[#222] w-full rounded-xl overflow-hidden transform transition-all duration-300 ease-out ${
           isOpen ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
         }`}
         style={{ height: height, maxHeight: '90vh' }}
