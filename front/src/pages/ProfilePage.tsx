@@ -35,6 +35,7 @@ const ProfilePage = () => {
     profileImage: '',
   });
   const [topSongList, setTopSongList] = useState([]);
+  const [totalSingingCount, setTotalSingingCount] = useState(0);
   const [topSingerList, setTopSingerList] = useState([]);
   const [topGenreList, setTopGenreList] = useState([]);
 
@@ -50,7 +51,8 @@ const ProfilePage = () => {
           ]);
 
         setUserProfile(userProfileResponse);
-        setTopSongList(topSongListResponse);
+        setTopSongList(topSongListResponse.mostSongsList);
+        setTotalSingingCount(topSongListResponse.totalCount);
         setTopSingerList(topSingerListResponse);
         setTopGenreList(topGenreResponse);
       } catch (error) {
@@ -111,7 +113,7 @@ const ProfilePage = () => {
         {/* 가장 많이 부른 노래 */}
         <div className="w-full ">
           <p className="text-lg font-semibold p-2">가장 많이 부른 곡 Top 3</p>
-          <TopSongList topSongList={topSongList} />
+          <TopSongList topSongList={topSongList} totalSingingCount={totalSingingCount} />
         </div>
 
         {/* 노래방 방문한 날 (캘린더) */}

@@ -18,10 +18,9 @@ export const getUserProfile = () => {
 export const getTopGenreList = () => {
   return axiosInstance({
     method: 'GET',
-    url: '/api/histories/most-genre',
+    url: '/histories/most-genre',
   })
     .then(res => {
-      console.log(res);
       return res.data.data;
     })
     .catch(err => {
@@ -36,7 +35,6 @@ export const getTopSongList = () => {
     url: '/histories/most-songs',
   })
     .then(res => {
-      console.log(res);
       return res.data.data;
     })
     .catch(err => {
@@ -54,7 +52,6 @@ export const getSingingDay = (currentYear: number) => {
     },
   })
     .then(res => {
-      console.log(res.data.data);
       return res.data.data.singAt;
     })
     .catch(err => {
