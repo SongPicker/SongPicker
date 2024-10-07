@@ -4,6 +4,7 @@ import com.fastarm.back.auth.security.dto.LoginMemberInfo;
 import com.fastarm.back.common.controller.dto.ApiResponse;
 import com.fastarm.back.history.controller.dto.*;
 import com.fastarm.back.history.dto.DateSongsDto;
+import com.fastarm.back.history.dto.MostSongsListDto;
 import com.fastarm.back.history.dto.SingDateDto;
 import com.fastarm.back.history.dto.TeamRecentSongsDto;
 import com.fastarm.back.history.service.HistoryService;
@@ -26,7 +27,7 @@ public class HistoryController {
 
     @GetMapping("/most-songs")
     public ResponseEntity<?> mostSongsList(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
-        List<MostSongsResponse> result = historyService.findMostSongsList(loginMemberInfo.getLoginId());
+        MostSongsResponse result = historyService.findMostSongsList(loginMemberInfo.getLoginId());
         return ResponseEntity.ok(new ApiResponse<>("HI100", "가장 많이 부른 곡 조회 성공", result));
     }
 
