@@ -90,6 +90,7 @@ export const getTopSingerList = () => {
     url: '/api/histories/most-singers',
   })
     .then(res => {
+      console.log(res);
       return res.data.data;
     })
     .catch(err => {
