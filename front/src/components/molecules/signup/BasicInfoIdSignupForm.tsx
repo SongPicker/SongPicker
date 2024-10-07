@@ -7,6 +7,7 @@ type BasicInfoIdFormProps = {
   loginId: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onValidation: (isValid: boolean, isAvailable: boolean) => void;
+  checkAvailability?: boolean; // 새로운 prop 추가
 };
 
 const validateId = (id: string) => {
@@ -14,7 +15,12 @@ const validateId = (id: string) => {
   return regex.test(id);
 };
 
-const BasicInfoIdForm = ({ loginId, onChange, onValidation }: BasicInfoIdFormProps) => {
+const BasicInfoIdForm = ({
+  loginId,
+  onChange,
+  onValidation,
+  checkAvailability = true, // 기본값을 true로 설정
+}: BasicInfoIdFormProps) => {
   const [isIdValid, setIsIdValid] = useState(false);
   const [isIdAvailable, setIsIdAvailable] = useState(false);
   const [message, setMessage] = useState('');
@@ -24,7 +30,7 @@ const BasicInfoIdForm = ({ loginId, onChange, onValidation }: BasicInfoIdFormPro
 
   const debouncedCheckAvailability = useCallback(
     debounce(async (id: string) => {
-      if (validateId(id)) {
+      if (validateId(id) && checkAvailability) {
         setIsChecking(true);
         console.log('Checking login ID availability:', id);
         try {
@@ -36,9 +42,13 @@ const BasicInfoIdForm = ({ loginId, onChange, onValidation }: BasicInfoIdFormPro
         } finally {
           setIsChecking(false);
         }
+      } else if (validateId(id) && !checkAvailability) {
+        // 중복 체크를 하지 않는 경우, 유효성만 검사
+        setIsIdAvailable(true);
+        onValidation(true, true);
       }
     }, 300),
-    [checkLoginIdAvailability, onValidation]
+    [checkLoginIdAvailability, onValidation, checkAvailability]
   );
 
   useEffect(() => {
@@ -55,7 +65,9 @@ const BasicInfoIdForm = ({ loginId, onChange, onValidation }: BasicInfoIdFormPro
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(e);
-    setIsChecking(true);
+    if (checkAvailability) {
+      setIsChecking(true);
+    }
   };
 
   return (
@@ -73,17 +85,17 @@ const BasicInfoIdForm = ({ loginId, onChange, onValidation }: BasicInfoIdFormPro
         className="w-full"
       />
       <div className="h-6 mt-1">
-        {isChecking && (
+        {checkAvailability && isChecking && (
           <ul className="list-disc list-inside text-yellow-500 text-sm">
             <li>확인 중...</li>
           </ul>
         )}
-        {!isChecking && message && (
+        {checkAvailability && !isChecking && message && (
           <ul className="list-disc list-inside text-sm">
             <li className={isIdAvailable ? 'text-green-500' : 'text-red-500'}>{message}</li>
           </ul>
         )}
-        {!isChecking && !isIdValid && loginId && (
+        {!isIdValid && loginId && (
           <ul className="list-disc list-inside text-sm text-red-500">
             <li>4~16자의 영문 소문자, 숫자만 사용 가능합니다.</li>
           </ul>

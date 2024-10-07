@@ -3,13 +3,21 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import axiosInstance from '../services/axiosInstance';
 import axios, { AxiosError } from 'axios';
 
+type Purpose = 'SIGNUP' | 'FIND_PASSWORD' | 'CHANGE_PHONE' | 'FIND_LOGIN_ID';
+
+interface PhoneVerificationResult {
+  isSuccess: boolean;
+  message: string;
+  code?: string;
+}
+
 interface AuthState {
   isAuthenticated: boolean;
   accessToken: string | null;
   role: string | null;
   loginId: string | null;
-  isSongSelected: boolean; // 곡 선택 여부
-  setSongSelected: (isSelected: boolean) => void; // 곡 선택 상태 설정 함수
+  isSongSelected: boolean;
+  setSongSelected: (isSelected: boolean) => void;
   register: (userData: RegisterData) => Promise<void>;
   login: (accessToken: string, loginId: string) => void;
   logout: () => Promise<void>;
@@ -23,8 +31,9 @@ interface AuthState {
   checkPhoneAvailability: (phone: string) => Promise<{ isAvailable: boolean; message: string }>;
   sendPhoneVerification: (
     phone: string,
-    purpose: string
-  ) => Promise<{ isSuccess: boolean; message: string }>;
+    purpose: Purpose,
+    loginId?: string
+  ) => Promise<PhoneVerificationResult>;
   verifyPhoneCode: (
     authCode: string,
     phone: string
@@ -185,13 +194,13 @@ const useAuthStore = create<AuthState>()(
         }
       },
 
-      sendPhoneVerification: async (phone: string, purpose: string, loginId?: string) => {
+      sendPhoneVerification: async (phone: string, purpose: Purpose, loginId?: string) => {
         try {
-          const requestBody: { phone: string; purpose: string; loginId?: string } = {
+          const requestBody: { phone: string; purpose: Purpose; loginId?: string } = {
             phone,
             purpose,
           };
-          if (purpose === 'findPassword' && loginId) {
+          if (purpose === 'FIND_PASSWORD' && loginId) {
             requestBody.loginId = loginId;
           }
 
@@ -200,6 +209,8 @@ const useAuthStore = create<AuthState>()(
           switch (code) {
             case 'AU101':
               return { isSuccess: true, message: '인증번호가 전송되었습니다.' };
+            case 'ME009':
+              return { isSuccess: false, message: '존재하지 않는 회원입니다.', code: 'ME009' };
             case 'CN000':
               return { isSuccess: false, message: '인증번호 전송에 실패했습니다.' };
             case 'ME007':

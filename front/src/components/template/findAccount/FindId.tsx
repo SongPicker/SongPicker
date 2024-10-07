@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from 'react';
-import UserInfoPhoneSignupForm from '../molecules/signup/UserInfoPhoneSignupForm';
-import UserInfoAuthCodeSignupForm from '../molecules/signup/UserInfoAuthCodeSignupForm';
+import UserInfoPhoneSignupForm from '../../molecules/signup/UserInfoPhoneSignupForm';
+import UserInfoAuthCodeSignupForm from '../../molecules/signup/UserInfoAuthCodeSignupForm';
 
 type Props = {
-  onVerificationComplete: (isComplete: boolean) => void;
+  onVerificationComplete: (isComplete: boolean, phone: string) => void;
 };
 
 const FindId = ({ onVerificationComplete }: Props) => {
@@ -20,19 +20,19 @@ const FindId = ({ onVerificationComplete }: Props) => {
     console.log('Sending verification code to:', phone);
     setShowAuthCode(true);
     setResetAuthCode(false);
-    onVerificationComplete(false);
+    onVerificationComplete(false, ''); // Reset verification status when sending new code
   }, [phone, onVerificationComplete]);
 
   const handleResetAuthCode = useCallback(() => {
     setResetAuthCode(true);
-    onVerificationComplete(false);
+    onVerificationComplete(false, ''); // Reset verification status when resending code
     console.log('Resending verification code to:', phone);
   }, [phone, onVerificationComplete]);
 
   const handleAuthCodeVerify = useCallback(() => {
-    console.log('Verifying auth code');
-    onVerificationComplete(true);
-  }, [onVerificationComplete]);
+    console.log('Verifying auth code for phone:', phone);
+    onVerificationComplete(true, phone);
+  }, [onVerificationComplete, phone]);
 
   const handlePhoneValidation = useCallback((isValid: boolean) => {
     setIsPhoneValid(isValid);
@@ -51,6 +51,7 @@ const FindId = ({ onVerificationComplete }: Props) => {
         onValidation={handlePhoneValidation}
         showLabel={false}
         purpose="FIND_LOGIN_ID"
+        checkAvailability={false}
       />
       {showAuthCode && (
         <UserInfoAuthCodeSignupForm
