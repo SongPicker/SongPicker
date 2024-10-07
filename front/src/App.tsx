@@ -16,6 +16,7 @@ import useAuthStore from './stores/useAuthStore';
 import './App.css';
 import { onMessage } from 'firebase/messaging';
 import { messaging } from './firebaseConfig';
+import ChangeProfile from './pages/ChangeProfilePage';
 // import { requestNotificationPermission } from './pushNotifications';
 
 interface PrivateRouteProps {
@@ -150,6 +151,14 @@ const App = () => {
             element={
               <PrivateRoute>
                 <ProfilePage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/members/:id/change"
+            element={
+              <PrivateRoute>
+                <ChangeProfile />
               </PrivateRoute>
             }
           />
