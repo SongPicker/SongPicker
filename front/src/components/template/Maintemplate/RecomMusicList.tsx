@@ -341,6 +341,7 @@ const RecomMusicList = ({
         <MusicDetailModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
+          isLoading={isLoadingDetail}
           songDetail={selectedSongDetail}
           height="80vh"
         />

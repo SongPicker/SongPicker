@@ -117,3 +117,26 @@ export const reserveSong = async (number: number) => {
   });
   return response.data;
 };
+
+// 테마별 노래추천
+export interface ThemedSongRecommendation {
+  themeTitle: string;
+  songList: {
+    songId: number;
+    number: number;
+    title: string;
+    singer: string;
+    coverImage?: string;
+    isLike: boolean;
+    likeId: number | null;
+  }[];
+}
+
+export const getThemedSongRecommendations = async (theme: string) => {
+  const response = await axiosInstance({
+    method: 'GET',
+    url: '/api/songs',
+    params: { theme },
+  });
+  return response.data;
+};
