@@ -1,5 +1,4 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import LinkmodeLeft from '../../molecules/MainMolecule/LinkmodeLeft';
 import LinkmodeCircle from '../../atoms/MainAtom/LinkmodeCircle';
 

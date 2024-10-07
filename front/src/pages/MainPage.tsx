@@ -1,15 +1,15 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import MainLayout from '../layouts/MainLayout';
+import { checkConnectionStatus, disconnectService } from '../services/connectionService';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { fetchNickname } from '../services/memberSevice';
+import TwoBtnAlertModal from '../components/template/commons/TwoBtnAlertModal';
 import KaraokeLinkMode from '../components/organisms/MainOrganism/KaraokeLinkMode';
+import MainLayout from '../layouts/MainLayout';
 import RecomMusicList from '../components/template/Maintemplate/RecomMusicList';
 import CustomAlert from '../components/template/commons/CustomAlertModal';
 import ConnectionModal from '../components/template/commons/ConnectionModal';
 import UserStatisticsBanner from '../components/template/Maintemplate/UserStatisticsBanner';
 import RecomThemeBanner from '../components/template/Maintemplate/RecomThemeBanner';
-import { checkConnectionStatus, disconnectService } from '../services/connectionService';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { fetchNickname } from '../services/memberSevice';
-import TwoBtnAlertModal from '../components/template/commons/TwoBtnAlertModal';
 
 const MainPage = () => {
   const [showNotification, setShowNotification] = useState(false);
