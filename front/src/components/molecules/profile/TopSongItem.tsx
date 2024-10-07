@@ -6,6 +6,7 @@ type TopSongItemProps = {
     count: number;
   };
   rank: number;
+  totalSingingCount: number;
 };
 
 const TopSongItem = (props: TopSongItemProps) => {
@@ -22,7 +23,7 @@ const TopSongItem = (props: TopSongItemProps) => {
           <progress
             className="progress progress-secondary w-full"
             value={props.topSongItem.count}
-            max="10"
+            max={props.totalSingingCount}
           ></progress>
         </div>
       </div>

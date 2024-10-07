@@ -1,6 +1,7 @@
 import TopSongItem from '../../molecules/profile/TopSongItem';
 
 type TopSongListProps = {
+  totalSingingCount: number;
   topSongList: {
     title: string;
     singer: string;
@@ -16,6 +17,7 @@ const TopSongList = (props: TopSongListProps) => {
         return (
           <TopSongItem
             topSongItem={item}
+            totalSingingCount={props.totalSingingCount}
             rank={i + 1}
             key={`topSong-${item.title}-${item.singer}`}
           />
