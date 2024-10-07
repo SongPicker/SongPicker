@@ -1,10 +1,7 @@
 package com.fastarm.back.history.service;
 
 import com.fastarm.back.history.controller.dto.*;
-import com.fastarm.back.history.dto.DateSongsDto;
-import com.fastarm.back.history.dto.DateSongsListDto;
-import com.fastarm.back.history.dto.SingDateDto;
-import com.fastarm.back.history.dto.TeamRecentSongsDto;
+import com.fastarm.back.history.dto.*;
 import com.fastarm.back.history.repository.PersonalSingHistoryRepository;
 import com.fastarm.back.history.repository.TeamSingHistoryRepository;
 import com.fastarm.back.likes.entity.Likes;
@@ -37,10 +34,15 @@ public class HistoryService {
     private final TeamService teamService;
 
     @Transactional(readOnly = true)
-    public List<MostSongsResponse> findMostSongsList(String loginId) {
+    public MostSongsResponse findMostSongsList(String loginId) {
         Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(MemberNotFoundException::new);
-        return personalSingHistoryRepository.personalMostSongsInfo(member);
+        List<MostSongsListDto> list = personalSingHistoryRepository.personalMostSongsInfo(member);
+        int count = 0;
+        for (int i=0; i<3; i++) {
+            count += list.get(i).getCount();
+        }
+        return MostSongsResponse.from(count, list);
     }
 
     @Transactional(readOnly = true)
