@@ -4,7 +4,7 @@ import axiosInstance from './axiosInstance';
 export const getUserProfile = () => {
   return axiosInstance({
     method: 'GET',
-    url: '/api/members/profile-info',
+    url: '/members/profile-info',
   })
     .then(res => {
       return res.data.data;
@@ -18,10 +18,9 @@ export const getUserProfile = () => {
 export const getTopGenreList = () => {
   return axiosInstance({
     method: 'GET',
-    url: '/api/histories/most-genre',
+    url: '/histories/most-genre',
   })
     .then(res => {
-      console.log(res);
       return res.data.data;
     })
     .catch(err => {
@@ -33,10 +32,9 @@ export const getTopGenreList = () => {
 export const getTopSongList = () => {
   return axiosInstance({
     method: 'GET',
-    url: '/api/histories/most-songs',
+    url: '/histories/most-songs',
   })
     .then(res => {
-      console.log(res);
       return res.data.data;
     })
     .catch(err => {
@@ -48,13 +46,12 @@ export const getTopSongList = () => {
 export const getSingingDay = (currentYear: number) => {
   return axiosInstance({
     method: 'GET',
-    url: '/api/histories/date',
+    url: '/histories/date',
     params: {
       year: currentYear,
     },
   })
     .then(res => {
-      console.log(res.data.data);
       return res.data.data.singAt;
     })
     .catch(err => {
@@ -66,7 +63,7 @@ export const getSingingDay = (currentYear: number) => {
 export const getSongList = (selectedYear: number, selectedMonth: number, selectedDay: number) => {
   return axiosInstance({
     method: 'GET',
-    url: '/api/histories/date/songs',
+    url: '/histories/date/songs',
     params: {
       year: selectedYear,
       month: selectedMonth,
@@ -74,7 +71,6 @@ export const getSongList = (selectedYear: number, selectedMonth: number, selecte
     },
   })
     .then(res => {
-      console.log(res.data.data);
       return res.data.data;
     })
     .catch(err => {
@@ -87,10 +83,9 @@ export const getSongList = (selectedYear: number, selectedMonth: number, selecte
 export const getTopSingerList = () => {
   return axiosInstance({
     method: 'GET',
-    url: '/api/histories/most-singers',
+    url: '/histories/most-singers',
   })
     .then(res => {
-      console.log(res);
       return res.data.data;
     })
     .catch(err => {
