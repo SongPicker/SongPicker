@@ -14,18 +14,17 @@ public class SongDto {
         private String title;
         private String singer;
         private String coverImage;
-        private Boolean isLike;
+        @Builder.Default
+        private Boolean isLike = false;
         private Long likeId;
 
-        public static SongDto from(Song song,Boolean isLike,Long likeId) {
+        public static SongDto from(Song song) {
                 return SongDto.builder()
                         .songId(song.getId())
                         .number(song.getNumber())
                         .title(song.getTitle())
                         .singer(song.getSinger())
                         .coverImage(song.getCoverImage())
-                        .isLike(isLike)
-                        .likeId(likeId)
                         .build();
         }
 }

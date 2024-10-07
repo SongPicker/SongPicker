@@ -59,4 +59,7 @@ public interface SongRepository extends JpaRepository<Song, Long> , SongReposito
     """
     )
     Slice<PopularGetResponse> getPopularSongs(Pageable pageable);
+
+    @Query(value = "SELECT * FROM song WHERE genre = :genre ORDER BY RAND() LIMIT 20", nativeQuery = true)
+    List<Song> findByGenre(String genre);
 }

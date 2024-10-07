@@ -1,5 +1,7 @@
 package com.fastarm.back.song.service;
 
+import com.fastarm.back.likes.entity.Likes;
+import com.fastarm.back.likes.repository.LikesRepository;
 import com.fastarm.back.member.entity.Member;
 import com.fastarm.back.member.repository.MemberRepository;
 import com.fastarm.back.song.constants.SongConstants;
@@ -7,6 +9,7 @@ import com.fastarm.back.song.controller.dto.*;
 import com.fastarm.back.song.dto.SongDetailDto;
 import com.fastarm.back.song.dto.SongDto;
 import com.fastarm.back.song.entity.Song;
+import com.fastarm.back.song.enums.Theme;
 import com.fastarm.back.song.exception.NotFoundSongDetailException;
 import com.fastarm.back.song.exception.NotFoundSongException;
 import com.fastarm.back.song.repository.SongRepository;
@@ -31,7 +34,8 @@ public class SongService {
     private final MemberRepository memberRepository;
     private final RestTemplate restTemplate;
     private final TeamRepository teamRepository;
-
+    private final LikesRepository likesRepository;
+    private final Random random = new Random();
 
     @Transactional
     public List<SongDto> recommendMySong(String loginId) {
@@ -120,5 +124,48 @@ public class SongService {
         List<SongDto> singerResults = songRepository.findSongsWithLikeStatus(songsBySinger, member.getId());
 
         return SongSearchResponse.from(songResults, singerResults);
+    }
+
+    public List<String> findThemeTotalList() {
+        return Arrays.stream(Theme.values())
+                .map(Theme::getGenre)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public ThemeSongsListResponse findThemeSongsList(String genre, String loginId) {
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(MemberNotFoundException::new);
+
+        List<Song> songs = songRepository.findByGenre(genre);
+        List<Likes> likes = likesRepository.findByMemberAndSongIn(member, songs);
+
+        Map<Long, SongDto> map = new LinkedHashMap<>();
+
+        for (Song data : songs) {
+            map.put(data.getId(), SongDto.from(data));
+        }
+
+        for (Likes like : likes) {
+            map.get(like.getSong().getId()).setIsLike(true);
+            map.get(like.getSong().getId()).setLikeId(like.getId());
+        }
+
+        List<SongDto> list = map.values().stream().toList();
+
+        String themeTitle = Theme.getThemeTitleByGenre(genre);
+
+        return new ThemeSongsListResponse(themeTitle, list);
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> findThemeRandomList() {
+        List<String> allGenres = findThemeTotalList();
+
+        return random.ints(0, allGenres.size())
+                .distinct()
+                .limit(2)
+                .mapToObj(allGenres::get)
+                .collect(Collectors.toList());
     }
 }
