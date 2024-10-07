@@ -17,7 +17,7 @@ const MyCalendar = (props: MyCalendarProps) => {
 
   return (
     <Calendar
-      className="bg-white text-black w-11/12 rounded-xl shadow-lg"
+      className="bg-white text-black w-full rounded-xl shadow-lg"
       value={value}
       onChange={onChange}
       calendarType="gregory"

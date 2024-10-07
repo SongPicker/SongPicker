@@ -1,12 +1,23 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import MainLayout from '../layouts/MainLayout';
 import useAuthStore from '../stores/useAuthStore'; // useAuthStore 가져오기
 import MyCalendar from '../components/organisms/profile/MyCalendar';
 import { useQuery } from '@tanstack/react-query';
-import { getSingingDay } from '../services/profileService';
+import {
+  getSingingDay,
+  getTopGenreList,
+  getTopSingerList,
+  getTopSongList,
+  getUserProfile,
+} from '../services/profileService';
 import CalendarModal from '../components/organisms/profile/CalendarModal';
+import ProfileCard from '../components/organisms/profile/ProfileCard';
+import TopSongList from '../components/organisms/profile/TopSongList';
+import TopSingerWordCloud from '../components/organisms/profile/TopSingerWordCloud';
+import TopGenreItem from '../components/atoms/profile/TopGenreItem';
 
 const ProfilePage = () => {
+  // 로그아웃
   const { logout } = useAuthStore(); // useAuthStore에서 logout 함수 가져오기
   const handleLogout = async () => {
     try {
@@ -18,6 +29,38 @@ const ProfilePage = () => {
     }
   };
 
+  // 프로필 표시 & 많이 부른 노래 & 많이 부른 가수
+  const [userProfile, setUserProfile] = useState({
+    nickname: '',
+    profileImage: '',
+  });
+  const [topSongList, setTopSongList] = useState([]);
+  const [topSingerList, setTopSingerList] = useState([]);
+  const [topGenreList, setTopGenreList] = useState([]);
+
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        const [userProfileResponse, topSongListResponse, topSingerListResponse, topGenreResponse] =
+          await Promise.all([
+            getUserProfile(),
+            getTopSongList(),
+            getTopSingerList(),
+            getTopGenreList(),
+          ]);
+
+        setUserProfile(userProfileResponse);
+        setTopSongList(topSongListResponse);
+        setTopSingerList(topSingerListResponse);
+        setTopGenreList(topGenreResponse);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchProfileData();
+  }, []);
+
   // 노래 부른 날 색칠
   const currentYear = new Date().getFullYear();
 
@@ -28,7 +71,7 @@ const ProfilePage = () => {
     },
   });
 
-  // 해당 일자에 부른 노래
+  // 해당 일자에 부른 노래 모달
   const [selectedYear, setSelectedYear] = useState(0);
   const [selectedMonth, setSelectedMonth] = useState(0);
   const [selectedDate, setSelectedDate] = useState(0);
@@ -48,24 +91,55 @@ const ProfilePage = () => {
 
   return (
     <MainLayout title="마이페이지">
-      <button className="btn" onClick={handleLogout}>
-        임시로그아웃버튼
-      </button>
-      <div className="flex w-full justify-center">
-        <MyCalendar
-          singingDayData={singingDayData || []}
-          handleSelectedDate={handleSelectedDate}
-          currentYear={currentYear}
-        />
+      {/* 프로필 */}
+      <ProfileCard userProfile={userProfile} handleLogout={handleLogout} />
+
+      <div className="flex flex-col px-4 items-center gap-6 py-6">
+        {/* 기본 분석 */}
+        <div className="w-full">
+          <p className="text-lg font-semibold p-2">{userProfile.nickname}님에 대한 분석</p>
+          <div className="flex flex-col gap-2">
+            <p className="text-md px-2">이번 달 SongPicker 사용 일수 : 10일</p>
+            <p className="text-md px-2">가장 많이 부른 노래 장르 Top 3</p>
+            <div className="flex gap-2">
+              {topGenreList.map((item, i) => {
+                return <TopGenreItem name={item} key={`${item}-${i}`} />;
+              })}
+            </div>
+          </div>
+        </div>
+        {/* 가장 많이 부른 노래 */}
+        <div className="w-full ">
+          <p className="text-lg font-semibold p-2">가장 많이 부른 곡 Top 3</p>
+          <TopSongList topSongList={topSongList} />
+        </div>
+
+        {/* 노래방 방문한 날 (캘린더) */}
+        <div className="w-full">
+          <p className="text-lg font-semibold p-2">SongPicker 사용한 날</p>
+          <MyCalendar
+            singingDayData={singingDayData || []}
+            handleSelectedDate={handleSelectedDate}
+            currentYear={currentYear}
+          />
+        </div>
+
+        {/* 캘린더 모달 */}
+        {openCalendarModal && (
+          <CalendarModal
+            selectedYear={selectedYear}
+            selectedMonth={selectedMonth}
+            selectedDate={selectedDate}
+            handleModal={handleModal}
+          />
+        )}
+
+        {/* 내가 선호하는 아티스트 */}
+        <div className="w-full">
+          <p className="text-lg font-semibold p-2">선호하는 아티스트</p>
+          <TopSingerWordCloud topSingerList={topSingerList} />
+        </div>
       </div>
-      {openCalendarModal && (
-        <CalendarModal
-          selectedYear={selectedYear}
-          selectedMonth={selectedMonth}
-          selectedDate={selectedDate}
-          handleModal={handleModal}
-        />
-      )}
     </MainLayout>
   );
 };
