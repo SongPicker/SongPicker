@@ -1,8 +1,10 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { debounce } from 'lodash';
 import SignupInput from '../../atoms/signup/SignupInput';
 import SignupButton from '../../atoms/signup/SignupButton';
 import useAuthStore from '../../../stores/useAuthStore';
+
+type Purpose = 'SIGNUP' | 'FIND_PASSWORD' | 'CHANGE_PHONE' | 'FIND_LOGIN_ID';
 
 type UserInfoPhoneSignupFormProps = {
   onVerify: () => void;
@@ -10,17 +12,23 @@ type UserInfoPhoneSignupFormProps = {
   onChange: (phone: string) => void;
   onValidation: (isValid: boolean) => void;
   showLabel?: boolean;
-  purpose?: 'SIGNUP' | 'FIND_PASSWORD' | 'CHANGE_PHONE' | 'FIND_LOGIN_ID';
+  purpose: Purpose;
+  checkAvailability?: boolean;
+  loginId?: string;
+  onError?: (message: string) => void; // 선택적 prop으로 변경
 };
 
-const UserInfoPhoneSignupForm = ({
+const UserInfoPhoneSignupForm: React.FC<UserInfoPhoneSignupFormProps> = ({
   onVerify,
   onResetAuthCode,
   onChange,
   onValidation,
   showLabel = true,
-  purpose = 'SIGNUP',
-}: UserInfoPhoneSignupFormProps) => {
+  purpose,
+  checkAvailability = true,
+  loginId,
+  onError,
+}) => {
   const [phone, setPhone] = useState('');
   const [isPhoneValid, setIsPhoneValid] = useState(false);
   const [isPhoneAvailable, setIsPhoneAvailable] = useState(false);
@@ -28,12 +36,12 @@ const UserInfoPhoneSignupForm = ({
   const [message, setMessage] = useState('');
   const [showAuthCodeForm, setShowAuthCodeForm] = useState(false);
 
-  const checkPhoneAvailability = useAuthStore(state => state.checkPhoneAvailability);
   const sendPhoneVerification = useAuthStore(state => state.sendPhoneVerification);
+  const checkPhoneAvailability = useAuthStore(state => state.checkPhoneAvailability);
 
   const debouncedCheckAvailability = useCallback(
     debounce(async (phoneNumber: string) => {
-      if (phoneNumber.length === 11) {
+      if (phoneNumber.length === 11 && checkAvailability) {
         setIsChecking(true);
         console.log('Checking phone availability:', phoneNumber);
         try {
@@ -45,9 +53,13 @@ const UserInfoPhoneSignupForm = ({
         } finally {
           setIsChecking(false);
         }
+      } else if (phoneNumber.length === 11) {
+        // If not checking availability, consider the phone number valid if it's the correct length
+        setIsPhoneAvailable(true);
+        onValidation(true);
       }
     }, 300),
-    [checkPhoneAvailability, onValidation]
+    [checkPhoneAvailability, onValidation, checkAvailability]
   );
 
   const handleChange = useCallback(
@@ -55,8 +67,9 @@ const UserInfoPhoneSignupForm = ({
       const value = e.target.value.replace(/[^0-9]/g, '');
       setPhone(value);
       onChange(value);
-      setIsPhoneValid(value.length === 11);
-      if (value.length === 11) {
+      const phoneValid = value.length === 11;
+      setIsPhoneValid(phoneValid);
+      if (phoneValid) {
         debouncedCheckAvailability(value);
       } else {
         setIsPhoneAvailable(false);
@@ -68,17 +81,33 @@ const UserInfoPhoneSignupForm = ({
   );
 
   const handleVerify = useCallback(async () => {
-    if (isPhoneValid && isPhoneAvailable) {
+    if (isPhoneValid && (isPhoneAvailable || !checkAvailability)) {
       console.log('Sending phone verification:', phone);
-      const { isSuccess, message } = await sendPhoneVerification(phone, purpose);
-      console.log('Phone verification send result:', isSuccess, message);
-      if (isSuccess) {
+      const result = await sendPhoneVerification(phone, purpose, loginId);
+      console.log('Phone verification send result:', result.isSuccess, result.message);
+
+      if (result.isSuccess) {
         setShowAuthCodeForm(true);
         onVerify();
+      } else {
+        // 모든 오류 상황에 대해 onError 호출
+        if (onError) {
+          onError(result.message);
+        }
+        setMessage(result.message);
       }
-      setMessage(message);
     }
-  }, [isPhoneValid, isPhoneAvailable, phone, sendPhoneVerification, purpose, onVerify]);
+  }, [
+    isPhoneValid,
+    isPhoneAvailable,
+    phone,
+    sendPhoneVerification,
+    purpose,
+    onVerify,
+    checkAvailability,
+    loginId,
+    onError,
+  ]);
 
   const handleRetry = useCallback(() => {
     setShowAuthCodeForm(false);
@@ -111,7 +140,7 @@ const UserInfoPhoneSignupForm = ({
         <div className="ml-[18px]">
           {!showAuthCodeForm && (
             <SignupButton
-              disabled={!isPhoneValid || !isPhoneAvailable || isChecking}
+              disabled={!isPhoneValid || (!isPhoneAvailable && checkAvailability) || isChecking}
               onClick={handleVerify}
             >
               인증하기
@@ -121,12 +150,12 @@ const UserInfoPhoneSignupForm = ({
         </div>
       </div>
       <div className="h-6 mt-1">
-        {isChecking && (
+        {isChecking && checkAvailability && (
           <ul className="list-disc list-inside text-yellow-500 text-sm">
             <li>확인 중...</li>
           </ul>
         )}
-        {!isChecking && message && (
+        {!isChecking && message && checkAvailability && (
           <ul className="list-disc list-inside text-sm">
             <li className={isPhoneAvailable ? 'text-green-500' : 'text-red-500'}>{message}</li>
           </ul>
