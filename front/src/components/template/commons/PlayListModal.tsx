@@ -93,7 +93,6 @@ const PlayListModal = ({ closeModal }: PlayListModalProps) => {
             {activeTab === 'liked' ? (
               <LikedSongList
                 isConnected={isConnected}
-                // onShowConnectionModal={handleShowConnectionModal}
                 onShowConnectionModal={handleReservationComplete}
               />
             ) : (
