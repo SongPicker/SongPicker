@@ -1,5 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useCallback, useState, useEffect, useMemo } from 'react';
 import MusicItem from '../organisms/commons/MusicItem';
 import { deleteLike, registerLike } from '../../services/songService';
 
@@ -21,11 +20,13 @@ type Props = {
     songSearchList: SearchResultItem[];
     singerSearchList: SearchResultItem[];
   };
+
   onShowConnectionModal: (
     message: string,
     icon: 'link' | 'spinner' | 'reservation',
     autoCloseDelay?: number
   ) => void;
+
   onItemClick: (music: SearchResultItem) => void;
   isLoading: boolean;
   error: string | null;
@@ -47,13 +48,8 @@ const SearchMain = ({
   isConnected,
   onSeeMore,
 }: Props) => {
-  const navigate = useNavigate();
   const [songs, setSongs] = useState<SearchResultItem[]>([]);
   const [singers, setSingers] = useState<SearchResultItem[]>([]);
-
-  const handleShowConnectionModal = (message: string) => {
-    onShowConnectionModal(message, 'link');
-  };
 
   useEffect(() => {
     setSongs(searchResults.songSearchList);
@@ -61,25 +57,16 @@ const SearchMain = ({
   }, [searchResults]);
 
   const updateSongState = useCallback((updatedSong: SearchResultItem) => {
-    setSongs(prevSongs => {
-      const newSongs = prevSongs.map(song =>
-        song.songId === updatedSong.songId ? updatedSong : song
-      );
-      return newSongs;
-    });
-    setSingers(prevSingers => {
-      const newSingers = prevSingers.map(singer =>
-        singer.songId === updatedSong.songId ? updatedSong : singer
-      );
-      return newSingers;
-    });
+    const updateList = (prevList: SearchResultItem[]) =>
+      prevList.map(item => (item.songId === updatedSong.songId ? updatedSong : item));
+
+    setSongs(updateList);
+    setSingers(updateList);
   }, []);
 
   const handleLikeToggle = useCallback(
     async (song: SearchResultItem) => {
       const newIsLike = !song.isLike;
-
-      // 즉시 UI 업데이트
       const updatedSong = { ...song, isLike: newIsLike };
       updateSongState(updatedSong);
 
@@ -103,7 +90,6 @@ const SearchMain = ({
         }
       } catch (error) {
         console.error('찜 등록/해제 중 오류 발생:', error);
-        // 실패 시 원래 상태로 되돌림
         updateSongState({ ...song, isLike: !newIsLike });
         onShowConnectionModal('찜 등록/해제 중 오류가 발생했습니다.', 'link', 2000);
       }
@@ -124,17 +110,17 @@ const SearchMain = ({
           imageUrl={item.coverImage}
           isLiked={item.isLike}
           onLikeToggle={() => handleLikeToggle(item)}
-          onShowConnectionModal={handleShowConnectionModal}
+          onShowConnectionModal={(message: string) => onShowConnectionModal(message, 'link')}
           isConnected={isConnected}
           onItemClick={() => onItemClick(item)}
         />
       ));
     },
-    [handleLikeToggle, handleShowConnectionModal, isConnected, onItemClick]
+    [handleLikeToggle, onShowConnectionModal, isConnected, onItemClick]
   );
 
-  const renderSearchSection = useCallback(
-    (title: string, items: SearchResultItem[], type: Exclude<Tab, 'all'>) => (
+  const renderSearchSection = useMemo(
+    () => (title: string, items: SearchResultItem[], type: Exclude<Tab, 'all'>) => (
       <div className="mb-6">
         <div className="flex justify-between items-center mb-2">
           <h3 className="font-medium">
@@ -158,29 +144,23 @@ const SearchMain = ({
     [activeTab, onSeeMore, onTabChange, renderMusicItems]
   );
 
+  if (isLoading) return <p className="text-gray-500">검색 중...</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
+
   return (
     <div>
-      {isLoading ? (
-        <p className="text-gray-500">검색 중...</p>
-      ) : error ? (
-        <p className="text-red-500">{error}</p>
-      ) : (
+      {keyword && (
         <>
-          {keyword && (
-            <>
-              {(activeTab === 'all' || activeTab === 'song') &&
-                renderSearchSection('곡', songs, 'song')}
-              {(activeTab === 'all' || activeTab === 'singer') &&
-                renderSearchSection('가수', singers, 'singer')}
-              {songs.length === 0 && singers.length === 0 && (
-                <p className="text-gray-500">"{keyword}"에 대한 검색 결과가 없습니다.</p>
-              )}
-            </>
+          {(activeTab === 'all' || activeTab === 'song') &&
+            renderSearchSection('곡', songs, 'song')}
+          {(activeTab === 'all' || activeTab === 'singer') &&
+            renderSearchSection('가수', singers, 'singer')}
+          {songs.length === 0 && singers.length === 0 && (
+            <p className="text-gray-500">"{keyword}"에 대한 검색 결과가 없습니다.</p>
           )}
         </>
       )}
     </div>
   );
 };
-
 export default SearchMain;
