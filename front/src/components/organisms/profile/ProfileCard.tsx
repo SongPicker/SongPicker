@@ -20,7 +20,7 @@ const ProfileCard = (props: ProfileCardProps) => {
         <p className="flex text-lg font-semibold">{props.userProfile.nickname}님</p>
         <div className="flex gap-4">
           <span
-            className="text-md font-medium underline"
+            className="text-md font-medium underline cursor-pointer"
             onClick={() => {
               navigate('/members/:id/change', { state: props.userProfile });
             }}
