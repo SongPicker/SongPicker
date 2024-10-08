@@ -15,7 +15,6 @@ const SearchBar = ({ onSearch, onInputChange, initialKeyword }: Props) => {
     setSearchTerm(initialKeyword);
   }, [initialKeyword]);
 
-  // 디바운스된 입력 변경 함수
   const debouncedInputChange = useCallback(
     debounce((term: string) => {
       onInputChange(term.trim());
