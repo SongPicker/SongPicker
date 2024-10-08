@@ -6,12 +6,18 @@ type BasicInfoPasswordFormProps = {
   password: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onValidation: (isValid: boolean) => void;
+  label?: string;
+  placeholder?: string;
+  name?: string;
 };
 
 const BasicInfoPasswordForm = ({
   password,
   onChange,
   onValidation,
+  label = '비밀번호',
+  placeholder = '비밀번호를 입력해주세요',
+  name = 'password',
 }: BasicInfoPasswordFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLengthValid, setIsLengthValid] = useState(false);
@@ -31,16 +37,16 @@ const BasicInfoPasswordForm = ({
 
   return (
     <div className="relative h-24">
-      <label htmlFor="password" className="block text-lg text-white mb-2">
-        비밀번호
+      <label htmlFor={name} className="block text-lg text-white mb-2">
+        {label}
       </label>
       <div className="relative">
         <BasicInput
-          id="password"
+          id={name}
           type={showPassword ? 'text' : 'password'}
-          placeholder="비밀번호를 입력해주세요"
+          placeholder={placeholder}
           value={password}
-          name="password"
+          name={name}
           onChange={onChange}
           className="w-full pr-10"
         />
