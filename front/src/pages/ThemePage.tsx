@@ -11,8 +11,11 @@ import {
   deleteLike,
   reserveSong,
   Song,
+  SongDetail,
   ThemedSongRecommendation,
+  getSongDetail,
 } from '../services/songService';
+import MusicDetailModal from '../components/template/commons/MusicDetailModal';
 
 const ThemePage = () => {
   const [isConnected, setIsConnected] = useState(false);
@@ -30,6 +33,11 @@ const ThemePage = () => {
   const [connectionModalMessage, setConnectionModalMessage] = useState('');
   const [modalIcon, setModalIcon] = useState<'link' | 'spinner' | 'reservation'>('link');
   const [autoCloseDelay, setAutoCloseDelay] = useState<number | undefined>(undefined);
+
+  // MusicDetailModal 관련 상태
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedSongDetail, setSelectedSongDetail] = useState<SongDetail | null>(null);
+  const [isLoadingDetail, setIsLoadingDetail] = useState(false);
 
   const handleShowNotification = (title: string, description: string) => {
     setNotificationMessage({ title, description });
@@ -54,6 +62,27 @@ const ThemePage = () => {
   const handleCloseConnectionModal = () => {
     setShowConnectionModal(false);
   };
+
+  // 곡 선택 핸들러
+  const handleItemClick = useCallback(
+    async (song: Song) => {
+      setIsLoadingDetail(true);
+      try {
+        const response = await getSongDetail(song.songId);
+        if (response.code === 'SO100') {
+          setSelectedSongDetail(response.data);
+          setIsModalOpen(true);
+        } else {
+          throw new Error(response.message || '노래 상세 정보를 불러오는데 실패했습니다.');
+        }
+      } catch (error) {
+        handleShowNotification('오류 발생', '노래 상세 정보를 불러오는데 실패했습니다.');
+      } finally {
+        setIsLoadingDetail(false);
+      }
+    },
+    [handleShowNotification]
+  );
 
   // 연결상태 확인 API
   const fetchConnectionStatus = useCallback(async () => {
@@ -229,20 +258,23 @@ const ThemePage = () => {
 
   return (
     <MainLayout title="테마별 노래 추천">
-      <div className="p-4">
-        <Alltheme
-          themes={allThemes}
-          selectedTheme={selectedTheme}
-          onThemeSelect={handleThemeSelect}
-          themedSongs={themedSongs}
-          isRefreshing={isRefreshing}
-          isConnected={isConnected}
-          onRefresh={handleRefresh}
-          onLikeToggle={handleLikeToggle}
-          onReservation={handleReservation}
-          onShowNotification={handleShowNotification}
-          onShowConnectionModal={handleShowConnectionModal}
-        />
+      <div className="h-full flex flex-col">
+        <div className="flex-grow overflow-hidden p-4">
+          <Alltheme
+            themes={allThemes}
+            selectedTheme={selectedTheme}
+            onThemeSelect={handleThemeSelect}
+            themedSongs={themedSongs}
+            isRefreshing={isRefreshing}
+            isConnected={isConnected}
+            onRefresh={handleRefresh}
+            onLikeToggle={handleLikeToggle}
+            onReservation={handleReservation}
+            onShowNotification={handleShowNotification}
+            onShowConnectionModal={handleShowConnectionModal}
+            onItemClick={handleItemClick}
+          />
+        </div>
       </div>
 
       {showNotification && (
@@ -259,6 +291,16 @@ const ThemePage = () => {
         icon={modalIcon}
         autoCloseDelay={autoCloseDelay}
       />
+
+      {selectedSongDetail && (
+        <MusicDetailModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          isLoading={isLoadingDetail}
+          songDetail={selectedSongDetail}
+          height="80vh"
+        />
+      )}
     </MainLayout>
   );
 };

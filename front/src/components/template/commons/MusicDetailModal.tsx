@@ -17,7 +17,6 @@ const MusicDetailModal = ({
   isLoading,
   height,
 }: MusicDetailModalProps) => {
-  console.log('MusicDetailModal rendered:', { isOpen, songDetail, isLoading });
   if (isLoading) {
     return (
       <BottomSlideModal isOpen={isOpen} onClose={onClose} height={height} title={songDetail.title}>
