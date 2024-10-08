@@ -89,7 +89,7 @@ const UserInfoNicknameSignupForm = ({
       <label htmlFor="nickname" className="block text-lg text-white mb-2">
         닉네임
       </label>
-      <div className="flex gap-3">
+      <div className="flex gap-4">
         <SignupInput
           id="nickname"
           name="nickname"
@@ -103,7 +103,8 @@ const UserInfoNicknameSignupForm = ({
         />
         {isEditMode && (
           <button
-            className={`btn w-16 bg-primary disabled:bg-[#CCCCCC] border-none shadow-lg`}
+            className={`h-fit px-5 py-2 rounded-md text-sm text-white transition-colors whitespace-nowrap disabled:bg-[#AAAAAA] disabled:cursor-not-allowed border-none shadow-lg bg-primary hover:bg-secondary`}
+            type="button"
             onClick={onSave}
             disabled={!isAvailable || !hasEdited || !isLengthValid || !isContentValid}
           >
