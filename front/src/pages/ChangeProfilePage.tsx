@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import SimpleLayout from '../layouts/SimpleLayout';
 import songPickerLogo from '../assets/songPickerLogo.svg';
 import UserInfoNicknameSignupForm from '../components/molecules/signup/UserInfoNicknameSignupForm';
@@ -9,6 +9,7 @@ import UserInfoAuthCodeSignupForm from '../components/molecules/signup/UserInfoA
 
 const ChangeProfilePage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const userProfile = location.state || {};
   const [nickname, setNickname] = useState<string>(userProfile.nickname);
   const [isNicknameValid, setIsNicknameValid] = useState(false);
@@ -97,6 +98,15 @@ const ChangeProfilePage = () => {
             purpose="CHANGE_PHONE"
           />
         )}
+        {/* 비밀번호 재설정 */}
+        <button
+          className="flex font-bold text-primary text-lg"
+          onClick={() => {
+            navigate('/members/:id/change/password');
+          }}
+        >
+          비밀번호 재설정
+        </button>
       </div>
     </SimpleLayout>
   );
