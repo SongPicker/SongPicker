@@ -136,20 +136,6 @@ export const getAllThemes = async () => {
   return response.data;
 };
 
-// 테마별 노래추천
-// export interface ThemedSongRecommendation {
-//   themeTitle: string;
-//   songList: {
-//     songId: number;
-//     number: number;
-//     title: string;
-//     singer: string;
-//     coverImage?: string;
-//     isLike: boolean;
-//     likeId: number | null;
-//   }[];
-// }
-
 export interface Song {
   songId: number;
   number: number;
