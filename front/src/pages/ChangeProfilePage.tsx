@@ -45,7 +45,7 @@ const ChangeProfilePage = () => {
 
   return (
     <SimpleLayout title="프로필 수정">
-      <div className="px-4 space-y-12 min-w-72 w-full">
+      <div className="mt-12 px-4 space-y-12 min-w-72 w-full">
         {/* 프로필 사진 수정 */}
         <div className="flex flex-col items-center gap-5">
           <div className="flex mask mask-circle w-20 h-20 bg-white">

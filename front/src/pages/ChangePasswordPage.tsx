@@ -3,10 +3,18 @@ import BasicInfoPasswordConfirmForm from '../components/molecules/signup/BasicIn
 import BasicInfoPasswordForm from '../components/molecules/signup/BasicInfoPasswordSignupForm';
 import FooterButtonLayout from '../layouts/FooterButtonLayout';
 import CurrentPasswordForm from '../components/molecules/profile/CurrentPasswordForm';
+import { changePassword } from '../services/profileChangeService';
+import CustomModal from '../components/organisms/commons/CustomModal';
+import { useNavigate } from 'react-router-dom';
+import { set } from 'lodash';
 
 const ChangePasswordPage = () => {
+  const navigate = useNavigate()
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
-  const [currentPassword, setCurrentPassword] = useState('');
+  const [existPassword, setExistPassword] = useState('');
+  const [openModal, setOpenModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState('')
+  const [movePage, setMovePage] = useState(false)
   const [formData, setFormData] = useState({
     newPassword: '',
     newPasswordConfirm: '',
@@ -17,7 +25,7 @@ const ChangePasswordPage = () => {
   });
 
   const handleCurrentPasswordChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrentPassword(e.target.value);
+    setExistPassword(e.target.value);
   }, []);
 
   const handleNewPasswordChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,16 +42,47 @@ const ChangePasswordPage = () => {
     setValidations(prev => ({ ...prev, newPasswordConfirm: isValid }));
   }, []);
 
+  const savePasswordChange = async () => {
+    try {
+      const code = await changePassword(
+        existPassword,
+        formData.newPassword,
+        formData.newPasswordConfirm
+      );
+      if (code === 'AU003') {
+        setModalMessage('현재 비밀번호가 일치하지 않습니다')
+        setOpenModal(true)
+        console.log('모달', existPassword, formData.newPassword, formData.newPasswordConfirm)
+      } else if (code === 'ME105') {
+        setModalMessage('비밀번호가 수정되었습니다')
+        setOpenModal(true)
+        setMovePage(true)
+      } else if (code === 'ME006') {
+        setModalMessage('비밀번호 수정에 실패했습니다')
+        setOpenModal(true)
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false)
+    movePage && navigate('/members/:id/change/')
+  }
+
   return (
     <FooterButtonLayout
       title="비밀번호 수정"
       buttonText="저장"
       isButtonValid={validations.newPassword && validations.newPasswordConfirm}
-      onButtonClick={() => {}}
+      onButtonClick={() => {
+        savePasswordChange();
+      }}
     >
       <div className="mt-12 px-4 space-y-12 min-w-72 w-full">
         {/* 현재 비밀번호 */}
-        <CurrentPasswordForm password={currentPassword} onChange={handleCurrentPasswordChange} />
+        <CurrentPasswordForm password={existPassword} onChange={handleCurrentPasswordChange} />
 
         {/* 새 비밀번호 */}
         <BasicInfoPasswordForm
@@ -64,9 +103,12 @@ const ChangePasswordPage = () => {
             onValidation={handleNewPasswordConfirmValidation}
             label="새 비밀번호 확인"
             placeholder="새로운 비밀번호를 다시 입력해주세요"
-            name="newPassWordConfirm"
+            name="newPasswordConfirm"
           />
         )}
+
+        {/* 비밀번호 모달창 */}
+        <CustomModal isOpen={openModal} rightButtonText='확인' onClose={handleCloseModal} message={modalMessage}/>
       </div>
     </FooterButtonLayout>
   );
