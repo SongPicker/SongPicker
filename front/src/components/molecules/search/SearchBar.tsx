@@ -1,17 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { IoMdSearch } from 'react-icons/io';
+import debounce from 'lodash/debounce';
 
 type Props = {
   onSearch: (keyword: string) => void;
+  onInputChange: (keyword: string) => void;
   initialKeyword: string;
 };
 
-const SearchBar = ({ onSearch, initialKeyword }: Props) => {
+const SearchBar = ({ onSearch, onInputChange, initialKeyword }: Props) => {
   const [searchTerm, setSearchTerm] = useState(initialKeyword);
 
   useEffect(() => {
     setSearchTerm(initialKeyword);
   }, [initialKeyword]);
+
+  // 디바운스된 입력 변경 함수
+  const debouncedInputChange = useCallback(
+    debounce((term: string) => {
+      onInputChange(term.trim());
+    }, 300),
+    [onInputChange]
+  );
+
+  // 입력값 변경 시 실시간 검색
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newTerm = e.target.value;
+    setSearchTerm(newTerm);
+    debouncedInputChange(newTerm);
+  };
 
   // Enter 키를 눌렀을 때 검색
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -22,19 +39,7 @@ const SearchBar = ({ onSearch, initialKeyword }: Props) => {
 
   // 검색 버튼 클릭 또는 Enter 키 눌렀을 때 검색 처리
   const handleSearch = () => {
-    if (searchTerm.trim()) {
-      onSearch(searchTerm);
-      updateRecentSearches(searchTerm);
-    }
-  };
-
-  // 최근 검색어 업데이트
-  const updateRecentSearches = (term: string) => {
-    let recentSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
-    recentSearches = recentSearches.filter((item: string) => item !== term);
-    recentSearches.unshift(term);
-    if (recentSearches.length > 10) recentSearches.pop();
-    localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
+    onSearch(searchTerm.trim());
   };
 
   return (
@@ -44,7 +49,7 @@ const SearchBar = ({ onSearch, initialKeyword }: Props) => {
         <input
           type="text"
           value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
+          onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           placeholder="곡 명, 가수로 검색"
           className="outline-none bg-transparent w-full"
