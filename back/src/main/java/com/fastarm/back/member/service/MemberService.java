@@ -138,6 +138,10 @@ public class MemberService {
         return ProfileInfoResponse.builder()
                 .nickname(member.getNickname())
                 .profileImage(member.getProfileImage())
+                .gender(member.getGender())
+                .loginId(member.getLoginId())
+                .name(member.getName())
+                .phone(member.getPhone())
                 .build();
     }
 
