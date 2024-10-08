@@ -1,10 +1,21 @@
 import React from 'react';
 
-type Props = {};
+type Props = {
+  genre: string;
+  isSelected: boolean;
+  onClick: () => void;
+};
 
-const ThemeTab = (props: Props) => {
+const ThemeTab = ({ genre, isSelected, onClick }: Props) => {
   return (
-    <div className="flex items-center justify-center py-1 px-4 bg-[#333] rounded-full">#장르</div>
+    <div
+      className={`flex items-center justify-center py-[6px] px-4 rounded-full cursor-pointer ${
+        isSelected ? 'bg-[#9747FF]' : 'bg-[#333]'
+      }`}
+      onClick={onClick}
+    >
+      #{genre}
+    </div>
   );
 };
 

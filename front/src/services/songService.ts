@@ -118,20 +118,54 @@ export const reserveSong = async (number: number) => {
   return response.data;
 };
 
+// 테마 목록 랜덤 조회 API
+export const getRandomThemes = async () => {
+  const response = await axiosInstance({
+    method: 'GET',
+    url: '/api/songs/themes-random',
+  });
+  return response.data;
+};
+
+// 테마 목록 전체 조회 API
+export const getAllThemes = async () => {
+  const response = await axiosInstance({
+    method: 'GET',
+    url: '/api/songs/themes-total',
+  });
+  return response.data;
+};
+
 // 테마별 노래추천
-export interface ThemedSongRecommendation {
-  themeTitle: string;
-  songList: {
-    songId: number;
-    number: number;
-    title: string;
-    singer: string;
-    coverImage?: string;
-    isLike: boolean;
-    likeId: number | null;
-  }[];
+// export interface ThemedSongRecommendation {
+//   themeTitle: string;
+//   songList: {
+//     songId: number;
+//     number: number;
+//     title: string;
+//     singer: string;
+//     coverImage?: string;
+//     isLike: boolean;
+//     likeId: number | null;
+//   }[];
+// }
+
+export interface Song {
+  songId: number;
+  number: number;
+  title: string;
+  singer: string;
+  coverImage?: string;
+  isLike: boolean;
+  likeId: number | null;
 }
 
+export interface ThemedSongRecommendation {
+  themeTitle: string;
+  list: Song[];
+}
+
+// 테마 전체 노래리스트 API
 export const getThemedSongRecommendations = async (theme: string) => {
   const response = await axiosInstance({
     method: 'GET',
