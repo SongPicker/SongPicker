@@ -20,13 +20,11 @@ type Props = {
     songSearchList: SearchResultItem[];
     singerSearchList: SearchResultItem[];
   };
-
   onShowConnectionModal: (
     message: string,
     icon: 'link' | 'spinner' | 'reservation',
     autoCloseDelay?: number
   ) => void;
-
   onItemClick: (music: SearchResultItem) => void;
   isLoading: boolean;
   error: string | null;
