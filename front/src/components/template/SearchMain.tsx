@@ -1,6 +1,5 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import RecentSearch from '../organisms/search/RecentSearch';
 import MusicItem from '../organisms/commons/MusicItem';
 import { deleteLike, registerLike } from '../../services/songService';
 
@@ -14,19 +13,26 @@ interface SearchResultItem {
   likeId: number | null;
 }
 
+type Tab = 'all' | 'song' | 'singer';
+
 type Props = {
   keyword: string;
   searchResults: {
-    songSearchList: Array<any>;
-    singerSearchList: Array<any>;
+    songSearchList: SearchResultItem[];
+    singerSearchList: SearchResultItem[];
   };
-  onShowConnectionModal: (message: string) => void;
+  onShowConnectionModal: (
+    message: string,
+    icon: 'link' | 'spinner' | 'reservation',
+    autoCloseDelay?: number
+  ) => void;
   onItemClick: (music: SearchResultItem) => void;
   isLoading: boolean;
   error: string | null;
-  activeTab: 'all' | 'song' | 'singer';
-  onTabChange: (tab: 'all' | 'song' | 'singer') => void;
+  activeTab: Tab;
+  onTabChange: (tab: Tab) => void;
   isConnected: boolean;
+  onSeeMore: () => void;
 };
 
 const SearchMain = ({
@@ -39,132 +45,139 @@ const SearchMain = ({
   activeTab,
   onTabChange,
   isConnected,
+  onSeeMore,
 }: Props) => {
   const navigate = useNavigate();
-  const [songs, setSongs] = useState<SearchResultItem[]>(searchResults.songSearchList);
+  const [songs, setSongs] = useState<SearchResultItem[]>([]);
+  const [singers, setSingers] = useState<SearchResultItem[]>([]);
 
-  const handleLikeToggle = useCallback(async (song: SearchResultItem) => {
-    const newIsLike = !song.isLike;
-
-    // 즉시 UI 업데이트
-    setSongs(prevSongs =>
-      prevSongs.map(item => (item.songId === song.songId ? { ...item, isLike: newIsLike } : item))
-    );
-
-    try {
-      if (newIsLike) {
-        // 찜 등록 API 호출
-        const result = await registerLike(song.songId);
-        setSongs(prevSongs =>
-          prevSongs.map(item =>
-            item.songId === song.songId
-              ? { ...item, isLike: true, likeId: result.likeId || result.body }
-              : item
-          )
-        );
-      } else {
-        // 찜 해제 API 호출
-        if (song.likeId) {
-          await deleteLike(song.likeId);
-          setSongs(prevSongs =>
-            prevSongs.map(item =>
-              item.songId === song.songId ? { ...item, isLike: false, likeId: null } : item
-            )
-          );
-        }
-      }
-    } catch (error) {
-      console.error('찜 등록/해제 중 오류 발생:', error);
-
-      // 실패 시 원래 상태로 되돌립니다.
-      setSongs(prevSongs =>
-        prevSongs.map(item =>
-          item.songId === song.songId ? { ...item, isLike: !newIsLike } : item
-        )
-      );
-    }
-  }, []);
-
-  const renderMusicItems = (items: Array<any>, limit?: number) => {
-    const itemsToRender = limit ? items.slice(0, limit) : items;
-    return itemsToRender.map(item => (
-      <MusicItem
-        key={item.number}
-        id={item.number.toString()}
-        number={item.number.toString()}
-        title={item.title}
-        artist={item.singer}
-        imageUrl={item.coverImage}
-        isLiked={item.isLike}
-        onLikeToggle={() => handleLikeToggle(item)}
-        onShowConnectionModal={onShowConnectionModal}
-        isConnected={isConnected}
-        onItemClick={() => onItemClick(item)}
-      />
-    ));
+  const handleShowConnectionModal = (message: string) => {
+    onShowConnectionModal(message, 'link');
   };
 
-  const renderSearchSection = (title: string, items: Array<any>, type: 'song' | 'singer') => (
-    <div className="mb-6">
-      <div className="flex justify-between items-center mb-2">
-        <h3 className="font-medium">
-          {title} 검색결과 {items.length}개
-        </h3>
-        {activeTab === 'all' && items.length > 4 && (
-          <button
-            className="text-sm text-[#9747FF]"
-            onClick={() => {
-              onTabChange(type);
-              navigate(`/search?keyword=${encodeURIComponent(keyword)}&tab=${type}`);
-            }}
-          >
-            더보기
-          </button>
-        )}
+  useEffect(() => {
+    setSongs(searchResults.songSearchList);
+    setSingers(searchResults.singerSearchList);
+  }, [searchResults]);
+
+  const updateSongState = useCallback((updatedSong: SearchResultItem) => {
+    setSongs(prevSongs => {
+      const newSongs = prevSongs.map(song =>
+        song.songId === updatedSong.songId ? updatedSong : song
+      );
+      return newSongs;
+    });
+    setSingers(prevSingers => {
+      const newSingers = prevSingers.map(singer =>
+        singer.songId === updatedSong.songId ? updatedSong : singer
+      );
+      return newSingers;
+    });
+  }, []);
+
+  const handleLikeToggle = useCallback(
+    async (song: SearchResultItem) => {
+      const newIsLike = !song.isLike;
+
+      // 즉시 UI 업데이트
+      const updatedSong = { ...song, isLike: newIsLike };
+      updateSongState(updatedSong);
+
+      try {
+        if (newIsLike) {
+          const result = await registerLike(song.songId);
+          if (result.code === 'LI100' || result.message === '찜 등록 성공') {
+            updateSongState({ ...updatedSong, likeId: result.likeId || result.body });
+            onShowConnectionModal('찜 목록에 추가되었습니다.', 'reservation', 2000);
+          } else {
+            throw new Error('찜 등록 실패');
+          }
+        } else {
+          const result = await deleteLike(Number(song.number));
+          if (result.code === 'LI101' || result.message === '찜 삭제 성공') {
+            updateSongState({ ...updatedSong, likeId: null });
+            onShowConnectionModal('찜 목록에서 제거되었습니다.', 'reservation', 2000);
+          } else {
+            throw new Error('찜 해제 실패');
+          }
+        }
+      } catch (error) {
+        console.error('찜 등록/해제 중 오류 발생:', error);
+        // 실패 시 원래 상태로 되돌림
+        updateSongState({ ...song, isLike: !newIsLike });
+        onShowConnectionModal('찜 등록/해제 중 오류가 발생했습니다.', 'link', 2000);
+      }
+    },
+    [updateSongState, onShowConnectionModal]
+  );
+
+  const renderMusicItems = useCallback(
+    (items: SearchResultItem[], limit?: number) => {
+      const itemsToRender = limit ? items.slice(0, limit) : items;
+      return itemsToRender.map(item => (
+        <MusicItem
+          key={item.songId}
+          id={item.songId.toString()}
+          number={item.number.toString()}
+          title={item.title}
+          artist={item.singer}
+          imageUrl={item.coverImage}
+          isLiked={item.isLike}
+          onLikeToggle={() => handleLikeToggle(item)}
+          onShowConnectionModal={handleShowConnectionModal}
+          isConnected={isConnected}
+          onItemClick={() => onItemClick(item)}
+        />
+      ));
+    },
+    [handleLikeToggle, handleShowConnectionModal, isConnected, onItemClick]
+  );
+
+  const renderSearchSection = useCallback(
+    (title: string, items: SearchResultItem[], type: Exclude<Tab, 'all'>) => (
+      <div className="mb-6">
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="font-medium">
+            {title} 검색결과 {items.length}개
+          </h3>
+          {activeTab === 'all' && items.length > 5 && (
+            <button
+              className="text-sm text-[#9747FF]"
+              onClick={() => {
+                onTabChange(type);
+                onSeeMore();
+              }}
+            >
+              더보기
+            </button>
+          )}
+        </div>
+        {renderMusicItems(items, activeTab === 'all' ? 5 : undefined)}
       </div>
-      {renderMusicItems(items, activeTab === 'all' ? 4 : undefined)}
-    </div>
+    ),
+    [activeTab, onSeeMore, onTabChange, renderMusicItems]
   );
 
   return (
     <div>
-      {!keyword && (
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <p className="font-medium text-[#888]">최근 검색어</p>
-            <button
-              className="text-sm text-[#444]"
-              onClick={() => {
-                localStorage.removeItem('recentSearches');
-                window.location.reload();
-              }}
-            >
-              전체 삭제
-            </button>
-          </div>
-          <RecentSearch />
-        </div>
-      )}
-
-      {keyword && (
-        <div className="search-results">
-          {isLoading ? (
-            <p className="text-gray-500">검색 중...</p>
-          ) : error ? (
-            <p className="text-red-500">{error}</p>
-          ) : (
+      {isLoading ? (
+        <p className="text-gray-500">검색 중...</p>
+      ) : error ? (
+        <p className="text-red-500">{error}</p>
+      ) : (
+        <>
+          {keyword && (
             <>
               {(activeTab === 'all' || activeTab === 'song') &&
-                renderSearchSection('곡', searchResults.songSearchList, 'song')}
+                renderSearchSection('곡', songs, 'song')}
               {(activeTab === 'all' || activeTab === 'singer') &&
-                renderSearchSection('가수', searchResults.singerSearchList, 'singer')}
-              {searchResults.songSearchList.length === 0 &&
-                searchResults.singerSearchList.length === 0 && (
-                  <p className="text-gray-500">"{keyword}"에 대한 검색 결과가 없습니다.</p>
-                )}
+                renderSearchSection('가수', singers, 'singer')}
+              {songs.length === 0 && singers.length === 0 && (
+                <p className="text-gray-500">"{keyword}"에 대한 검색 결과가 없습니다.</p>
+              )}
             </>
           )}
-        </div>
+        </>
       )}
     </div>
   );

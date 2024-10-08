@@ -53,7 +53,6 @@ export const searchSongs = async (keyword: string) => {
     });
 
     // 응답 데이터 구조 확인 및 처리
-    console.log('API Response:', response);
     if (response.data && response.data.body) {
       return response.data.body;
     } else if (response.data) {
