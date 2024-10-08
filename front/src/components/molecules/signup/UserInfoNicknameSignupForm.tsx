@@ -4,11 +4,11 @@ import SignupInput from '../../atoms/signup/SignupInput';
 import useAuthStore from '../../../stores/useAuthStore';
 
 type UserInfoNicknameSignupFormProps = {
-  initialNickname?: string; // 기본 값
+  initialNickname?: string;
   onChange: (nickname: string) => void;
   onValidation: (isValid: boolean) => void;
-  isEditMode?: boolean; // 수정 모드
-  onSave?: () => void; // 수정 모드에서 저장 버튼 관련
+  isEditMode?: boolean;
+  onSave?: () => void;
 };
 
 const UserInfoNicknameSignupForm = ({
@@ -28,14 +28,19 @@ const UserInfoNicknameSignupForm = ({
 
   const checkNicknameAvailability = useAuthStore(state => state.checkNicknameAvailability);
 
+  const validateNickname = useCallback((value: string) => {
+    const lengthValid = value.length >= 2 && value.length <= 8;
+    const contentValid = /^(?:[a-zA-Z]{2,8}|[가-힣]{2,8}|[a-zA-Z0-9가-힣]{2,8})$/.test(value);
+    return { lengthValid, contentValid };
+  }, []);
+
   const debouncedCheckAvailability = useCallback(
     debounce(async (value: string) => {
-      if (isLengthValid && isContentValid && (!isEditMode || value !== initialNickname)) {
+      const { lengthValid, contentValid } = validateNickname(value);
+      if (lengthValid && contentValid && (!isEditMode || value !== initialNickname)) {
         setIsChecking(true);
-        console.log('Checking nickname availability:', value);
         try {
           const { isAvailable, message } = await checkNicknameAvailability(value);
-          console.log('Nickname availability result:', isAvailable, message);
           setIsAvailable(isAvailable);
           setMessage(message);
           onValidation(isAvailable);
@@ -44,14 +49,7 @@ const UserInfoNicknameSignupForm = ({
         }
       }
     }, 300),
-    [
-      isLengthValid,
-      isContentValid,
-      checkNicknameAvailability,
-      onValidation,
-      initialNickname,
-      isEditMode,
-    ]
+    [validateNickname, checkNicknameAvailability, onValidation, initialNickname, isEditMode]
   );
 
   const handleChange = useCallback(
@@ -61,38 +59,37 @@ const UserInfoNicknameSignupForm = ({
       onChange(value);
       setHasEdited(value !== initialNickname);
 
-      const lengthValid = value.length >= 2 && value.length <= 8;
-      const contentValid = /^(?:[a-zA-Z]{2,8}|[가-힣]{2,8}|[a-zA-Z0-9가-힣]{2,8})$/.test(value);
-
+      const { lengthValid, contentValid } = validateNickname(value);
       setIsLengthValid(lengthValid);
       setIsContentValid(contentValid);
 
-      if (lengthValid && contentValid && (!isEditMode || value !== initialNickname)) {
+      if (lengthValid && contentValid) {
         debouncedCheckAvailability(value);
-      } else if (isEditMode && value === initialNickname) {
-        setMessage('기존 닉네임입니다.');
-        setIsAvailable(false);
       } else {
         setIsAvailable(false);
         onValidation(false);
         setMessage('');
       }
     },
-    [onChange, debouncedCheckAvailability, initialNickname, isEditMode]
+    [onChange, debouncedCheckAvailability, initialNickname, validateNickname]
   );
 
   useEffect(() => {
-    if (isEditMode && !hasEdited) {
-      setIsAvailable(false);
+    if (isEditMode) {
+      const { lengthValid, contentValid } = validateNickname(initialNickname);
+      setIsLengthValid(lengthValid);
+      setIsContentValid(contentValid);
+      setIsAvailable(true);
+      setMessage('');
     }
-  }, [isEditMode, hasEdited]);
+  }, [isEditMode, initialNickname, validateNickname]);
 
   return (
     <div className="h-24">
       <label htmlFor="nickname" className="block text-lg text-white mb-2">
         닉네임
       </label>
-      <div className="flex gap-3">
+      <div className="flex gap-4">
         <SignupInput
           id="nickname"
           name="nickname"
@@ -106,9 +103,10 @@ const UserInfoNicknameSignupForm = ({
         />
         {isEditMode && (
           <button
-            className={`btn w-16 bg-primary disabled:bg-[#CCCCCC] border-none shadow-lg`}
+            className={`h-fit px-5 py-2 rounded-md text-sm text-white transition-colors whitespace-nowrap disabled:bg-[#AAAAAA] disabled:cursor-not-allowed border-none shadow-lg bg-primary hover:bg-secondary`}
+            type="button"
             onClick={onSave}
-            disabled={!isAvailable || !hasEdited}
+            disabled={!isAvailable || !hasEdited || !isLengthValid || !isContentValid}
           >
             저장
           </button>
