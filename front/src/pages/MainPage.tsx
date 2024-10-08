@@ -2,6 +2,11 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { checkConnectionStatus, disconnectService } from '../services/connectionService';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { fetchNickname } from '../services/memberSevice';
+import {
+  getRandomThemes,
+  getThemedSongRecommendations,
+  ThemedSongRecommendation,
+} from '../services/songService';
 import TwoBtnAlertModal from '../components/template/commons/TwoBtnAlertModal';
 import KaraokeLinkMode from '../components/organisms/MainOrganism/KaraokeLinkMode';
 import MainLayout from '../layouts/MainLayout';
@@ -25,6 +30,15 @@ const MainPage = () => {
   const [mode, setMode] = useState<string | null>(null);
   const [teamName, setTeamName] = useState<string | null>(null);
   const navigate = useNavigate();
+  const [randomThemes, setRandomThemes] = useState<string[]>([]);
+  const [themeRecommendations, setThemeRecommendations] = useState<ThemedSongRecommendation[]>([]);
+
+  const handleViewMore = useCallback(
+    (theme: string) => {
+      navigate(`/theme`, { state: { selectedTheme: theme } });
+    },
+    [navigate]
+  );
 
   // 닉네임 가져오는 api
   useEffect(() => {
@@ -95,34 +109,35 @@ const MainPage = () => {
     }
   };
 
-  // 임시 테마 노래 1
-  const kpopTheme = {
-    title: '신나는 K-POP 여자 아이돌 노래',
-    gradientColors: 'bg-gradient-to-r from-red-400 to-pink-500',
-    themeLink: '/theme/k-pop',
-    items: [
-      { imageUrl: '', number: '154353', title: 'Ditto', artist: 'NewJeans' },
-      { imageUrl: '', number: '234233', title: 'Hype Boy', artist: 'NewJeans' },
-      { imageUrl: '', number: '343424', title: 'OMG', artist: 'NewJeans' },
-    ],
-  };
+  // 랜덤 테마 및 테마별 노래 추천 가져오기
+  const fetchRandomThemesAndSongs = useCallback(async () => {
+    try {
+      const themesResponse = await getRandomThemes();
+      if (themesResponse.code === 'SO106' && Array.isArray(themesResponse.data)) {
+        setRandomThemes(themesResponse.data);
 
-  // 임시 테마 노래 2
-  const balladeTheme = {
-    title: '감성적인 발라드 모음',
-    gradientColors: 'bg-gradient-to-r from-blue-400 to-purple-500',
-    themeLink: '/theme/ballad',
-    items: [
-      { imageUrl: '', number: '167575', title: '사랑은 늘 도망가', artist: '임영웅' },
-      { imageUrl: '', number: '276535', title: '취중고백', artist: '김민석' },
-      {
-        imageUrl: '',
-        number: '334242',
-        title: '그날에 나는 맘이 편했을까',
-        artist: '이예준',
-      },
-    ],
-  };
+        const recommendationsPromises = themesResponse.data.map((theme: string) =>
+          getThemedSongRecommendations(theme)
+        );
+        const recommendationsResponses = await Promise.all(recommendationsPromises);
+
+        const validRecommendations = recommendationsResponses
+          .filter(response => response.code === 'SO105' && response.data)
+          .map(response => ({
+            ...response.data,
+            list: response.data.list.slice(0, 3), // 각 테마당 3곡만 선택
+          }));
+
+        setThemeRecommendations(validRecommendations);
+      }
+    } catch (error) {
+      console.error('Failed to fetch random themes and songs:', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchRandomThemesAndSongs();
+  }, [fetchRandomThemesAndSongs]);
 
   const handleShowNotification = (title: string, description: string) => {
     setNotificationMessage({ title, description });
@@ -182,8 +197,20 @@ const MainPage = () => {
 
         {/* 테마 추천 */}
         <div className="px-2">
-          <RecomThemeBanner {...kpopTheme} />
-          <RecomThemeBanner {...balladeTheme} />
+          {themeRecommendations.map((theme, index) => (
+            <RecomThemeBanner
+              key={index}
+              title={theme.themeTitle}
+              gradientColors={`bg-gradient-to-r from-primary to-secondary`} // 실제 색상은 필요에 따라 조정
+              themeLink={`/theme`}
+              items={theme.list.map(song => ({
+                imageUrl: song.coverImage || '',
+                number: song.number.toString(),
+                title: song.title,
+                artist: song.singer,
+              }))}
+            />
+          ))}
         </div>
 
         {/* 사용자 통계 배너 */}
