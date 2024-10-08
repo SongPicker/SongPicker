@@ -7,6 +7,9 @@ type BasicInfoPasswordConfirmFormProps = {
   passwordConfirm: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onValidation: (isValid: boolean) => void;
+  label?: string;
+  placeholder?: string;
+  name?: string;
 };
 
 const BasicInfoPasswordConfirmForm = ({
@@ -14,6 +17,9 @@ const BasicInfoPasswordConfirmForm = ({
   passwordConfirm,
   onChange,
   onValidation,
+  label = '비밀번호 확인',
+  placeholder = '비밀번호를 다시 입력해주세요',
+  name = 'passwordConfirm',
 }: BasicInfoPasswordConfirmFormProps) => {
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const [error, setError] = useState('');
@@ -26,16 +32,16 @@ const BasicInfoPasswordConfirmForm = ({
 
   return (
     <div className="relative h-24">
-      <label htmlFor="passwordConfirm" className="block text-lg text-white mb-2">
-        비밀번호 확인
+      <label htmlFor={name} className="block text-lg text-white mb-2">
+        {label}
       </label>
       <div className="relative">
         <BasicInput
-          id="passwordConfirm"
+          id={name}
           type={showPasswordConfirm ? 'text' : 'password'}
-          placeholder="비밀번호를 다시 입력해주세요"
+          placeholder={placeholder}
           value={passwordConfirm}
-          name="passwordConfirm"
+          name={name}
           onChange={onChange}
           className="w-full pr-10"
         />
