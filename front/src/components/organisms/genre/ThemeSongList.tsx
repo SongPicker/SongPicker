@@ -11,6 +11,7 @@ type Props = {
   onLikeToggle: (song: Song) => void;
   onReservation: (song: Song) => void;
   onShowConnectionModal: (message: string) => void;
+  onItemClick: (song: Song) => void;
 };
 
 const ThemeSongList = ({
@@ -19,8 +20,8 @@ const ThemeSongList = ({
   isConnected,
   onRefresh,
   onLikeToggle,
-  onReservation,
   onShowConnectionModal,
+  onItemClick,
 }: Props) => {
   if (!themedSongs) {
     return <div className="text-white">로딩 중...</div>;
@@ -29,37 +30,38 @@ const ThemeSongList = ({
   const { themeTitle, list } = themedSongs;
 
   return (
-    <div>
-      {/* 노래리스트 */}
-      <div
-        className="w-full p-3 rounded-xl min-h-screen"
-        style={{ background: 'linear-gradient(to right, #9747FF, #575ED2)' }}
-      >
-        {/* 테마제목 */}
-        <div className="flex justify-between">
-          <p className="font-semibold text-lg text-white mb-4">#{themeTitle}</p>
+    <div className="h-full flex flex-col bg-gradient-to-r from-primary to-secondary">
+      {/* 고정된 헤더 (테마 제목 및 새로고침 아이콘) */}
+      <div className="flex-shrink-0 p-3">
+        <div className="flex justify-between items-center">
+          <p className="font-semibold text-lg text-white">#{themeTitle}</p>
           <IoMdRefreshCircle
             className={`text-white size-7 cursor-pointer ${isRefreshing ? 'animate-spin' : ''}`}
             onClick={onRefresh}
           />
         </div>
+      </div>
 
-        {/* 노래 목록 */}
-        {list.map((song: Song) => (
-          <MusicItem
-            key={song.songId}
-            id={song.songId.toString()}
-            number={song.number.toString()}
-            title={song.title}
-            artist={song.singer}
-            imageUrl={song.coverImage || ''}
-            isLiked={song.isLike}
-            onLikeToggle={() => onLikeToggle(song)}
-            onShowConnectionModal={onShowConnectionModal}
-            onItemClick={() => onReservation(song)}
-            isConnected={isConnected}
-          />
-        ))}
+      {/* 스크롤 가능한 노래 목록 */}
+      <div className="flex-grow overflow-y-auto">
+        <div className="p-3">
+          {list.map((song: Song) => (
+            <div key={song.songId} className="mb-2">
+              <MusicItem
+                id={song.songId.toString()}
+                number={song.number.toString()}
+                title={song.title}
+                artist={song.singer}
+                imageUrl={song.coverImage || ''}
+                isLiked={song.isLike}
+                onLikeToggle={() => onLikeToggle(song)}
+                onShowConnectionModal={onShowConnectionModal}
+                onItemClick={() => onItemClick(song)}
+                isConnected={isConnected}
+              />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -15,6 +15,7 @@ type Props = {
   onReservation: (song: Song) => void;
   onShowNotification: (title: string, description: string) => void;
   onShowConnectionModal: (message: string) => void;
+  onItemClick: (song: Song) => void;
 };
 
 const Alltheme = ({
@@ -29,6 +30,7 @@ const Alltheme = ({
   onReservation,
   onShowNotification,
   onShowConnectionModal,
+  onItemClick,
 }: Props) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -53,29 +55,31 @@ const Alltheme = ({
   }, []);
 
   return (
-    <div>
+    <div className="flex flex-col h-full">
       {/* 탭 */}
-      <div
-        ref={scrollContainerRef}
-        className="mb-6 flex gap-3 overflow-x-auto whitespace-nowrap pb-2"
-        style={{
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none',
-          WebkitOverflowScrolling: 'touch',
-        }}
-      >
-        {themes.map(theme => (
-          <ThemeTab
-            key={theme}
-            genre={theme}
-            isSelected={theme === selectedTheme}
-            onClick={() => onThemeSelect(theme)}
-          />
-        ))}
+      <div className="flex-shrink-0 pb-4">
+        {/* 배경색과 z-index 추가 */}
+        <div
+          ref={scrollContainerRef}
+          className="flex gap-3 overflow-x-auto whitespace-nowrap"
+          style={{
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+            WebkitOverflowScrolling: 'touch',
+          }}
+        >
+          {themes.map(theme => (
+            <ThemeTab
+              key={theme}
+              genre={theme}
+              isSelected={theme === selectedTheme}
+              onClick={() => onThemeSelect(theme)}
+            />
+          ))}
+        </div>
       </div>
-
       {/* 노래리스트 */}
-      <div className="">
+      <div className="flex-grow overflow-y-auto rounded-xl overflow-hidden">
         {themedSongs && (
           <ThemeSongList
             themedSongs={themedSongs}
@@ -85,6 +89,7 @@ const Alltheme = ({
             onLikeToggle={onLikeToggle}
             onReservation={onReservation}
             onShowConnectionModal={onShowConnectionModal}
+            onItemClick={onItemClick}
           />
         )}
       </div>
