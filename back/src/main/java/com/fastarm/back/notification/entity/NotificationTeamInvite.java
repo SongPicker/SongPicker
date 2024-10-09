@@ -32,4 +32,9 @@ public class NotificationTeamInvite extends Notification{
         this.status = Status.REJECT;
     }
 
+    @PreRemove
+    public void preRemove() {
+        this.delete();
+    }
+
 }
