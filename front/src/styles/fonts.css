@@ -8,7 +8,7 @@
 
 @font-face {
   font-family: 'PyeongChang Peace';
-  src: url('/fonts/PyeongChangPeace-Light.woff2') format('woff2');
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2206-02@1.0/PyeongChangPeace.woff2') format('woff2');
   font-weight: 300;
   font-style: normal;
   font-display: swap;
@@ -16,7 +16,7 @@
 
 @font-face {
   font-family: 'PyeongChang Peace';
-  src: url('/fonts/PyeongChangPeace-Bold.woff2') format('woff2');
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2206-02@1.0/PyeongChangPeace-Bold.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
