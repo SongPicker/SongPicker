@@ -1,12 +1,19 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import BasicInfoPasswordConfirmForm from '../components/molecules/signup/BasicInfoPasswordConfirmSignupForm';
 import BasicInfoPasswordForm from '../components/molecules/signup/BasicInfoPasswordSignupForm';
 import FooterButtonLayout from '../layouts/FooterButtonLayout';
-import CurrentPasswordForm from '../components/molecules/profile/CurrentPasswordForm';
+import { changePassword } from '../services/profileChangeService';
+import CustomModal from '../components/organisms/commons/CustomModal';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const ChangePasswordPage = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
-  const [currentPassword, setCurrentPassword] = useState('');
+  const [existPassword, setExistPassword] = useState('');
+  const [openModal, setOpenModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [movePage, setMovePage] = useState(false);
   const [formData, setFormData] = useState({
     newPassword: '',
     newPasswordConfirm: '',
@@ -16,9 +23,10 @@ const ChangePasswordPage = () => {
     newPasswordConfirm: false,
   });
 
-  const handleCurrentPasswordChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrentPassword(e.target.value);
-  }, []);
+  useEffect(() => {
+    const passwordFromState = location.state?.existPassword || '';
+    setExistPassword(passwordFromState);
+  }, [location.state]);
 
   const handleNewPasswordChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -34,17 +42,50 @@ const ChangePasswordPage = () => {
     setValidations(prev => ({ ...prev, newPasswordConfirm: isValid }));
   }, []);
 
+  const savePasswordChange = async () => {
+    try {
+      const code = await changePassword(
+        existPassword,
+        formData.newPassword,
+        formData.newPasswordConfirm
+      );
+      if (code === 'AU003') {
+        setModalMessage('현재 비밀번호를 인증해주세요');
+        setOpenModal(true);
+        setMovePage(true)
+      } else if (code === 'ME105') {
+        setModalMessage('비밀번호가 재설정 되었습니다');
+        setOpenModal(true);
+        setMovePage(true);
+      } else if (code === 'ME006') {
+        setModalMessage('비밀번호 재설정에 실패했습니다');
+        setOpenModal(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    movePage && navigate('/members/:id/change/');
+  };
+
+  const handleCloseModalToVerify = () => {
+    setOpenModal(false);
+    movePage && navigate('/members/:id/change/verify-password');
+  };
+
   return (
     <FooterButtonLayout
-      title="비밀번호 수정"
+      title="비밀번호 재설정"
       buttonText="저장"
       isButtonValid={validations.newPassword && validations.newPasswordConfirm}
-      onButtonClick={() => {}}
+      onButtonClick={() => {
+        savePasswordChange();
+      }}
     >
       <div className="mt-12 px-4 space-y-12 min-w-72 w-full">
-        {/* 현재 비밀번호 */}
-        <CurrentPasswordForm password={currentPassword} onChange={handleCurrentPasswordChange} />
-
         {/* 새 비밀번호 */}
         <BasicInfoPasswordForm
           password={formData.newPassword}
@@ -64,9 +105,17 @@ const ChangePasswordPage = () => {
             onValidation={handleNewPasswordConfirmValidation}
             label="새 비밀번호 확인"
             placeholder="새로운 비밀번호를 다시 입력해주세요"
-            name="newPassWordConfirm"
+            name="newPasswordConfirm"
           />
         )}
+
+        {/* 비밀번호 모달창 */}
+        <CustomModal
+          isOpen={openModal}
+          rightButtonText="확인"
+          onClose={handleCloseModal}
+          message={modalMessage}
+        />
       </div>
     </FooterButtonLayout>
   );
