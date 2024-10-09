@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
 import Alltheme from '../components/template/genre/Alltheme';
 import CustomAlert from '../components/template/commons/CustomAlertModal';
@@ -18,6 +19,8 @@ import {
 import MusicDetailModal from '../components/template/commons/MusicDetailModal';
 
 const ThemePage = () => {
+  const [searchParams] = useSearchParams();
+  const theme = searchParams.get('theme');
   const [isConnected, setIsConnected] = useState(false);
   const [allThemes, setAllThemes] = useState<string[]>([]);
   const [selectedTheme, setSelectedTheme] = useState<string>('');
@@ -62,6 +65,14 @@ const ThemePage = () => {
   const handleCloseConnectionModal = () => {
     setShowConnectionModal(false);
   };
+
+  useEffect(() => {
+    if (theme) {
+      // theme 값에 따라 탭 및 관련 데이터를 설정
+      setSelectedTheme(theme);
+      fetchThemedSongs(theme); // 선택된 테마의 노래 불러오기
+    }
+  }, [theme]);
 
   // 곡 선택 핸들러
   const handleItemClick = useCallback(

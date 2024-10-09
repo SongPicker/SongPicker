@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { FaAngleRight } from 'react-icons/fa6';
 import ColMusicItem from '../../organisms/commons/ColMusicItem';
 
@@ -12,18 +11,18 @@ type Props = {
     title: string;
     artist: string;
   }>;
-  themeLink: string;
+  onMoreClick: () => void;
 };
 
-const RecomThemeBanner = ({ title, gradientColors, items, themeLink }: Props) => {
+const RecomThemeBanner = ({ title, gradientColors, items, onMoreClick }: Props) => {
   return (
     <div className="mb-8">
       <div className="flex justify-between items-center mb-3">
         <h2 className="text-xl font-medium">{title}</h2>
-        <Link to={themeLink} className="flex items-center">
+        <button onClick={onMoreClick} className="flex items-center">
           <p>더보기</p>
           <FaAngleRight />
-        </Link>
+        </button>
       </div>
 
       <div className={`w-full ${gradientColors} p-3 rounded-xl flex justify-between`}>
