@@ -88,7 +88,7 @@ def individual_recommend_songs_api(request):
     elif len(song_ids) == 4:
         weights = [7, 5, 4, 4]
     elif len(song_ids) == 3:
-        weights = [8, 7, 7]
+        weights = [8, 6, 6]
 
     index = 0
     recommended_songs = pd.DataFrame(columns=['id', 'acousticness', 'bpm', 'composer', 'cover_image', 'danceability', 
@@ -168,7 +168,7 @@ def team_recommend_songs_api(request):
     elif len(song_ids) == 4:
         weights = [7, 5, 4, 4]
     elif len(song_ids) == 3:
-        weights = [8, 7, 7]
+        weights = [8, 6, 6]
     elif len(song_ids) == 2:
         weights = [12, 8]
     else:
