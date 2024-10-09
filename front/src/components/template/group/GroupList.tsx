@@ -14,6 +14,7 @@ interface Group {
 const GroupList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [groups, setGroups] = useState<Group[]>([]);
+  const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null);
 
   const fetchGroups = useCallback(async () => {
     try {
@@ -42,9 +43,18 @@ const GroupList = () => {
   }, []);
 
   // 그룹 나가기 시 그룹을 제거하는 함수
-  const handleGroupLeft = useCallback((teamId: number) => {
-    setGroups(prevGroups => prevGroups.filter(group => group.teamId !== teamId));
-  }, []);
+  // const handleGroupLeft = useCallback((teamId: number) => {
+  //   setGroups(prevGroups => prevGroups.filter(group => group.teamId !== teamId));
+  // }, []);
+  const handleGroupLeft = useCallback(
+    (teamId: number) => {
+      setGroups(prevGroups => prevGroups.filter(group => group.teamId !== teamId));
+      if (selectedGroupId === teamId) {
+        setSelectedGroupId(null);
+      }
+    },
+    [selectedGroupId]
+  );
 
   const fixedContent = (
     <div className="flex p-4 bg-black justify-end">
@@ -63,6 +73,7 @@ const GroupList = () => {
         {/* GroupListContent에 onGroupLeft 전달 */}
         <GroupListContent
           groups={groups}
+          selectedGroupId={selectedGroupId}
           onGroupEdited={handleGroupEdited}
           onGroupLeft={handleGroupLeft}
         />
