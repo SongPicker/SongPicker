@@ -13,7 +13,7 @@ interface GroupMembersProps {
 
 const GroupMembers = ({ members, onAddMemberClick }: GroupMembersProps) => {
   return (
-    <div className="overflow-x-auto whitespace-nowrap py-4 px-4">
+    <div className="overflow-x-auto overflow-y-hidden whitespace-nowrap py-4 px-4">
       <div className="inline-flex space-x-6">
         {/* 멤버 추가 버튼 */}
         <div className="flex flex-col items-center">
