@@ -26,7 +26,7 @@ interface GroupConnect {
   ) => void;
 }
 
-const GroupDetail = ({ isConnected, onShowConnectionModal  }: GroupConnect) => {
+const GroupDetail = ({ isConnected, onShowConnectionModal }: GroupConnect) => {
   const { teamId } = useParams<{ teamId: string }>();
   const navigate = useNavigate();
   const location = useLocation();
