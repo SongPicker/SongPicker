@@ -13,8 +13,6 @@ import com.fastarm.back.song.entity.Song;
 import com.fastarm.back.song.repository.SongRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,10 +28,9 @@ public class BaseDataService {
     private final MemberRepository memberRepository;
 
     @Transactional(readOnly = true)
-    @Cacheable(cacheNames = "getPopularList", key = "'popularList:page:' + #pageable.pageNumber + ':size:' + #pageable.pageSize", cacheManager = "redisCacheManager")
-    public List<PopularGetResponse> getPopularList(Pageable pageable) {
-        Slice<PopularGetResponse> result = songRepository.getPopularSongs(pageable);
-        return result.getContent();
+    @Cacheable(cacheNames = "getPopularList", key = "'popularList'", cacheManager = "redisCacheManager")
+    public List<PopularGetResponse> getPopularList() {
+        return songRepository.getPopularSongs();
     }
 
     @Transactional
