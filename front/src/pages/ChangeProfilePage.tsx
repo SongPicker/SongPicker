@@ -102,7 +102,7 @@ const ChangeProfilePage = () => {
         <button
           className="flex font-bold text-primary text-lg"
           onClick={() => {
-            navigate('/members/:id/change/password');
+            navigate('/members/:id/change/verify-password');
           }}
         >
           비밀번호 재설정

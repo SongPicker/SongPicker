@@ -1,20 +1,19 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import BasicInfoPasswordConfirmForm from '../components/molecules/signup/BasicInfoPasswordConfirmSignupForm';
 import BasicInfoPasswordForm from '../components/molecules/signup/BasicInfoPasswordSignupForm';
 import FooterButtonLayout from '../layouts/FooterButtonLayout';
-import CurrentPasswordForm from '../components/molecules/profile/CurrentPasswordForm';
 import { changePassword } from '../services/profileChangeService';
 import CustomModal from '../components/organisms/commons/CustomModal';
-import { useNavigate } from 'react-router-dom';
-import { set } from 'lodash';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const ChangePasswordPage = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const location = useLocation();
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const [existPassword, setExistPassword] = useState('');
   const [openModal, setOpenModal] = useState(false);
-  const [modalMessage, setModalMessage] = useState('')
-  const [movePage, setMovePage] = useState(false)
+  const [modalMessage, setModalMessage] = useState('');
+  const [movePage, setMovePage] = useState(false);
   const [formData, setFormData] = useState({
     newPassword: '',
     newPasswordConfirm: '',
@@ -24,9 +23,10 @@ const ChangePasswordPage = () => {
     newPasswordConfirm: false,
   });
 
-  const handleCurrentPasswordChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setExistPassword(e.target.value);
-  }, []);
+  useEffect(() => {
+    const passwordFromState = location.state?.existPassword || '';
+    setExistPassword(passwordFromState);
+  }, [location.state]);
 
   const handleNewPasswordChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -50,16 +50,16 @@ const ChangePasswordPage = () => {
         formData.newPasswordConfirm
       );
       if (code === 'AU003') {
-        setModalMessage('현재 비밀번호가 일치하지 않습니다')
-        setOpenModal(true)
-        console.log('모달', existPassword, formData.newPassword, formData.newPasswordConfirm)
-      } else if (code === 'ME105') {
-        setModalMessage('비밀번호가 수정되었습니다')
-        setOpenModal(true)
+        setModalMessage('현재 비밀번호를 인증해주세요');
+        setOpenModal(true);
         setMovePage(true)
+      } else if (code === 'ME105') {
+        setModalMessage('비밀번호가 재설정 되었습니다');
+        setOpenModal(true);
+        setMovePage(true);
       } else if (code === 'ME006') {
-        setModalMessage('비밀번호 수정에 실패했습니다')
-        setOpenModal(true)
+        setModalMessage('비밀번호 재설정에 실패했습니다');
+        setOpenModal(true);
       }
     } catch (error) {
       console.log(error);
@@ -67,13 +67,18 @@ const ChangePasswordPage = () => {
   };
 
   const handleCloseModal = () => {
-    setOpenModal(false)
-    movePage && navigate('/members/:id/change/')
-  }
+    setOpenModal(false);
+    movePage && navigate('/members/:id/change/');
+  };
+
+  const handleCloseModalToVerify = () => {
+    setOpenModal(false);
+    movePage && navigate('/members/:id/change/verify-password');
+  };
 
   return (
     <FooterButtonLayout
-      title="비밀번호 수정"
+      title="비밀번호 재설정"
       buttonText="저장"
       isButtonValid={validations.newPassword && validations.newPasswordConfirm}
       onButtonClick={() => {
@@ -81,9 +86,6 @@ const ChangePasswordPage = () => {
       }}
     >
       <div className="mt-12 px-4 space-y-12 min-w-72 w-full">
-        {/* 현재 비밀번호 */}
-        <CurrentPasswordForm password={existPassword} onChange={handleCurrentPasswordChange} />
-
         {/* 새 비밀번호 */}
         <BasicInfoPasswordForm
           password={formData.newPassword}
@@ -108,7 +110,12 @@ const ChangePasswordPage = () => {
         )}
 
         {/* 비밀번호 모달창 */}
-        <CustomModal isOpen={openModal} rightButtonText='확인' onClose={handleCloseModal} message={modalMessage}/>
+        <CustomModal
+          isOpen={openModal}
+          rightButtonText="확인"
+          onClose={handleCloseModal}
+          message={modalMessage}
+        />
       </div>
     </FooterButtonLayout>
   );

@@ -33,6 +33,23 @@ export const changePhoneNumber = (newPhoneNumber: string) => {
     });
 };
 
+export const verifyPassword = (existPassword: string) => {
+  return axiosInstance({
+    method: 'POST',
+    url: '/api/auths/password/verify',
+    data: {
+      password: existPassword,
+    },
+  })
+    .then(res => {
+      console.log(res)
+      return res.data.code;
+    })
+    .catch(err => {
+      console.log(err);
+    });
+};
+
 export const changePassword = (
   existPassword: string,
   newPassword: string,

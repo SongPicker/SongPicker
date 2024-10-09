@@ -18,6 +18,7 @@ import { onMessage } from 'firebase/messaging';
 import { messaging } from './firebaseConfig';
 import ChangeProfile from './pages/ChangeProfilePage';
 import ChangePasswordPage from './pages/ChangePasswordPage';
+import VerifyPasswordPage from './pages/VerifyPasswordPage';
 // import { requestNotificationPermission } from './pushNotifications';
 
 interface PrivateRouteProps {
@@ -164,7 +165,15 @@ const App = () => {
             }
           />
           <Route
-            path="/members/:id/change/password"
+            path="/members/:id/change/verify-password"
+            element={
+              <PrivateRoute>
+                <VerifyPasswordPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/members/:id/change/change-password"
             element={
               <PrivateRoute>
                 <ChangePasswordPage />
