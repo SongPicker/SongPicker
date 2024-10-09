@@ -19,18 +19,12 @@ from django.urls import path
 from songs.views import (
     individual_recommend_songs_api,
     team_recommend_songs_api,
-    recommend_songs_cosine, 
-    recommend_songs_mf, 
-    recommend_songs_neural_network, 
 )
 
 urlpatterns = [
     path('individual/recommends', individual_recommend_songs_api, name='individual_recommend_songs_api'),
     path('team/recommends', team_recommend_songs_api, name='team_recommend_songs_api'),
     path('admin/', admin.site.urls),
-    path('recommend/cosine/', recommend_songs_cosine, name='recommend_songs_cosine'),
-    path('recommend/mf/', recommend_songs_mf, name='recommend_songs_mf'),
-    path('recommend/neural-network/', recommend_songs_neural_network, name='recommend_songs_neural_network'),
 ]
 
 # http://127.0.0.1:8000/recommend/mf/?songs=69605&songs=53341&songs=80930&songs=85300&songs=53410
