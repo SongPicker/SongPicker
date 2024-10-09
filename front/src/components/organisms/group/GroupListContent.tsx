@@ -13,16 +13,20 @@ interface Group {
 
 interface GroupListContentProps {
   groups: Group[];
+  selectedGroupId: number | null;
   onGroupEdited: (updatedGroup: Group) => void;
   onGroupLeft: (teamId: number) => void;
-  onGroupClick?: (event: React.MouseEvent, groupId: number) => void; // 그룹 클릭 시 호출되는 함수 추가 (선택적 props)
+  onGroupClick?: (event: React.MouseEvent, groupId: number) => void;
+  showMenu?: boolean;
 }
 
 const GroupListContent = ({
   groups,
+  selectedGroupId,
   onGroupEdited,
   onGroupLeft,
   onGroupClick,
+  showMenu = true,
 }: GroupListContentProps) => {
   const navigate = useNavigate();
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
@@ -34,6 +38,8 @@ const GroupListContent = ({
   useEffect(() => {
     setLocalGroups(groups);
   }, [groups]);
+
+  useEffect(() => {}, [selectedGroupId]);
 
   const handleGroupClick = useCallback(
     (event: React.MouseEvent, teamId: number) => {
@@ -116,6 +122,8 @@ const GroupListContent = ({
             onEditClick={e => handleEditClick(e, group)}
             onGroupLeft={() => handleGroupLeftInternal(group.teamId)}
             isOpen={openMenuId === group.teamId}
+            isSelected={group.teamId === selectedGroupId}
+            showMenu={showMenu}
           />
         ))}
       </div>
