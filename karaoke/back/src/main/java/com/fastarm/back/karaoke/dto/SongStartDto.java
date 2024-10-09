@@ -14,4 +14,5 @@ public class SongStartDto {
     private String nickname;
     private Long teamId;
     private Mode mode;
+    private int order;
 }

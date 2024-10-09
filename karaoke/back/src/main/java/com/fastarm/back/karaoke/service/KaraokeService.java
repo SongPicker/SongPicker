@@ -27,7 +27,6 @@ import com.fastarm.back.song.repository.SongRepository;
 import com.fastarm.back.team.entity.Team;
 import com.fastarm.back.team.exception.TeamNotFoundException;
 import com.fastarm.back.team.repository.TeamRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -53,7 +52,6 @@ public class KaraokeService {
     private final TeamSingHistoryRepository teamSingHistoryRepository;
     private final RedisService redisService;
     private final RestTemplate restTemplate;
-    private final ObjectMapper objectMapper;
 
 
     @Transactional
@@ -71,7 +69,9 @@ public class KaraokeService {
 
     @Transactional
     public void startSong(SongStartDto songStartDto) {
-        Machine machine = machineRepository.findBySerialNumber(songStartDto.getSerialNumber())
+        String serialNumber = songStartDto.getSerialNumber();
+
+        Machine machine = machineRepository.findBySerialNumber(serialNumber)
                 .orElseThrow(NotFoundMachineException::new);
 
         if (machine.getCoin() == 0) {
@@ -104,6 +104,10 @@ public class KaraokeService {
         }
 
         machine.useCoin();
+
+        Object startSong = redisService.getListDataByIndex(RedisConstants.RESERVATION_INFO + serialNumber, songStartDto.getOrder());
+
+        redisService.removeFromList(RedisConstants.RESERVATION_INFO + serialNumber, startSong);
     }
 
     public List<Object> findReservations(String serialNumber) {
