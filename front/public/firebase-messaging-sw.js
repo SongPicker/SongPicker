@@ -22,25 +22,28 @@ messaging.onBackgroundMessage(payload => {
   const notificationOptions = {
     body: payload.notification.body,
     icon: '/icons/favicon-196x196.png',
+    data: { url: '/' }, // 클릭 시 이동할 URL을 데이터에 포함
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
-// self.addEventListener('push', function (event) {
-//   if (event.data) {
-//     const payload = event.data.json();
-//     const title = payload.notification.title;
-//     const options = {
-//       body: payload.notification.body,
-//       icon: payload.notification.icon || '/icons/favicon-196x196.png',
-//       data: payload.data,
-//     };
-//     event.waitUntil(self.registration.showNotification(title, options));
-//   }
-// });
-
 self.addEventListener('notificationclick', function (event) {
-  event.notification.close();
-  event.waitUntil(clients.openWindow('/'));
+  event.notification.close(); // 알림 닫기
+
+  // 클라이언트를 열거나 포커스
+  event.waitUntil(
+    clients.matchAll({ type: 'window' }).then(clientList => {
+      for (let i = 0; i < clientList.length; i++) {
+        const client = clientList[i];
+        if (client.url === '/' && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      // 열린 창이 없으면 새 창 열기
+      if (clients.openWindow) {
+        return clients.openWindow('/');
+      }
+    })
+  );
 });
