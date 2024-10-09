@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/base-data")
 @RequiredArgsConstructor
@@ -23,7 +25,7 @@ public class BaseDataController {
 
     @GetMapping("/initial")
     public ResponseEntity<?> popularList(@PageableDefault(size = 33, sort = "id") Pageable pageable) {
-        Slice<PopularGetResponse> result = baseDataService.getPopularList(pageable);
+        List<PopularGetResponse> result = baseDataService.getPopularList(pageable);
         return ResponseEntity.ok(new ApiResponse<>("BD100", "선택 데이터 항목 조회 성공", result));
     }
 
