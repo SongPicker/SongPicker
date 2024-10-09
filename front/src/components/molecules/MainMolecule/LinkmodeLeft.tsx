@@ -11,8 +11,6 @@ interface LinkmodeLeftProps {
 }
 
 const LinkmodeLeft = ({ isConnected, mode, teamName, onDisconnect }: LinkmodeLeftProps) => {
-  console.log('LinkmodeLeft received isConnected:', isConnected);
-
   return (
     <div className="flex flex-col justify-between">
       <div>
@@ -20,7 +18,6 @@ const LinkmodeLeft = ({ isConnected, mode, teamName, onDisconnect }: LinkmodeLef
         <LinkModeSubtext isConnected={isConnected} mode={mode} teamName={teamName} />
       </div>
       {isConnected && <DisconnectButton onDisconnect={onDisconnect} />}
-      {/* <DisconnectButton /> */}
     </div>
   );
 };
