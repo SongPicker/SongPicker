@@ -33,9 +33,10 @@ const MainPage = () => {
   const [randomThemes, setRandomThemes] = useState<string[]>([]);
   const [themeRecommendations, setThemeRecommendations] = useState<ThemedSongRecommendation[]>([]);
 
+  // 테마 페이지로 이동하는 함수
   const handleViewMore = useCallback(
     (theme: string) => {
-      navigate(`/theme`, { state: { selectedTheme: theme } });
+      navigate(`/theme?theme=${encodeURIComponent(theme)}`);
     },
     [navigate]
   );
@@ -71,14 +72,15 @@ const MainPage = () => {
     }
   }, []);
 
+  // 연결 상태를 주기적으로 확인 (30분마다)
   useEffect(() => {
     fetchConnectionStatus();
-    const intervalId = setInterval(fetchConnectionStatus, 1200000);
+    const intervalId = setInterval(fetchConnectionStatus, 1800000);
     return () => clearInterval(intervalId);
   }, [fetchConnectionStatus]);
 
+  // QrScanPage에서 전달받은 상태 확인
   useEffect(() => {
-    // QrScanPage에서 전달받은 상태 확인
     if (location.state) {
       const { isConnected: newIsConnected, mode: newMode, teamName: newTeamName } = location.state;
       if (newIsConnected !== undefined) {
@@ -93,6 +95,7 @@ const MainPage = () => {
     }
   }, [location]);
 
+  // 연결 해제 처리
   const handleDisconnect = async () => {
     try {
       const response = await disconnectService();
@@ -123,8 +126,9 @@ const MainPage = () => {
 
         const validRecommendations = recommendationsResponses
           .filter(response => response.code === 'SO105' && response.data)
-          .map(response => ({
+          .map((response, index) => ({
             ...response.data,
+            theme: themesResponse.data[index], // theme을 명확히 추가
             list: response.data.list.slice(0, 3), // 각 테마당 3곡만 선택
           }));
 
@@ -135,19 +139,23 @@ const MainPage = () => {
     }
   }, []);
 
+  // 컴포넌트가 마운트될 때 랜덤 테마 및 노래 목록 가져오기
   useEffect(() => {
     fetchRandomThemesAndSongs();
   }, [fetchRandomThemesAndSongs]);
 
+  // 알림 표시 함수
   const handleShowNotification = (title: string, description: string) => {
     setNotificationMessage({ title, description });
     setShowNotification(true);
   };
 
+  // 알림 닫기 함수
   const handleCloseNotification = () => {
     setShowNotification(false);
   };
 
+  // 연결 모달 표시 함수
   const handleShowConnectionModal = (
     message: string,
     icon: 'link' | 'spinner' | 'reservation' = 'link',
@@ -159,10 +167,12 @@ const MainPage = () => {
     setShowConnectionModal(true);
   };
 
+  // 연결 모달 닫기 함수
   const handleCloseConnectionModal = () => {
     setShowConnectionModal(false);
   };
 
+  // 연결 모드 클릭 처리
   const handleLinkmodeClick = () => {
     if (isConnected) {
       setShowDisconnectModal(true); // 연결 중일 때 모달 표시
@@ -197,18 +207,18 @@ const MainPage = () => {
 
         {/* 테마 추천 */}
         <div className="px-2">
-          {themeRecommendations.map((theme, index) => (
+          {themeRecommendations.map((themeRec, index) => (
             <RecomThemeBanner
               key={index}
-              title={theme.themeTitle}
-              gradientColors={`bg-gradient-to-r from-primary to-secondary`} // 실제 색상은 필요에 따라 조정
-              themeLink={`/theme`}
-              items={theme.list.map(song => ({
+              title={themeRec.themeTitle}
+              gradientColors={`bg-gradient-to-r from-primary to-secondary`}
+              items={themeRec.list.map(song => ({
                 imageUrl: song.coverImage || '',
                 number: song.number.toString(),
                 title: song.title,
                 artist: song.singer,
               }))}
+              onMoreClick={() => handleViewMore(randomThemes[index])}
             />
           ))}
         </div>

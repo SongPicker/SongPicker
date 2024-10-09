@@ -13,7 +13,8 @@ interface Group {
 
 const GroupSelectPage = () => {
   const [groups, setGroups] = useState<Group[]>([]);
-  const [selectedGroup, setSelectedGroup] = useState<number | null>(null);
+  const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null);
+
   const navigate = useNavigate();
 
   // 그룹 목록을 불러오는 함수
@@ -33,13 +34,13 @@ const GroupSelectPage = () => {
   }, [fetchGroups]);
 
   const handleGroupSelect = (event: React.MouseEvent, groupId: number) => {
-    event.stopPropagation(); // 기본 동작 막기
-    setSelectedGroup(groupId); // 그룹 선택 상태 업데이트
+    event.stopPropagation();
+    setSelectedGroupId(groupId);
   };
 
   const handleNext = () => {
-    if (selectedGroup) {
-      navigate('/qr-scan', { state: { groupId: selectedGroup } });
+    if (selectedGroupId) {
+      navigate('/qr-scan', { state: { groupId: selectedGroupId } });
     }
   };
 
@@ -48,11 +49,12 @@ const GroupSelectPage = () => {
       title="노래방 그룹 선택"
       buttonText="QR스캔"
       onButtonClick={handleNext}
-      isButtonValid={selectedGroup !== null}
+      isButtonValid={selectedGroupId !== null}
     >
       <div className="flex-1">
         <GroupListContent
           groups={groups}
+          selectedGroupId={selectedGroupId}
           onGroupEdited={updatedGroup => {
             setGroups(prevGroups =>
               prevGroups.map(group => (group.teamId === updatedGroup.teamId ? updatedGroup : group))
@@ -60,8 +62,12 @@ const GroupSelectPage = () => {
           }}
           onGroupLeft={teamId => {
             setGroups(prevGroups => prevGroups.filter(group => group.teamId !== teamId));
+            if (selectedGroupId === teamId) {
+              setSelectedGroupId(null);
+            }
           }}
-          onGroupClick={handleGroupSelect} // 그룹 클릭 시 선택하도록 핸들러 추가
+          onGroupClick={handleGroupSelect}
+          showMenu={false}
         />
       </div>
     </FooterButtonLayout>

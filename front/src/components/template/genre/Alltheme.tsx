@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import ThemeTab from '../../atoms/genre/ThemeTab';
 import ThemeSongList from '../../organisms/genre/ThemeSongList';
 import { ThemedSongRecommendation, Song } from '../../../services/songService';
@@ -33,6 +34,19 @@ const Alltheme = ({
   onItemClick,
 }: Props) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [searchParams, setSearchParams] = useSearchParams(); // 쿼리 파라미터 사용
+  const themeQuery = searchParams.get('theme');
+
+  useEffect(() => {
+    if (themeQuery) {
+      onThemeSelect(themeQuery); // 쿼리 파라미터가 있을 때 해당 테마로 선택
+    }
+  }, [themeQuery, onThemeSelect]);
+
+  const handleThemeClick = (theme: string) => {
+    setSearchParams({ theme }); // 탭 클릭 시 URL의 쿼리 파라미터 변경
+    onThemeSelect(theme); // 테마 선택
+  };
 
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
@@ -73,7 +87,7 @@ const Alltheme = ({
               key={theme}
               genre={theme}
               isSelected={theme === selectedTheme}
-              onClick={() => onThemeSelect(theme)}
+              onClick={() => handleThemeClick(theme)}
             />
           ))}
         </div>

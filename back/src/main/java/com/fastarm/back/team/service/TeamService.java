@@ -199,13 +199,17 @@ public class TeamService {
         Team team = teamRepository.findById(dto.getTeamId()).orElseThrow(TeamNotFoundException :: new);
         TeamMember teamMember = teamMemberRepository.findByTeamIdAndMemberId(dto.getTeamId(),member.getId())
                 .orElseThrow(TeamMemberNotFoundException::new);
+        System.out.println("1");
+        Long remainingMembers = teamMemberRepository.countByTeamId(dto.getTeamId());
 
-        teamMemberRepository.delete(teamMember);
-
-        int remainingMembers = teamMemberRepository.countByTeamId(dto.getTeamId());
-        if (remainingMembers==0){
-            s3Service.deleteFile(team.getTeamImage());
+        if (remainingMembers==1){
+            teamMemberRepository.delete(teamMember);
+            if(team.getTeamImage()!=null){
+                s3Service.deleteFile(team.getTeamImage());
+            }
             teamRepository.delete(team);
+        }else{
+            teamMemberRepository.delete(teamMember);
         }
     }
 }
