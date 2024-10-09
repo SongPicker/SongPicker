@@ -13,7 +13,6 @@ interface Group {
 
 const GroupSelectPage = () => {
   const [groups, setGroups] = useState<Group[]>([]);
-  const [selectedGroup, setSelectedGroup] = useState<number | null>(null);
   const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null);
 
   const navigate = useNavigate();
@@ -36,13 +35,12 @@ const GroupSelectPage = () => {
 
   const handleGroupSelect = (event: React.MouseEvent, groupId: number) => {
     event.stopPropagation();
-    setSelectedGroup(groupId);
     setSelectedGroupId(groupId);
   };
 
   const handleNext = () => {
-    if (selectedGroup) {
-      navigate('/qr-scan', { state: { groupId: selectedGroup } });
+    if (selectedGroupId) {
+      navigate('/qr-scan', { state: { groupId: selectedGroupId } });
     }
   };
 
@@ -51,7 +49,7 @@ const GroupSelectPage = () => {
       title="노래방 그룹 선택"
       buttonText="QR스캔"
       onButtonClick={handleNext}
-      isButtonValid={selectedGroup !== null}
+      isButtonValid={selectedGroupId !== null}
     >
       <div className="flex-1">
         <GroupListContent
@@ -64,6 +62,9 @@ const GroupSelectPage = () => {
           }}
           onGroupLeft={teamId => {
             setGroups(prevGroups => prevGroups.filter(group => group.teamId !== teamId));
+            if (selectedGroupId === teamId) {
+              setSelectedGroupId(null);
+            }
           }}
           onGroupClick={handleGroupSelect}
           showMenu={false}
