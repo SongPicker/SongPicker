@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import MusicItem from './MusicItem';
+import { LuMic2 } from 'react-icons/lu';
 import { RecentSong, getMyRecentSongs } from '../../../services/historyService';
 import { deleteLike, registerLike } from '../../../services/songService';
 
@@ -113,7 +114,10 @@ const RecentSongList = ({ isConnected, onShowConnectionModal }: RecentSongListPr
           />
         ))
       ) : (
-        <p>최근 부른 곡이 없습니다.</p> // 데이터가 없을 때의 대체 텍스트
+        <div className="w-full h-full flex flex-col justify-center items-center text-purple-200">
+          <LuMic2 className="size-10 mb-4" />
+          <p className="text-lg">최근부른 곡이 없습니다.</p>
+        </div>
       )}
     </>
   );

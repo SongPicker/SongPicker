@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getLikedSongs, LikedSong, deleteLike } from '../../../services/songService';
 import MusicItem from './MusicItem';
+import { PiMusicNotesFill } from 'react-icons/pi';
 
 type LikedSongListProps = {
   isConnected: boolean;
@@ -68,7 +69,10 @@ const LikedSongList = ({ isConnected, onShowConnectionModal }: LikedSongListProp
           />
         ))
       ) : (
-        <p>찜한 곡이 없습니다.</p> // 데이터가 없을 때의 대체 텍스트
+        <div className="w-full h-full flex flex-col justify-center items-center text-purple-200">
+          <PiMusicNotesFill className="size-10 mb-4" />
+          <p className="text-lg">찜한 곡이 없습니다.</p>
+        </div>
       )}
     </>
   );
