@@ -4,7 +4,7 @@ import BasicInfoPasswordForm from '../components/molecules/signup/BasicInfoPassw
 import FooterButtonLayout from '../layouts/FooterButtonLayout';
 import { changePassword } from '../services/profileChangeService';
 import CustomModal from '../components/organisms/commons/CustomModal';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 const ChangePasswordPage = () => {
   const navigate = useNavigate();
@@ -22,7 +22,6 @@ const ChangePasswordPage = () => {
     newPassword: false,
     newPasswordConfirm: false,
   });
-
   useEffect(() => {
     const passwordFromState = location.state?.existPassword || '';
     setExistPassword(passwordFromState);
@@ -52,7 +51,7 @@ const ChangePasswordPage = () => {
       if (code === 'AU003') {
         setModalMessage('현재 비밀번호를 인증해주세요');
         setOpenModal(true);
-        setMovePage(true)
+        setMovePage(true);
       } else if (code === 'ME105') {
         setModalMessage('비밀번호가 재설정 되었습니다');
         setOpenModal(true);
@@ -68,12 +67,12 @@ const ChangePasswordPage = () => {
 
   const handleCloseModal = () => {
     setOpenModal(false);
-    movePage && navigate('/members/:id/change/');
+    movePage && navigate('/members/change');
   };
 
   const handleCloseModalToVerify = () => {
     setOpenModal(false);
-    movePage && navigate('/members/:id/change/verify-password');
+    movePage && navigate('/members/change/verify-password');
   };
 
   return (
@@ -83,6 +82,9 @@ const ChangePasswordPage = () => {
       isButtonValid={validations.newPassword && validations.newPasswordConfirm}
       onButtonClick={() => {
         savePasswordChange();
+      }}
+      onBackButtonClick={() => {
+        navigate('/members/change/');
       }}
     >
       <div className="mt-12 px-4 space-y-12 min-w-72 w-full">

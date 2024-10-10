@@ -18,6 +18,9 @@ import TopSingerWordCloud from '../components/organisms/profile/TopSingerWordClo
 import TopGenreItem from '../components/atoms/profile/TopGenreItem';
 
 const ProfilePage = () => {
+
+
+  // 프로필 표시 & 많이 부른 장르, 노래, 가수 & 월별 이용
   const { logout } = useAuthStore();
   const [userProfile, setUserProfile] = useState({
     nickname: '',
@@ -27,6 +30,7 @@ const ProfilePage = () => {
     phone: '',
     loginId: '',
   });
+  const [monthUse, setMonthUse] = useState(0)
   const [topSongList, setTopSongList] = useState([]);
   const [totalSingingCount, setTotalSingingCount] = useState(0);
   const [topSingerList, setTopSingerList] = useState([]);
@@ -111,7 +115,7 @@ const ProfilePage = () => {
   return (
     <MainLayout title="마이페이지">
       {/* 프로필 */}
-      <ProfileCard userProfile={userProfile} handleLogout={handleLogout} />
+      <ProfileCard userProfile={userProfile} handleLogout={handleLogout}/>
 
       <div className="flex flex-col px-4 items-center gap-6 py-6">
         {/* 기본 분석 */}

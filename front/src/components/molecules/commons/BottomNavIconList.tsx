@@ -28,8 +28,8 @@ function BottomNavIconList() {
       <Link to="/group">
         <GroupIcon isActive={isActive('/group')} />
       </Link>
-      <Link to="/members/id">
-        <PersonIcon isActive={isActive('/members/id')} />
+      <Link to="/members">
+        <PersonIcon isActive={isActive('/members')} />
       </Link>
     </div>
   );
