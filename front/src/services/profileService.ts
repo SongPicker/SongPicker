@@ -92,3 +92,18 @@ export const getTopSingerList = () => {
       console.log(err);
     });
 };
+
+// 이번 달 사용 횟수
+export const getThisMonthUseCount = () => {
+  return axiosInstance({
+    method: 'GET',
+    url: '/api/histories/this-month/use-count',
+  })
+    .then(res => {
+      return res.data.data;
+    })
+    .catch(err => {
+      console.log(err);
+      return 0;
+    });
+};
