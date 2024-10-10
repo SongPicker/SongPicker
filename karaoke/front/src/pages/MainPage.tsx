@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import MainBackground from '../assets/MainBackground.png';
 import CircleButton from '../molecules/CircleButton';
 import GuideQrcode from '../organisms/GuideQrcode';
@@ -50,14 +50,20 @@ const MainPage = () => {
   };
 
   // 예약 차트 오픈
-  const handleReservation = () => {
-    if (!reservationData || reservationData.length === 0) {
+  const handleReservation = useCallback(async () => {
+    try {
+      await refetchReservation();
+      const updatedReservationData = await refetchReservation();
+      if (!updatedReservationData.data || updatedReservationData.data.length === 0) {
+        setShowReserveAlert(true);
+      } else {
+        setShowReservation(true);
+      }
+    } catch (error) {
+      console.error("Failed to fetch reservation data", error);
       setShowReserveAlert(true);
-    } else {
-      setShowReservation(true);
-      refetchReservation();
     }
-  };
+  }, [refetchReservation]);
 
   const closeReserveAlert = () => {
     setShowReserveAlert(false);
