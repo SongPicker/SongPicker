@@ -42,7 +42,7 @@ export const verifyPassword = (existPassword: string) => {
     },
   })
     .then(res => {
-      console.log(res)
+      console.log(res);
       return res.data.code;
     })
     .catch(err => {
@@ -72,5 +72,27 @@ export const changePassword = (
     })
     .catch(err => {
       console.log(err);
+    });
+};
+
+export const changeProfileImage = (profileImg: File) => {
+  const formData = new FormData();
+  formData.append('profileImage', profileImg);
+
+  return axiosInstance({
+    method: 'PATCH',
+    url: '/api/members/profile-image',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
+    .then(res => {
+      console.log('프로필 이미지 변경 성공:', res);
+      return res.data;
+    })
+    .catch(err => {
+      console.error('프로필 이미지 변경 실패:', err);
+      throw err;
     });
 };
