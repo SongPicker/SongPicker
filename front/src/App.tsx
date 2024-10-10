@@ -157,7 +157,7 @@ const App = () => {
             }
           />
           <Route
-            path="/members/:id"
+            path="/members"
             element={
               <PrivateRoute>
                 <ProfilePage />
@@ -165,7 +165,7 @@ const App = () => {
             }
           />
           <Route
-            path="/members/:id/change"
+            path="/members/change"
             element={
               <PrivateRoute>
                 <ChangeProfile />
@@ -173,7 +173,7 @@ const App = () => {
             }
           />
           <Route
-            path="/members/:id/change/verify-password"
+            path="/members/change/verify-password"
             element={
               <PrivateRoute>
                 <VerifyPasswordPage />
@@ -181,7 +181,7 @@ const App = () => {
             }
           />
           <Route
-            path="/members/:id/change/change-password"
+            path="/members/change/change-password"
             element={
               <PrivateRoute>
                 <ChangePasswordPage />

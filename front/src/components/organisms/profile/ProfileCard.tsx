@@ -22,7 +22,7 @@ const ProfileCard = (props: ProfileCardProps) => {
           <span
             className="text-md font-medium underline cursor-pointer"
             onClick={() => {
-              navigate('/members/:id/change', { state: props.userProfile });
+              navigate('/members/change', { state: props.userProfile });
             }}
           >
             프로필 수정하기

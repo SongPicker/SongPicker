@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import ExistPasswordForm from '../components/molecules/profile/ExistPasswordForm';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import FooterButtonLayout from '../layouts/FooterButtonLayout';
 
 const VerifyPasswordPage = () => {
@@ -21,7 +21,7 @@ const VerifyPasswordPage = () => {
       title="비밀번호 재설정"
       buttonText="다음"
       onButtonClick={() => {
-        navigate('/members/:id/change/change-password', {state: {existPassword: existPassword}});
+        navigate('/members/change/change-password', { state: { existPassword: existPassword } });
       }}
       isButtonValid={isExistPasswordValid}
     >

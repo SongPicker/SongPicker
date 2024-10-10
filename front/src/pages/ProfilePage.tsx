@@ -15,6 +15,7 @@ import ProfileCard from '../components/organisms/profile/ProfileCard';
 import TopSongList from '../components/organisms/profile/TopSongList';
 import TopSingerWordCloud from '../components/organisms/profile/TopSingerWordCloud';
 import TopGenreItem from '../components/atoms/profile/TopGenreItem';
+import { useParams } from 'react-router-dom';
 
 const ProfilePage = () => {
   // 로그아웃
@@ -47,14 +48,16 @@ const ProfilePage = () => {
     const fetchProfileData = async () => {
       try {
         const userProfileResponse = await getUserProfile();
-        setUserProfile(userProfileResponse || {
-          nickname: '',
-          profileImage: '',
-          name: '',
-          gender: '',
-          phone: '',
-          loginId: '',
-        });
+        setUserProfile(
+          userProfileResponse || {
+            nickname: '',
+            profileImage: '',
+            name: '',
+            gender: '',
+            phone: '',
+            loginId: '',
+          }
+        );
 
         const topSongListResponse = await getTopSongList();
         setTopSongList(topSongListResponse?.mostSongsList || []);
@@ -106,7 +109,7 @@ const ProfilePage = () => {
   return (
     <MainLayout title="마이페이지">
       {/* 프로필 */}
-      <ProfileCard userProfile={userProfile} handleLogout={handleLogout} />
+      <ProfileCard userProfile={userProfile} handleLogout={handleLogout}/>
 
       <div className="flex flex-col px-4 items-center gap-6 py-6">
         {/* 기본 분석 */}

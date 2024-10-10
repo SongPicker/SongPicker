@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import SimpleLayout from '../layouts/SimpleLayout';
 import songPickerLogo from '../assets/songPickerLogo.svg';
 import UserInfoNicknameSignupForm from '../components/molecules/signup/UserInfoNicknameSignupForm';
@@ -44,7 +44,12 @@ const ChangeProfilePage = () => {
   }, []);
 
   return (
-    <SimpleLayout title="프로필 수정">
+    <SimpleLayout
+      title="프로필 수정"
+      onBackButtonClick={() => {
+        navigate('/members');
+      }}
+    >
       <div className="mt-12 px-4 space-y-12 min-w-72 w-full">
         {/* 프로필 사진 수정 */}
         <div className="flex flex-col items-center gap-5">
@@ -103,7 +108,7 @@ const ChangeProfilePage = () => {
         <button
           className="flex font-bold text-primary text-lg"
           onClick={() => {
-            navigate('/members/:id/change/verify-password');
+            navigate('/members/change/verify-password');
           }}
         >
           비밀번호 재설정
