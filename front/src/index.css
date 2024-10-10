@@ -1,12 +1,21 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
 
 .overflow-y-auto {
-  scrollbar-width: none;  /* Firefox */
-  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
 }
 .overflow-y-auto::-webkit-scrollbar {
-  display: none;  /* WebKit */
+  display: none; /* WebKit */
+}
+
+.mockup-phone {
+  width: 100%;
+  max-width: 300px; /* 원하는 최대 너비로 조정 */
+}
+
+.mockup-phone .display {
+  aspect-ratio: 9/16; /* 모바일 화면 비율에 맞춤 */
 }
