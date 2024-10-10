@@ -1,8 +1,7 @@
 import axiosInstance from '../services/axiosInstance';
-import { ReservationItem } from '../shared/Types';
+import { SongItem } from '../shared/Types';
 
-
-const saveSingSong = (props:ReservationItem) => {
+const saveSingSong = (props: SongItem) => {
   return axiosInstance({
     method: 'POST',
     url: 'start-song',

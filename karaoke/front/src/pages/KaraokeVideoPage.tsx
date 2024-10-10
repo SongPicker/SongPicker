@@ -6,16 +6,17 @@ import LandingCharacter from '../assets/LandingCharacter.svg';
 
 import { useState } from 'react';
 import Text60 from '../atoms/Text60';
-import MiniChartTemplate from '../templates/MiniChartTemplate';
+import MiniChartTemplate from '../template/MiniChartTemplate';
 import MiniCircleButton from '../molecules/MiniCircleButton';
 import { useFetchReservation } from '../hooks/useFetchReservation';
+import AlertModal from '../molecules/AlertModal';
 
 const KaraokeVideoPage = () => {
   const state = useLocation();
   const [isVisible, setIsVisible] = useState(true);
-  const [showMiniRecommendation, setShowMiniRecommendation] = useState(false);
   const [showMiniReservation, setShowMiniReservation] = useState(false);
   const { data: reservationData, isLoading: reservationIsLoading } = useFetchReservation();
+  const [showReserveAlert, setShowReserveAlert] = useState(false);
 
   // 비디오 검색 안될 때
   const handleError = (error: number) => {
@@ -24,20 +25,17 @@ const KaraokeVideoPage = () => {
     }
   };
 
-  // 추천 차트 오픈
-  const handleMiniRecommendation = () => {
-    setShowMiniRecommendation(!showMiniRecommendation);
-    if (showMiniReservation) {
-      setShowMiniReservation(false);
+  // 예약 차트 오픈
+  const handleMiniReservation = () => {
+    if (reservationData?.length === 0) {
+      setShowReserveAlert(true);
+    } else {
+      setShowMiniReservation(!showMiniReservation);
     }
   };
 
-  // 예약 차트 오픈
-  const handleMiniReservation = () => {
-    setShowMiniReservation(!showMiniReservation);
-    if (showMiniRecommendation) {
-      setShowMiniRecommendation(false);
-    }
+  const closeReserveAlert = () => {
+    setShowReserveAlert(false);
   };
 
   return (
@@ -48,13 +46,8 @@ const KaraokeVideoPage = () => {
 
       {/* 비디오 */}
       <div className="flex flex-col w-full h-full justify-center items-center gap-3">
-        {/* 추천 차트 & 예약 목록 보기 버튼 */}
-        <div className="flex flex-col absolute right-10 bottom-10 gap-7">
-          <MiniCircleButton
-            text="추천 차트"
-            handleClick={handleMiniRecommendation}
-            color="bg-pink"
-          />
+        {/* 예약 목록 보기 버튼 */}
+        <div className="flex flex-col absolute right-10 bottom-10">
           <MiniCircleButton text="예약 목록" handleClick={handleMiniReservation} color="bg-blue" />
         </div>
 
@@ -76,20 +69,18 @@ const KaraokeVideoPage = () => {
       </div>
 
       {/* 미니 차트 */}
-      {showMiniRecommendation && (
-        <div className="absolute flex w-full h-full pointer-events-none">
-          {/* <MiniChartTemplate chartName='SongPicker 추천 차트' closeChart={handleMiniRecommendation}/> */}
-        </div>
-      )}
       {showMiniReservation && (
         <div className="absolute flex w-full h-full pointer-events-none">
           <MiniChartTemplate
             chartName="SongPicker 예약 목록"
             data={reservationData || []}
             isLoading={reservationIsLoading}
-            closeChart={handleMiniRecommendation}
+            closeChart={handleMiniReservation}
           />
         </div>
+      )}
+      {showReserveAlert && (
+        <AlertModal alertMessage="예약된 곡이 없습니다" closeAskPayModal={closeReserveAlert} />
       )}
     </div>
   );

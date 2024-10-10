@@ -1,7 +1,7 @@
 import ChartItem from '../molecules/ChartItem';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Reservation, ReservationItem } from '../shared/Types';
+import { Reservation, SongItem } from '../shared/Types';
 import findYoutube from '../utils/findYoutube';
 import saveSingSong from '../utils/saveSingSong';
 
@@ -15,10 +15,10 @@ const ReservationList = (props: ReservationListProps) => {
   const [clickedSinger, setClickedSinger] = useState('');
 
   // 클릭한 노래 상태 변경
-  const handleClickedSong = useCallback((song: ReservationItem) => {
+  const handleClickedSong = useCallback((song: SongItem) => {
     setClickedTitle(song.title);
     setClickedSinger(song.singer);
-    saveSingSong(song)
+    saveSingSong(song);
   }, []);
 
   // 클릭한 노래가 변경되면 유튜브 검색을 실행

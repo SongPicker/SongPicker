@@ -17,21 +17,32 @@ export type ButtonProps = {
 };
 
 // 예약
-export type ReservationItem = {
+export type SongItem = {
   number: number;
   title: string;
   singer: string;
-  nickname: string;
-  teamId: number | null;
-  mode: string;
+  nickname?: string;
+  teamId?: number | null;
+  mode?: string;
 };
 
-export type Reservation = ReservationItem[];
+export type Reservation = SongItem[];
+
+// 추천
+export interface UserData {
+  nickname: string | null;
+  loginId: string | null;
+  teamName: string | null;
+  teamId: number | null;
+  mode: 'INDIVIDUAL' | 'TEAM';
+}
 
 // 차트
 export type ChartTemplateProps = {
   chartName: string;
   closeChart: () => void;
-  isLoading: boolean;
-  data: Reservation | [];
+  isLoading?: boolean;
+  data: Reservation | UserData[] | [];
+  type?: string;
+  mode?: string;
 };

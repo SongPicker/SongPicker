@@ -1,10 +1,10 @@
 import { memo } from 'react';
 import Text36 from '../atoms/Text36';
-import { ReservationItem } from '../shared/Types';
+import { SongItem } from '../shared/Types';
 
 export type ChartItemProps = {
-  data: ReservationItem;
-  handleClickedSong: (song:ReservationItem) => void;
+  data: SongItem | SongItem;
+  handleClickedSong: (song: SongItem | SongItem) => void;
 };
 
 const ChartItem = (props: ChartItemProps) => {
