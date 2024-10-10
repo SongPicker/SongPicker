@@ -7,6 +7,7 @@ import useAuthStore from '../../../stores/useAuthStore';
 type Purpose = 'SIGNUP' | 'FIND_PASSWORD' | 'CHANGE_PHONE' | 'FIND_LOGIN_ID';
 
 type UserInfoPhoneSignupFormProps = {
+  initialPhone?: string;
   onVerify: () => void;
   onResetAuthCode: () => void;
   onChange: (phone: string) => void;
@@ -19,6 +20,7 @@ type UserInfoPhoneSignupFormProps = {
 };
 
 const UserInfoPhoneSignupForm: React.FC<UserInfoPhoneSignupFormProps> = ({
+  initialPhone = '',
   onVerify,
   onResetAuthCode,
   onChange,
@@ -29,7 +31,7 @@ const UserInfoPhoneSignupForm: React.FC<UserInfoPhoneSignupFormProps> = ({
   loginId,
   onError,
 }) => {
-  const [phone, setPhone] = useState('');
+  const [phone, setPhone] = useState(initialPhone);
   const [isPhoneValid, setIsPhoneValid] = useState(false);
   const [isPhoneAvailable, setIsPhoneAvailable] = useState(false);
   const [isChecking, setIsChecking] = useState(false);

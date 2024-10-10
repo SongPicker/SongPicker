@@ -47,11 +47,10 @@ const CalendarModal = (props: CalendarModalProps) => {
 
   return (
     <div className={`modal ${selectedCount > 0 ? 'modal-open' : ''}`}>
-      <div className="modal-box modal-scroll h-5/6 space-y-5 bg-gradient-to-b from-[#9747ff] to-[#565ed2] text-white">
+      <div className="modal-box h-5/6 space-y-5 bg-gradient-to-b from-[#9747ff] to-[#565ed2] text-white">
         <div className="p-1 flex w-full justify-between items-center">
           <p className="font-bold text-lg">
-            {props.selectedYear}년 {props.selectedMonth}월 {props.selectedDate}일에는{' '}
-            {selectedCount}곡을 불렀어요!
+            {props.selectedMonth}월 {props.selectedDate}일에는 {selectedCount}곡을 불렀어요!
           </p>
           <div
             className="flex border-none cursor-pointer"
@@ -63,7 +62,7 @@ const CalendarModal = (props: CalendarModalProps) => {
           </div>
         </div>
         <div className="border border-[#cccccc]"></div>
-        <div className="space-y-1">
+        <div className="space-y-1 overflow-y-auto h-[calc(100%-5rem)]">
           {selectedSongList.map((item, i) => {
             return (
               <MusicItem
