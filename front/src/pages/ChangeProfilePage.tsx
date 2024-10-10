@@ -58,15 +58,15 @@ const ChangeProfilePage = () => {
         <div className="flex flex-col items-center">
           <div className="flex w-1/2 justify-between">
             <span className="font-semibold">아이디</span>
-            <span className="text-gray-400">eunji</span>
+            <span className="text-gray-400">{userProfile.loginId}</span>
           </div>
           <div className="flex w-1/2 justify-between">
             <span className="font-semibold">이름</span>
-            <span className="text-gray-400">박은지</span>
+            <span className="text-gray-400">{userProfile.name}</span>
           </div>
           <div className="flex w-1/2 justify-between">
             <span className="font-semibold">성별</span>
-            <span className="text-gray-400">여</span>
+            <span className="text-gray-400">{userProfile.gender}</span>
           </div>
         </div>
 
@@ -83,6 +83,7 @@ const ChangeProfilePage = () => {
 
         {/* 휴대폰 번호 수정 */}
         <UserInfoPhoneSignupForm
+          initialPhone={userProfile.phone}
           onVerify={handlePhoneVerification}
           onResetAuthCode={handleResetAuthCode}
           onChange={setPhone}

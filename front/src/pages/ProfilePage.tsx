@@ -33,6 +33,10 @@ const ProfilePage = () => {
   const [userProfile, setUserProfile] = useState({
     nickname: '',
     profileImage: '',
+    name: '',
+    gender: '',
+    phone: '',
+    loginId: '',
   });
   const [topSongList, setTopSongList] = useState([]);
   const [totalSingingCount, setTotalSingingCount] = useState(0);
@@ -104,9 +108,15 @@ const ProfilePage = () => {
             <p className="text-md px-2">이번 달 SongPicker 사용 일수 : 10일</p>
             <p className="text-md px-2">가장 많이 부른 노래 장르 Top 3</p>
             <div className="flex gap-2">
-              {topGenreList.map((item, i) => {
-                return <TopGenreItem name={item} key={`${item}-${i}`} />;
-              })}
+              {topGenreList.length > 0 ? (
+                topGenreList.map((item, i) => {
+                  return <TopGenreItem name={item} key={`${item}-${i}`} />;
+                })
+              ) : (
+                <p className="text-sm text-white">
+                  아직 정보가 부족해요! SongPicker를 이용해보세요
+                </p>
+              )}
             </div>
           </div>
         </div>
