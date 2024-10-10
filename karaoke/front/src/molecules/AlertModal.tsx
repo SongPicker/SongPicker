@@ -1,6 +1,5 @@
 import Text48 from '../atoms/Text48';
 import Text60 from '../atoms/Text60';
-import { PayingInfo } from '../shared/Types';
 
 type AlertModalProps = {
   alertMessage: string;
