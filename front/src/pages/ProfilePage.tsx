@@ -4,18 +4,19 @@ import useAuthStore from '../stores/useAuthStore'; // useAuthStore 가져오기
 import MyCalendar from '../components/organisms/profile/MyCalendar';
 import { useQuery } from '@tanstack/react-query';
 import {
+  getMonthUse,
   getSingingDay,
   getTopGenreList,
   getTopSingerList,
   getTopSongList,
   getUserProfile,
+  
 } from '../services/profileService';
 import CalendarModal from '../components/organisms/profile/CalendarModal';
 import ProfileCard from '../components/organisms/profile/ProfileCard';
 import TopSongList from '../components/organisms/profile/TopSongList';
 import TopSingerWordCloud from '../components/organisms/profile/TopSingerWordCloud';
 import TopGenreItem from '../components/atoms/profile/TopGenreItem';
-import { useParams } from 'react-router-dom';
 
 const ProfilePage = () => {
   // 로그아웃
@@ -30,7 +31,7 @@ const ProfilePage = () => {
     }
   };
 
-  // 프로필 표시 & 많이 부른 노래 & 많이 부른 가수
+  // 프로필 표시 & 많이 부른 장르, 노래, 가수 & 월별 이용
   const [userProfile, setUserProfile] = useState({
     nickname: '',
     profileImage: '',
@@ -39,6 +40,7 @@ const ProfilePage = () => {
     phone: '',
     loginId: '',
   });
+  const [monthUse, setMonthUse] = useState(0)
   const [topSongList, setTopSongList] = useState([]);
   const [totalSingingCount, setTotalSingingCount] = useState(0);
   const [topSingerList, setTopSingerList] = useState([]);
@@ -58,6 +60,9 @@ const ProfilePage = () => {
             loginId: '',
           }
         );
+
+        const MonthUseResponse = await getMonthUse();
+        setMonthUse(MonthUseResponse?.data || 0)
 
         const topSongListResponse = await getTopSongList();
         setTopSongList(topSongListResponse?.mostSongsList || []);
@@ -116,7 +121,7 @@ const ProfilePage = () => {
         <div className="w-full">
           <p className="text-lg font-semibold p-2">{userProfile.nickname}님에 대한 분석</p>
           <div className="flex flex-col gap-2">
-            <p className="text-md px-2">이번 달 SongPicker 사용 일수 : 10일</p>
+            <p className="text-md px-2">이번 달 SongPicker 사용 일수 : {monthUse}일</p>
             <p className="text-md px-2">가장 많이 부른 노래 장르 Top 3</p>
             <div className="flex gap-2 px-2">
               {topGenreList.length > 0 ? (

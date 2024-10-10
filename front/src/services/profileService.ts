@@ -14,6 +14,21 @@ export const getUserProfile = () => {
     });
 };
 
+// 월 이용 횟수
+export const getMonthUse = () => {
+  return axiosInstance({
+    method: 'GET',
+    url: '/api/histories/this-month/use-count',
+  })
+    .then(res => {
+      console.log(res.data);
+      return res.data;
+    })
+    .catch(err => {
+      console.log(err);
+    });
+};
+
 // 많이 부른 장르
 export const getTopGenreList = () => {
   return axiosInstance({
