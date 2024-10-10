@@ -46,18 +46,17 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const [userProfileResponse, topSongListResponse, topSingerListResponse, topGenreResponse] =
-          await Promise.all([
-            getUserProfile(),
-            getTopSongList(),
-            getTopSingerList(),
-            getTopGenreList(),
-          ]);
-
+        const userProfileResponse = await getUserProfile();
         setUserProfile(userProfileResponse);
+
+        const topSongListResponse = await getTopSongList();
         setTopSongList(topSongListResponse.mostSongsList);
         setTotalSingingCount(topSongListResponse.totalCount);
+
+        const topSingerListResponse = await getTopSingerList();
         setTopSingerList(topSingerListResponse);
+
+        const topGenreResponse = await getTopGenreList();
         setTopGenreList(topGenreResponse);
       } catch (error) {
         console.error(error);
@@ -70,11 +69,12 @@ const ProfilePage = () => {
   // 노래 부른 날 색칠
   const currentYear = new Date().getFullYear();
 
-  const { data: singingDayData } = useQuery<Date[]>({
+  const { data: singingDayData, refetch } = useQuery<Date[]>({
     queryKey: ['karaokeDay', currentYear],
     queryFn: () => {
       return getSingingDay(currentYear);
     },
+    enabled: false,
   });
 
   // 해당 일자에 부른 노래 모달
