@@ -47,17 +47,25 @@ const ProfilePage = () => {
     const fetchProfileData = async () => {
       try {
         const userProfileResponse = await getUserProfile();
-        setUserProfile(userProfileResponse);
+        setUserProfile(userProfileResponse || {
+          nickname: '',
+          profileImage: '',
+          name: '',
+          gender: '',
+          phone: '',
+          loginId: '',
+        });
 
         const topSongListResponse = await getTopSongList();
-        setTopSongList(topSongListResponse.mostSongsList);
-        setTotalSingingCount(topSongListResponse.totalCount);
+        setTopSongList(topSongListResponse?.mostSongsList || []);
+        setTotalSingingCount(topSongListResponse?.totalCount || 0);
 
         const topSingerListResponse = await getTopSingerList();
-        setTopSingerList(topSingerListResponse);
+        setTopSingerList(topSingerListResponse || []);
 
         const topGenreResponse = await getTopGenreList();
-        setTopGenreList(topGenreResponse);
+        setTopGenreList(topGenreResponse || []);
+        await refetch();
       } catch (error) {
         console.error(error);
       }
@@ -107,7 +115,7 @@ const ProfilePage = () => {
           <div className="flex flex-col gap-2">
             <p className="text-md px-2">이번 달 SongPicker 사용 일수 : 10일</p>
             <p className="text-md px-2">가장 많이 부른 노래 장르 Top 3</p>
-            <div className="flex gap-2">
+            <div className="flex gap-2 px-2">
               {topGenreList.length > 0 ? (
                 topGenreList.map((item, i) => {
                   return <TopGenreItem name={item} key={`${item}-${i}`} />;
