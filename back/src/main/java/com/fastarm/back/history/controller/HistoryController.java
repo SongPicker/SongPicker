@@ -4,7 +4,6 @@ import com.fastarm.back.auth.security.dto.LoginMemberInfo;
 import com.fastarm.back.common.controller.dto.ApiResponse;
 import com.fastarm.back.history.controller.dto.*;
 import com.fastarm.back.history.dto.DateSongsDto;
-import com.fastarm.back.history.dto.MostSongsListDto;
 import com.fastarm.back.history.dto.SingDateDto;
 import com.fastarm.back.history.dto.TeamRecentSongsDto;
 import com.fastarm.back.history.service.HistoryService;
@@ -69,4 +68,11 @@ public class HistoryController {
         DateSongsResponse result = historyService.findDateSongsList(new DateSongsDto(year, month, day, loginMemberInfo.getLoginId()));
         return ResponseEntity.ok(new ApiResponse<>("HI104", "날짜별 부른 곡 조회 성공", result));
     }
+
+    @GetMapping("/this-month/use-count")
+    public ResponseEntity<?> monthUseCountGet(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
+        int result = historyService.getMonthUseCount(loginMemberInfo.getLoginId());
+        return ResponseEntity.ok(new ApiResponse<>("HI107", "현재 월 사용 횟수 조회 성공", result));
+    }
+
 }
