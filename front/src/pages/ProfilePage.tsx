@@ -33,6 +33,10 @@ const ProfilePage = () => {
   const [userProfile, setUserProfile] = useState({
     nickname: '',
     profileImage: '',
+    name: '',
+    gender: '',
+    phone: '',
+    loginId: '',
   });
   const [topSongList, setTopSongList] = useState([]);
   const [totalSingingCount, setTotalSingingCount] = useState(0);
@@ -42,18 +46,17 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const [userProfileResponse, topSongListResponse, topSingerListResponse, topGenreResponse] =
-          await Promise.all([
-            getUserProfile(),
-            getTopSongList(),
-            getTopSingerList(),
-            getTopGenreList(),
-          ]);
-
+        const userProfileResponse = await getUserProfile();
         setUserProfile(userProfileResponse);
+
+        const topSongListResponse = await getTopSongList();
         setTopSongList(topSongListResponse.mostSongsList);
         setTotalSingingCount(topSongListResponse.totalCount);
+
+        const topSingerListResponse = await getTopSingerList();
         setTopSingerList(topSingerListResponse);
+
+        const topGenreResponse = await getTopGenreList();
         setTopGenreList(topGenreResponse);
       } catch (error) {
         console.error(error);
@@ -66,11 +69,12 @@ const ProfilePage = () => {
   // 노래 부른 날 색칠
   const currentYear = new Date().getFullYear();
 
-  const { data: singingDayData } = useQuery<Date[]>({
+  const { data: singingDayData, refetch } = useQuery<Date[]>({
     queryKey: ['karaokeDay', currentYear],
     queryFn: () => {
       return getSingingDay(currentYear);
     },
+    enabled: false,
   });
 
   // 해당 일자에 부른 노래 모달
@@ -104,9 +108,15 @@ const ProfilePage = () => {
             <p className="text-md px-2">이번 달 SongPicker 사용 일수 : 10일</p>
             <p className="text-md px-2">가장 많이 부른 노래 장르 Top 3</p>
             <div className="flex gap-2">
-              {topGenreList.map((item, i) => {
-                return <TopGenreItem name={item} key={`${item}-${i}`} />;
-              })}
+              {topGenreList.length > 0 ? (
+                topGenreList.map((item, i) => {
+                  return <TopGenreItem name={item} key={`${item}-${i}`} />;
+                })
+              ) : (
+                <p className="text-sm text-white">
+                  아직 정보가 부족해요! SongPicker를 이용해보세요
+                </p>
+              )}
             </div>
           </div>
         </div>

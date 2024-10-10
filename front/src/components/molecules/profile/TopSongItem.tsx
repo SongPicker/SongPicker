@@ -10,6 +10,7 @@ type TopSongItemProps = {
 };
 
 const TopSongItem = (props: TopSongItemProps) => {
+  console.log(props);
   return (
     <div className="flex w-full items-center gap-2">
       <div className="h-full w-10 text-md font-semibold text-center">
@@ -17,7 +18,7 @@ const TopSongItem = (props: TopSongItemProps) => {
       </div>
       <div className="flex grow gap-3 items-center">
         <img src={props.topSongItem.coverImage} className="h-14" />
-        <div className="flex flex-col">
+        <div className="flex flex-col w-full">
           <p>{props.topSongItem.title}</p>
           <p>{props.topSongItem.singer}</p>
           <progress
