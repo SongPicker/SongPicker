@@ -6,25 +6,31 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import SongPickerGuitar from '@/assets/songPickerGuitar.svg?react';
 
+// 이미지 임포트
+import recommendImg from '@/assets/landing/recommendImg.jpg';
+import groupImg from '@/assets/landing/groupImg.jpg';
+import mypageImg from '@/assets/landing/mypageImg.jpg';
+import qrImg from '@/assets/landing/qrImg.jpg';
+
 const LandingPage: React.FC = () => {
   const slides = [
     {
-      image: '/src/assets/landing/recommendImg.jpg',
+      image: recommendImg,
       title: '당신의 취향이 담긴 선곡 추천!',
       description: '평소 즐겨 부르는 노래를 기반으로 맞춤 추천을 받아보세요.',
     },
     {
-      image: '/src/assets/landing/groupImg.jpg',
+      image: groupImg,
       title: '함께 부르는 즐거움!',
       description: '친구들과 함께 즐길 수 있는 완벽한 노래방 추천 리스트를 만들어드려요.',
     },
     {
-      image: '/src/assets/landing/mypageImg.jpg',
+      image: mypageImg,
       title: '나만의 취향 분석!',
       description: '당신의 노래 취향을 한눈에 확인하고 분석해보세요.',
     },
     {
-      image: '/src/assets/landing/qrImg.jpg',
+      image: qrImg,
       title: 'QR을 통해 노래방과의 연동!',
       description: 'QR 인식 한 번으로 노래방과 빠르게 연동하세요.',
     },
