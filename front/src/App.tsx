@@ -19,6 +19,7 @@ import { messaging } from './firebaseConfig';
 import ChangeProfile from './pages/ChangeProfilePage';
 import ChangePasswordPage from './pages/ChangePasswordPage';
 import VerifyPasswordPage from './pages/VerifyPasswordPage';
+import LandingPage from './pages/LandingPage';
 // import { requestNotificationPermission } from './pushNotifications';
 
 interface PrivateRouteProps {
@@ -30,7 +31,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
   const isSongSelected = useAuthStore(state => state.isSongSelected);
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/landing" replace />;
   }
 
   if (isAuthenticated && !isSongSelected && window.location.pathname !== '/song-select') {
@@ -106,7 +107,14 @@ const App = () => {
               </PublicRoute>
             }
           />
-
+          <Route
+            path="/landing"
+            element={
+              <PublicRoute>
+                <LandingPage />
+              </PublicRoute>
+            }
+          />
           {/* 곡 선택 페이지 */}
           <Route
             path="/song-select"
