@@ -53,6 +53,7 @@ public class MemberController {
     @PostMapping
     public ResponseEntity<?> memberAdd(@Valid @RequestBody MemberAddRequest request, HttpSession session) {
         memberService.addMember(request.toDto(session));
+        session.invalidate();
         return new ResponseEntity<>(new ApiResponse<>("ME100", "회원가입 성공", null), HttpStatus.CREATED);
     }
 
