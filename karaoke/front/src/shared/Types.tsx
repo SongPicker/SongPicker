@@ -28,6 +28,12 @@ export type SongItem = {
 
 export type Reservation = SongItem[];
 
+// 예약 노래 시작
+export type SaveSingSong = {
+  song: SongItem
+  order:number
+}
+
 // 추천
 export interface UserData {
   nickname: string | null;

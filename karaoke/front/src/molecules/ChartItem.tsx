@@ -3,8 +3,9 @@ import Text36 from '../atoms/Text36';
 import { SongItem } from '../shared/Types';
 
 export type ChartItemProps = {
-  data: SongItem | SongItem;
-  handleClickedSong: (song: SongItem | SongItem) => void;
+  data: SongItem;
+  handleClickedSong: (song: SongItem, order: number) => void;
+  index?: number;
 };
 
 const ChartItem = (props: ChartItemProps) => {
@@ -12,7 +13,7 @@ const ChartItem = (props: ChartItemProps) => {
     <div
       className="w-[1690px] h-fit bg-black/50 grid grid-flow-col grid-cols-12 p-2.5 gap-x-2.5 hover:bg-[#80F9C6] duration-75 cursor-pointer group"
       onClick={() => {
-        props.handleClickedSong(props.data);
+        props.handleClickedSong(props.data, props.index || 0);
       }}
     >
       {/* 노래방 번호 */}

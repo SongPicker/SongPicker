@@ -15,10 +15,10 @@ const ReservationList = (props: ReservationListProps) => {
   const [clickedSinger, setClickedSinger] = useState('');
 
   // 클릭한 노래 상태 변경
-  const handleClickedSong = useCallback((song: SongItem) => {
+  const handleClickedSong = useCallback((song: SongItem, order: number) => {
     setClickedTitle(song.title);
     setClickedSinger(song.singer);
-    saveSingSong(song);
+    saveSingSong({ song, order });
   }, []);
 
   // 클릭한 노래가 변경되면 유튜브 검색을 실행
@@ -41,6 +41,7 @@ const ReservationList = (props: ReservationListProps) => {
               <ChartItem
                 data={item}
                 handleClickedSong={handleClickedSong}
+                index={i}
                 key={`reserve-${item.number}-${i}`}
               />
             );
