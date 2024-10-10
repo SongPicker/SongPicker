@@ -17,12 +17,12 @@ const LandingPage: React.FC = () => {
     {
       image: recommendImg,
       title: '당신의 취향이 담긴 선곡 추천!',
-      description: '평소 즐겨 부르는 노래를 기반으로 맞춤 추천을 받아보세요.',
+      description: ['평소 즐겨 부르는 노래를 기반으로', '맞춤 추천을 받아보세요.'],
     },
     {
       image: groupImg,
       title: '함께 부르는 즐거움!',
-      description: '친구들과 함께 즐길 수 있는 완벽한 노래방 추천 리스트를 만들어드려요.',
+      description: ['친구들과 함께 즐길 수 있는', '완벽한 노래방 추천 리스트를 만들어드려요.'],
     },
     {
       image: mypageImg,
@@ -64,7 +64,16 @@ const LandingPage: React.FC = () => {
                 <SongPickerGuitar className="w-36 h-36 absolute -bottom-5 -right-16" />
               </div>
               <h2 className="text-2xl font-bold mb-4">{slide.title}</h2>
-              <p className="text-base text-center max-w-xs mb-8">{slide.description}</p>
+              <p className="text-base text-center max-w-xs mb-8">
+                {Array.isArray(slide.description)
+                  ? slide.description.map((line, i) => (
+                      <React.Fragment key={i}>
+                        {line}
+                        {i < slide.description.length - 1 && <br />}
+                      </React.Fragment>
+                    ))
+                  : slide.description}
+              </p>
             </div>
             {index === slides.length - 1 && (
               <Link

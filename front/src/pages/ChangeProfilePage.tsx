@@ -1,9 +1,13 @@
+import React, { useCallback, useState, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import SimpleLayout from '../layouts/SimpleLayout';
 import songPickerLogo from '../assets/songPickerLogo.svg';
 import UserInfoNicknameSignupForm from '../components/molecules/signup/UserInfoNicknameSignupForm';
-import { useCallback, useState } from 'react';
-import { changeNickname, changePhoneNumber } from '../services/profileChangeService';
+import {
+  changeNickname,
+  changePhoneNumber,
+  changeProfileImage,
+} from '../services/profileChangeService';
 import UserInfoPhoneSignupForm from '../components/molecules/signup/UserInfoPhoneSignupForm';
 import UserInfoAuthCodeSignupForm from '../components/molecules/signup/UserInfoAuthCodeSignupForm';
 
@@ -18,6 +22,8 @@ const ChangeProfilePage = () => {
   const [resetAuthCode, setResetAuthCode] = useState(false);
   const [phone, setPhone] = useState('');
   const [isPhoneValid, setIsPhoneValid] = useState(false);
+  const [profileImage, setProfileImage] = useState(userProfile.profileImage || songPickerLogo);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 닉네임 수정
   const changeProfile = () => {
@@ -43,15 +49,48 @@ const ChangeProfilePage = () => {
     setIsPhoneVerified(false);
   }, []);
 
+  const handleProfileImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        setProfileImage(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+
+      changeProfileImage(file)
+        .then(response => {
+          console.log('프로필 이미지 변경 성공:', response);
+          // 성공 메시지 표시 또는 다른 작업 수행
+        })
+        .catch(error => {
+          console.error('프로필 이미지 변경 실패:', error);
+          // 오류 메시지 표시
+        });
+    }
+  };
+
   return (
     <SimpleLayout title="프로필 수정">
       <div className="mt-12 px-4 space-y-12 min-w-72 w-full">
         {/* 프로필 사진 수정 */}
         <div className="flex flex-col items-center gap-5">
           <div className="flex mask mask-circle w-20 h-20 bg-white">
-            <img src={userProfile.profileImage || songPickerLogo} className="w-full h-full" />
+            <img src={profileImage} className="w-full h-full object-cover" alt="프로필 이미지" />
           </div>
-          <button className="btn w-fit bg-primary border-none text-base">프로필 사진 수정</button>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleProfileImageChange}
+            accept="image/*"
+            style={{ display: 'none' }}
+          />
+          <button
+            className="btn w-fit bg-primary border-none text-base"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            프로필 사진 수정
+          </button>
         </div>
 
         {/* 바꿀 수 없는 정보 */}

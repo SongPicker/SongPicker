@@ -47,14 +47,16 @@ const ProfilePage = () => {
     const fetchProfileData = async () => {
       try {
         const userProfileResponse = await getUserProfile();
-        setUserProfile(userProfileResponse || {
-          nickname: '',
-          profileImage: '',
-          name: '',
-          gender: '',
-          phone: '',
-          loginId: '',
-        });
+        setUserProfile(
+          userProfileResponse || {
+            nickname: '',
+            profileImage: '',
+            name: '',
+            gender: '',
+            phone: '',
+            loginId: '',
+          }
+        );
 
         const topSongListResponse = await getTopSongList();
         setTopSongList(topSongListResponse?.mostSongsList || []);
