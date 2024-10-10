@@ -7,7 +7,7 @@ interface PayingButtonProps extends PayingInfo {
 
 const PayingButton = (props: PayingButtonProps) => {
   return (
-    <div className="card flex bg-transparent w-[720px] h-[170px] shadow-xl border-none relative overflow-hidden cursor-pointer hover:bg-[#80E4F9] group"
+    <div className="card flex bg-transparent w-[680px] h-[170px] shadow-xl border-none relative overflow-hidden cursor-pointer hover:bg-[#80E4F9] group"
     onClick={()=> props.onClick(props)}
     >
       {/* 배경색 */}

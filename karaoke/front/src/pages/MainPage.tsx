@@ -94,7 +94,7 @@ const MainPage = () => {
       {showRecommendation && userData.length > 0 && (
         <div className="flex h-full">
           <ChartTemplates
-            chartName="SongPicker 추천 차트"
+            chartName="SongPicker 추천차트"
             data={userData}
             closeChart={() => setShowRecommendation(false)}
             type="recommendation"
@@ -107,7 +107,7 @@ const MainPage = () => {
       {showReservation && (
         <div className="flex h-full">
           <ChartTemplates
-            chartName="SongPicker 예약 목록"
+            chartName="SongPicker 예약목록"
             closeChart={() => setShowReservation(false)}
             data={reservationData || []}
             isLoading={reservationIsLoading}

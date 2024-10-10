@@ -10,6 +10,8 @@ import RecommendCarouselItem from './RecommendCarouselItem';
 type RecommendCarouselProps = {
   data: UserData[];
   mode: string;
+  chartName: string;
+  closeChart: () => void;
 };
 
 const RecommendCarousel = (props: RecommendCarouselProps) => {
@@ -44,7 +46,7 @@ const RecommendCarousel = (props: RecommendCarouselProps) => {
         const currentUser = props.data[index];
         return (
           currentChart === index && (
-            <div key={`chartCarousel-indi-${index}`}>
+            <div key={`chartCarousel-indi-${index}`} className='w-full'>
               <RecommendCarouselItem
                 data={userList.data || []}
                 id={index}
@@ -52,6 +54,9 @@ const RecommendCarousel = (props: RecommendCarouselProps) => {
                 handleClickedSong={handleClickedSong}
                 handleCurrentChart={handleCurrentChart}
                 nickname={currentUser.nickname}
+                chartName={props.chartName}
+                closeChart={props.closeChart}
+
               />
             </div>
           )

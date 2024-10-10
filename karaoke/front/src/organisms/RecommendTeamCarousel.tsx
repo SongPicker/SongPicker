@@ -8,6 +8,9 @@ import RecommendCarouselItem from './RecommendCarouselItem';
 type RecommendTeamCarouselProps = {
   data: UserData[];
   mode: string;
+  chartName: string;
+  closeChart: () => void;
+
 };
 
 const RecommendTeamCarousel = (props: RecommendTeamCarouselProps) => {
@@ -50,6 +53,9 @@ const RecommendTeamCarousel = (props: RecommendTeamCarouselProps) => {
                 handleClickedSong={handleClickedSong}
                 handleCurrentChart={handleCurrentChart}
                 nickname={currentUser.teamName}
+                chartName={props.chartName}
+                closeChart={props.closeChart}
+
               />
             </div>
           )
