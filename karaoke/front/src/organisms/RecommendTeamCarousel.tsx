@@ -45,7 +45,7 @@ const RecommendTeamCarousel = (props: RecommendTeamCarouselProps) => {
         const currentUser = props.data[index];
         return (
           currentChart === index && (
-            <div key={`chartCarousel-team-${index}`}>
+            <div key={`chartCarousel-team-${index}`} className='w-full'>
               <RecommendCarouselItem
                 data={userList.data || []}
                 id={index}
