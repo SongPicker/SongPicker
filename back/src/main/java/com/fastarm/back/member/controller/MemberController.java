@@ -65,54 +65,64 @@ public class MemberController {
 
     @GetMapping("/find-id")
     public ResponseEntity<?> loginIdFind(@RequestParam("phone") String phone,
-                                         @SessionAttribute(name = RedisSessionConstants.AUTH_PHONE, required = false) String authPhone) {
+                                         @SessionAttribute(name = RedisSessionConstants.AUTH_PHONE, required = false) String authPhone,
+                                         HttpSession session) {
         if (authPhone == null || !authPhone.equals(phone)) {
             throw new NotCheckPhoneAuthenticationException();
         }
         String result = memberService.findLoginId(phone);
+        session.invalidate();
         return ResponseEntity.ok(new ApiResponse<>("ME104", "로그인 아이디 찾기 성공", result));
     }
 
     @PatchMapping("/find-password")
     public ResponseEntity<?> passwordFind(@Valid @RequestBody PasswordFindRequest passwordFindRequest,
-                                          @SessionAttribute(name = RedisSessionConstants.AUTH_PHONE, required = false) String authPhone) {
+                                          @SessionAttribute(name = RedisSessionConstants.AUTH_PHONE, required = false) String authPhone,
+                                          HttpSession session) {
         if (authPhone == null || !authPhone.equals(passwordFindRequest.getPhone())) {
             throw new NotCheckPhoneAuthenticationException();
         }
         memberService.findPassword(passwordFindRequest.toDto());
+        session.invalidate();
         return ResponseEntity.ok(new ApiResponse<>("ME105", "비밀번호 수정 성공", null));
     }
 
     @PatchMapping("/password")
     public ResponseEntity<?> passwordModify(@Valid @RequestBody PasswordModifyRequest passwordModifyRequest,
                                             @AuthenticationPrincipal LoginMemberInfo loginMemberInfo,
-                                            @SessionAttribute(name = RedisSessionConstants.AUTH_PASSWORD, required = false) String authPassword) {
+                                            @SessionAttribute(name = RedisSessionConstants.AUTH_PASSWORD, required = false) String authPassword,
+                                            HttpSession session) {
         if (authPassword == null || !authPassword.equals(passwordModifyRequest.getExistPassword())) {
             throw new NotCheckPasswordAuthenticationException();
         }
         memberService.modifyPassword(passwordModifyRequest.toDto(loginMemberInfo.getLoginId()));
+        session.invalidate();
         return ResponseEntity.ok(new ApiResponse<>("ME105", "비밀번호 수정 성공", null));
     }
 
     @PatchMapping("/nickname")
     public ResponseEntity<?> nicknameModify(@Valid @RequestBody NicknameModifyRequest nicknameModifyRequest,
                                             @AuthenticationPrincipal LoginMemberInfo loginMemberInfo,
-                                            @SessionAttribute(name = RedisSessionConstants.CHECK_NICKNAME, required = false) String checkNickname) {
+                                            @SessionAttribute(name = RedisSessionConstants.CHECK_NICKNAME, required = false) String checkNickname,
+                                            HttpSession session) {
         if (checkNickname == null || !checkNickname.equals(nicknameModifyRequest.getNewNickname())) {
             throw new NotCheckNicknameDuplicationException();
         }
         memberService.modifyNickname(nicknameModifyRequest.toDto(loginMemberInfo.getLoginId()));
+        session.invalidate();
         return ResponseEntity.ok(new ApiResponse<>("ME107", "닉네임 수정 성공", null));
     }
 
     @PatchMapping("/phone")
     public ResponseEntity<?> phoneModify(@Valid @RequestBody PhoneModifyRequest phoneModifyRequest,
                                          @AuthenticationPrincipal LoginMemberInfo loginMemberInfo,
-                                         @SessionAttribute(name = RedisSessionConstants.AUTH_PHONE, required = false) String authPhone) {
+                                         @SessionAttribute(name = RedisSessionConstants.AUTH_PHONE, required = false) String authPhone,
+                                         HttpSession session) {
         if (authPhone == null || !authPhone.equals(phoneModifyRequest.getNewPhone())) {
             throw new NotCheckPhoneAuthenticationException();
         }
         memberService.modifyPhone(phoneModifyRequest.toDto(loginMemberInfo.getLoginId()));
+        session.invalidate();
         return ResponseEntity.ok(new ApiResponse<>("ME109", "전화번호 수정 성공", null));
     }
 
