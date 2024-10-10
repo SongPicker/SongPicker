@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -155,6 +156,24 @@ public class HistoryService {
         List<DateSongsListDto> result = map.values().stream().toList();
 
         return DateSongsResponse.from(songs.size(), result);
+    }
+
+    @Transactional(readOnly = true)
+    public int getMonthUseCount(String loginId) {
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(MemberNotFoundException::new);
+
+        LocalDateTime endDate = LocalDateTime.now();
+        LocalDateTime startDate = LocalDateTime.of(endDate.getYear(), endDate.getMonthValue(), 1, 0, 0, 0);
+
+        List<LocalDateTime> list = personalSingHistoryRepository.singDateList(member, startDate);
+
+        Set<LocalDate> result = new HashSet<>();
+        for (LocalDateTime date : list) {
+            result.add(date.toLocalDate());
+        }
+
+        return result.size();
     }
 
 }

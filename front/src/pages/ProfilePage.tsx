@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import MainLayout from '../layouts/MainLayout';
-import useAuthStore from '../stores/useAuthStore'; // useAuthStore 가져오기
+import useAuthStore from '../stores/useAuthStore';
 import MyCalendar from '../components/organisms/profile/MyCalendar';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -9,6 +9,7 @@ import {
   getTopSingerList,
   getTopSongList,
   getUserProfile,
+  getThisMonthUseCount,
 } from '../services/profileService';
 import CalendarModal from '../components/organisms/profile/CalendarModal';
 import ProfileCard from '../components/organisms/profile/ProfileCard';
@@ -17,19 +18,7 @@ import TopSingerWordCloud from '../components/organisms/profile/TopSingerWordClo
 import TopGenreItem from '../components/atoms/profile/TopGenreItem';
 
 const ProfilePage = () => {
-  // 로그아웃
-  const { logout } = useAuthStore(); // useAuthStore에서 logout 함수 가져오기
-  const handleLogout = async () => {
-    try {
-      await logout(); // 로그아웃 실행
-      console.log('로그아웃 완료');
-      // 추가적인 후처리 필요 시 여기에 작성 (예: 리다이렉트)
-    } catch (error) {
-      console.error('로그아웃 실패:', error);
-    }
-  };
-
-  // 프로필 표시 & 많이 부른 노래 & 많이 부른 가수
+  const { logout } = useAuthStore();
   const [userProfile, setUserProfile] = useState({
     nickname: '',
     profileImage: '',
@@ -42,22 +31,46 @@ const ProfilePage = () => {
   const [totalSingingCount, setTotalSingingCount] = useState(0);
   const [topSingerList, setTopSingerList] = useState([]);
   const [topGenreList, setTopGenreList] = useState([]);
+  const [thisMonthUseCount, setThisMonthUseCount] = useState(0);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      console.log('로그아웃 완료');
+    } catch (error) {
+      console.error('로그아웃 실패:', error);
+    }
+  };
 
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
         const userProfileResponse = await getUserProfile();
-        setUserProfile(userProfileResponse);
+        setUserProfile(
+          userProfileResponse || {
+            nickname: '',
+            profileImage: '',
+            name: '',
+            gender: '',
+            phone: '',
+            loginId: '',
+          }
+        );
 
         const topSongListResponse = await getTopSongList();
-        setTopSongList(topSongListResponse.mostSongsList);
-        setTotalSingingCount(topSongListResponse.totalCount);
+        setTopSongList(topSongListResponse?.mostSongsList || []);
+        setTotalSingingCount(topSongListResponse?.totalCount || 0);
 
         const topSingerListResponse = await getTopSingerList();
-        setTopSingerList(topSingerListResponse);
+        setTopSingerList(topSingerListResponse || []);
 
         const topGenreResponse = await getTopGenreList();
-        setTopGenreList(topGenreResponse);
+        setTopGenreList(topGenreResponse || []);
+
+        const thisMonthUseCountResponse = await getThisMonthUseCount();
+        setThisMonthUseCount(thisMonthUseCountResponse || 0);
+
+        await refetch();
       } catch (error) {
         console.error(error);
       }
@@ -105,9 +118,9 @@ const ProfilePage = () => {
         <div className="w-full">
           <p className="text-lg font-semibold p-2">{userProfile.nickname}님에 대한 분석</p>
           <div className="flex flex-col gap-2">
-            <p className="text-md px-2">이번 달 SongPicker 사용 일수 : 10일</p>
+            <p className="text-md px-2">이번 달 SongPicker 사용 횟수 : {thisMonthUseCount}회</p>
             <p className="text-md px-2">가장 많이 부른 노래 장르 Top 3</p>
-            <div className="flex gap-2">
+            <div className="flex gap-2 px-2">
               {topGenreList.length > 0 ? (
                 topGenreList.map((item, i) => {
                   return <TopGenreItem name={item} key={`${item}-${i}`} />;
