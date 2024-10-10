@@ -14,21 +14,6 @@ export const getUserProfile = () => {
     });
 };
 
-// 월 이용 횟수
-export const getMonthUse = () => {
-  return axiosInstance({
-    method: 'GET',
-    url: '/api/histories/this-month/use-count',
-  })
-    .then(res => {
-      console.log(res.data);
-      return res.data;
-    })
-    .catch(err => {
-      console.log(err);
-    });
-};
-
 // 많이 부른 장르
 export const getTopGenreList = () => {
   return axiosInstance({
@@ -105,5 +90,20 @@ export const getTopSingerList = () => {
     })
     .catch(err => {
       console.log(err);
+    });
+};
+
+// 이번 달 사용 횟수
+export const getThisMonthUseCount = () => {
+  return axiosInstance({
+    method: 'GET',
+    url: '/api/histories/this-month/use-count',
+  })
+    .then(res => {
+      return res.data.data;
+    })
+    .catch(err => {
+      console.log(err);
+      return 0;
     });
 };

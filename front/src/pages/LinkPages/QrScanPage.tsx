@@ -23,6 +23,7 @@ const QrScanPage = () => {
     setShowModal(true);
     setModalMessage('노래방기계와 연결중입니다. 잠시만 기다려주세요!');
     setModalIcon('spinner');
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     try {
       const { serialNumber } = JSON.parse(scanResult);
@@ -57,7 +58,7 @@ const QrScanPage = () => {
               groupId: groupId,
             },
           });
-        }, 1500);
+        }, 2500);
       } else {
         throw new Error('Connection failed');
       }
@@ -65,7 +66,7 @@ const QrScanPage = () => {
       console.error('Connection error:', error);
       setModalMessage('연결 중 오류가 발생했습니다. 다시 시도해주세요.');
       setModalIcon('link');
-      setTimeout(() => setShowModal(false), 1500);
+      setTimeout(() => setShowModal(false), 2500);
     }
   };
 
@@ -81,7 +82,7 @@ const QrScanPage = () => {
       <div className="flex-1 flex flex-col">
         <div className="relative w-full" style={{ height: '66.67vh' }}>
           <QrScanner
-            delay={300}
+            delay={3000}
             onError={handleError}
             onScan={handleScan}
             constraints={{

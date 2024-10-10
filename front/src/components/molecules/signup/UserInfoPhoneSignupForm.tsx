@@ -113,9 +113,8 @@ const UserInfoPhoneSignupForm: React.FC<UserInfoPhoneSignupFormProps> = ({
 
   const handleRetry = useCallback(() => {
     setShowAuthCodeForm(false);
-    setPhone('');
-    setIsPhoneValid(false);
-    setIsPhoneAvailable(false);
+    setIsPhoneValid(true); // 전화번호가 이미 유효하다고 가정
+    setIsPhoneAvailable(true); // 전화번호가 이미 사용 가능하다고 가정
     setMessage('');
     onResetAuthCode();
   }, [onResetAuthCode]);
@@ -137,7 +136,7 @@ const UserInfoPhoneSignupForm: React.FC<UserInfoPhoneSignupFormProps> = ({
           onChange={handleChange}
           className="flex-grow"
           maxLength={11}
-          disabled={showAuthCodeForm}
+          // disabled={showAuthCodeForm} 이 줄을 제거합니다
         />
         <div className="ml-[18px]">
           {!showAuthCodeForm && (

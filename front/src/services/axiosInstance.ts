@@ -76,11 +76,21 @@ const refreshAccessToken = async (): Promise<string> => {
   }
 };
 
+const removeSessionCookie = () => {
+  document.cookie = 'SESSION=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+};
+
 axiosInstance.interceptors.response.use(
   async (response: AxiosResponse<ApiResponse>) => {
+    const isAuthenticated = useAuthStore.getState().isAuthenticated;
+
+    if (isAuthenticated && document.cookie.includes('SESSION=')) {
+      removeSessionCookie();
+      console.log('Unnecessary SESSION cookie removed for authenticated user');
+    }
+
     if ('code' in response.data) {
       if (response.data.code === 'AU005') {
-        // 기존의 액세스 토큰 갱신 로직
         const originalRequest = response.config;
         if (!isRefreshing) {
           isRefreshing = true;
@@ -107,7 +117,6 @@ axiosInstance.interceptors.response.use(
           });
         }
       } else if (response.data.code === 'AU007') {
-        // 리프레시 토큰 만료 처리
         clearAuthState();
         window.location.href = '/login';
         return Promise.reject(new Error('Refresh token expired'));
@@ -116,6 +125,13 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error: AxiosError) => {
+    const isAuthenticated = useAuthStore.getState().isAuthenticated;
+
+    if (isAuthenticated && document.cookie.includes('SESSION=')) {
+      removeSessionCookie();
+      console.log('Unnecessary SESSION cookie removed for authenticated user on error');
+    }
+
     return Promise.reject(error);
   }
 );
