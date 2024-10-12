@@ -2,13 +2,17 @@ package com.fastarm.back.connection.repository;
 
 import com.fastarm.back.connection.entity.ConnectionInfo;
 import com.fastarm.back.member.entity.Member;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface ConnectionInfoRepository extends JpaRepository<ConnectionInfo, Long> {
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     List<ConnectionInfo> findListByMember(Member member);
 
     @Query("""
