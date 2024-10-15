@@ -124,16 +124,18 @@ SongPicker는 노래방 이용 데이터를 바탕으로 사용자의 취향에 
 
 **프레임워크 및 라이브러리**
 <div>
+  <span><img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black"/></span>
+  <span><img src="https://img.shields.io/badge/Styled--Component-DB7093?style=flat-square&logo=styled-components&logoColor=white"/></span>
+  <span><img src="https://img.shields.io/badge/Axios-5A29E4?style=flat-square&logo=axios&logoColor=white"/></span>
+  <span><img src="https://img.shields.io/badge/vite-%23646CFF.svg?style=flat-square&logo=vite&logoColor=white"</span>
+</div>
+<div>
   <span><img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=flat-square&logo=springboot&logoColor=white"/></span>
   <span><img src="https://img.shields.io/badge/Spring Security-6DB33F?style=flat-square&logo=springsecurity&logoColor=white"/></span>
   <span><img src="https://img.shields.io/badge/JWT-B041FF?style=flat-square&logo=jsonwebtokens&logoColor=white"/></span>
   <span><img src="https://img.shields.io/badge/JPA-007396?style=flat-square&logo=hibernate&logoColor=white"/></span>
   <span><img src="https://img.shields.io/badge/QueryDSL-007396?style=flat-square&logo=java&logoColor=white"/></span>
-  <span><img src="https://img.shields.io/badge/Jsoup-008000?style=flat-square&logo=java&logoColor=white"/></span>
-</div>
-<div>
-  <span><img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black"/></span>
-  <span><img src="https://img.shields.io/badge/Styled--Component-DB7093?style=flat-square&logo=styled-components&logoColor=white"/></span>
+  <span><img src="https://img.shields.io/badge/django-%23092E20.svg?style=flat-square&logo=django&logoColor=white"/></span>
 </div>
 
 <br>
@@ -163,7 +165,7 @@ SongPicker는 노래방 이용 데이터를 바탕으로 사용자의 취향에 
 
 <br>
 
-<p align="center"><img src="https://github.com/user-attachments/assets/c951a70f-c8ea-496f-9b25-4d6ebfd74628" width="100%" /></p>
+<p align="center"><img src="https://github.com/user-attachments/assets/ce438072-9476-42bf-91d4-8f8437f88503" width="100%" /></p>
 
 </div>
 </details>
@@ -180,7 +182,7 @@ SongPicker는 노래방 이용 데이터를 바탕으로 사용자의 취향에 
 </div>
 </details>
 
-#### [명세서 자세히 보기](https://www.notion.so/REST-API-eb150679fab942c7a17a89bb4d4fc936)
+#### [명세서 자세히 보기](https://mahogany-emperor-c5e.notion.site/API-6398db3c8a6147acb53ae2cfe13a5d50?pvs=4)
 
 ## 📂 디렉토리 구조
 <details>
