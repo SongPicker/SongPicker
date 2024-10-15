@@ -376,7 +376,7 @@ SongPicker는 노래방 이용 데이터를 바탕으로 사용자의 취향에 
 </td>
 <td width="25%" valign="top">
 <div>
-<p style="font-weight: bold">karaoke_front</p>
+<p style="font-weight: bold">karaoke_back</p>
 
 ```bash
 .
