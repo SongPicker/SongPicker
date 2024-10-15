@@ -187,7 +187,7 @@ SongPicker는 노래방 이용 데이터를 바탕으로 사용자의 취향에 
 ## 📂 디렉토리 구조
 <table>
 <tr>
-<td width="50%" valign="top">
+<td width="25%" valign="top">
 <div>
 <p style="font-weight: bold">frontend</p>
 
@@ -230,7 +230,7 @@ SongPicker는 노래방 이용 데이터를 바탕으로 사용자의 취향에 
 ```
 </div>
 </td>
-<td width="50%" valign="top">
+<td width="25%" valign="top">
 <div>
 <p style="font-weight: bold">backend</p>
 
@@ -324,6 +324,103 @@ SongPicker는 노래방 이용 데이터를 바탕으로 사용자의 취향에 
 │                   └── validation
 └── resources
     ├── application.yml
+
+```
+</div>
+</td>
+<td width="25%" valign="top">
+<div>
+<p style="font-weight: bold">karaoke_front</p>
+
+```bash
+.
+├── README.md
+├── dist
+│   ├── assets
+│   ├── fonts
+│   └── index.html
+├── eslint.config.js
+├── index.html
+├── package-lock.json
+├── package.json
+├── postcss.config.js
+├── public
+│   └── fonts
+├── src
+│   ├── App.css
+│   ├── App.tsx
+│   ├── assets
+│   ├── atoms
+│   ├── hooks
+│   ├── index.css
+│   ├── main.tsx
+│   ├── molecules
+│   ├── organisms
+│   ├── pages
+│   ├── services
+│   ├── shared
+│   ├── styles
+│   ├── template
+│   ├── utils
+│   └── vite-env.d.ts
+├── tailwind.config.js
+├── tsconfig.app.json
+├── tsconfig.app.tsbuildinfo
+├── tsconfig.json
+├── tsconfig.node.json
+├── tsconfig.node.tsbuildinfo
+└── vite.config.ts
+
+```
+</div>
+</td>
+<td width="25%" valign="top">
+<div>
+<p style="font-weight: bold">karaoke_front</p>
+
+```bash
+.
+├── java
+│   └── com
+│       └── fastarm
+│           └── back
+│               ├── BackApplication.java
+│               ├── common
+│               │   ├── config
+│               │   ├── constants
+│               │   ├── controller
+│               │   ├── exception
+│               │   └── service
+│               ├── connection
+│               │   ├── entity
+│               │   ├── enums
+│               │   └── repository
+│               ├── history
+│               │   ├── entity
+│               │   └── repository
+│               ├── karaoke
+│               │   ├── constants
+│               │   ├── controller
+│               │   ├── dto
+│               │   ├── entity
+│               │   ├── exception
+│               │   ├── repository
+│               │   └── service
+│               ├── member
+│               │   ├── entity
+│               │   ├── enums
+│               │   ├── exception
+│               │   └── repository
+│               ├── song
+│               │   ├── entity
+│               │   ├── exception
+│               │   └── repository
+│               └── team
+│                   ├── entity
+│                   ├── exception
+│                   └── repository
+└── resources
+    └── application.yml
 
 ```
 </div>
