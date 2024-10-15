@@ -23,9 +23,9 @@ SongPicker는 노래방 이용 데이터를 바탕으로 사용자의 취향에 
   
 ### 👨🏻‍💻 개발 인원
 
-|         <img src="https://github.com/hyeon8571.png" width="150">          |   <img src="https://github.com/eunji04.png" width="150">   |    <img src="https://github.com/suwhan2.png" width="150">     | <img src="https://github.com/jjuy00.png" width="150">  |   <img src="https://github.com/codemj99.png" width="150">    |       <img src="https://github.com/Roh-Jinseo.png" width="150">       |
+|         <img src="https://github.com/hyeon8571.png" width="150">          |   <img src="https://github.com/eunji04.png" width="150">   |    <img src="https://github.com/suwhan2.png" width="150">     | <img src="https://github.com/jjuy00.png" width="150">  |   <img src="https://github.com/codemj99.png" width="150">    |       <img src="https://github.com/soyeoning.png" width="150">       |
 | :----------------------------------------------------------------------: | :---------------------------------------------------------: | :---------------------------------------------------------------: | :---------------------------------------------------: | :-----------------------------------------------------------: | :-----------------------------------------------------------------: |
-| [원승현<br>@hyeon8571](https://github.com/hyeon8571)<br/>`BE`<br/>`Leader` | [박은지<br>@eunji04](https://github.com/eunji04)<br/>`BE` | [최수환<br>@suwhan2](https://github.com/suwhan2)<br/>`BE` | [박주영<br>@jjuy00](https://github.com/jjuy00)<br/>`FE` | [김민진<br>@codemj99](https://github.com/codemj99)<br/>`FE` | [노진서<br>@Roh-Jinseo](https://github.com/Roh-Jinseo)<br/>`FE` |
+| [원승현<br>@hyeon8571](https://github.com/hyeon8571)<br/>`BE`<br/>`Leader` | [박은지<br>@eunji04](https://github.com/eunji04)<br/>`BE` | [최수환<br>@suwhan2](https://github.com/suwhan2)<br/>`BE` | [박주영<br>@jjuy00](https://github.com/jjuy00)<br/>`FE` | [김민진<br>@codemj99](https://github.com/codemj99)<br/>`FE` | [조소연<br>@soyeoning](https://github.com/soyeoning)<br/>`FE` |
 
 <br>
 
@@ -185,167 +185,149 @@ SongPicker는 노래방 이용 데이터를 바탕으로 사용자의 취향에 
 #### [명세서 자세히 보기](https://mahogany-emperor-c5e.notion.site/API-6398db3c8a6147acb53ae2cfe13a5d50?pvs=4)
 
 ## 📂 디렉토리 구조
-<details>
-<summary>디렉토리 구조 보기</summary>
-<div markdown="1">
-  
+<table>
+<tr>
+<td width="50%" valign="top">
+<div>
+<p style="font-weight: bold">frontend</p>
+
+```bash
+.
+├── README.md
+├── eslint.config.js
+├── index.html
+├── package-lock.json
+├── package.json
+├── postcss.config.js
+├── public
+│   ├── basicImg.png
+│   ├── firebase-messaging-sw.js
+│   ├── fonts
+│   ├── icons
+│   ├── manifest.json
+│   └── songPicker_icon.png
+├── src
+│   ├── App.css
+│   ├── App.tsx
+│   ├── assets
+│   ├── components
+│   ├── firebaseConfig.ts
+│   ├── hooks
+│   ├── index.css
+│   ├── layouts
+│   ├── main.tsx
+│   ├── pages
+│   ├── react-qr-scanner.d.ts
+│   ├── services
+│   ├── stores
+│   ├── styles
+│   └── vite-env.d.ts
+├── tailwind.config.js
+├── tsconfig.app.json
+├── tsconfig.json
+├── tsconfig.node.json
+└── vite.config.ts
 ```
-  .
+</div>
+</td>
+<td width="50%" valign="top">
+<div>
+<p style="font-weight: bold">backend</p>
+
+```bash
+.
 ├── java
 │   └── com
-│       └── rebu
-│           ├── RebuApplication.java
-│           ├── absence
-│           │   ├── controller
-│           │   ├── dto
-│           │   ├── entity
-│           │   ├── exception
-│           │   ├── repository
-│           │   └── service
-│           ├── alarm
-│           │   ├── controller
-│           │   ├── dto
-│           │   ├── entity
-│           │   ├── enums
-│           │   ├── exception
-│           │   ├── repository
-│           │   └── service
-│           ├── auth
-│           │   ├── config
-│           │   ├── controller
-│           │   ├── dto
-│           │   ├── enums
-│           │   ├── exception
-│           │   ├── sevice
-│           │   └── validation
-│           ├── comment
-│           │   ├── controller
-│           │   ├── dto
-│           │   ├── entity
-│           │   ├── exception
-│           │   ├── repository
-│           │   ├── service
-│           │   └── validation
-│           ├── common
-│           │   ├── aop
-│           │   ├── config
-│           │   ├── controller
-│           │   ├── exception
-│           │   ├── service
-│           │   ├── util
-│           │   └── validation
-│           ├── feed
-│           │   ├── config
-│           │   ├── controller
-│           │   ├── dto
-│           │   ├── entity
-│           │   ├── exception
-│           │   ├── repository
-│           │   ├── review
-│           │   ├── service
-│           │   └── validation
-│           ├── follow
-│           │   ├── controller
-│           │   ├── dto
-│           │   ├── entity
-│           │   ├── exception
-│           │   ├── repository
-│           │   └── service
-│           ├── like
-│           │   ├── controller
-│           │   ├── dto
-│           │   ├── entity
-│           │   ├── exception
-│           │   ├── repository
-│           │   └── service
-│           ├── member
-│           │   ├── controller
-│           │   ├── dto
-│           │   ├── entity
-│           │   ├── enums
-│           │   ├── exception
-│           │   ├── repository
-│           │   ├── service
-│           │   └── validation
-│           ├── menu
-│           │   ├── controller
-│           │   ├── dto
-│           │   ├── entity
-│           │   ├── exception
-│           │   ├── repositoy
-│           │   ├── service
-│           │   └── validation
-│           ├── profile
-│           │   ├── controller
-│           │   ├── dto
-│           │   ├── employee
-│           │   ├── entity
-│           │   ├── enums
-│           │   ├── exception
-│           │   ├── repository
-│           │   ├── service
-│           │   ├── shop
-│           │   └── validation
-│           ├── reservation
-│           │   ├── controller
-│           │   ├── dto
-│           │   ├── entity
-│           │   ├── exception
-│           │   ├── repository
-│           │   ├── service
-│           │   └── validation
-│           ├── reviewkeyword
-│           │   ├── controller
-│           │   ├── dto
-│           │   ├── entity
-│           │   ├── exception
-│           │   ├── repository
-│           │   └── service
-│           ├── scrap
-│           │   ├── controller
-│           │   ├── dto
-│           │   ├── entity
-│           │   ├── exception
-│           │   ├── repository
-│           │   └── service
-│           ├── security
-│           │   ├── config
-│           │   ├── controller
-│           │   ├── dto
-│           │   ├── entity
-│           │   ├── exception
-│           │   ├── filter
-│           │   ├── service
-│           │   └── util
-│           ├── shop_favorite
-│           │   ├── controller
-│           │   ├── dto
-│           │   ├── entity
-│           │   ├── exception
-│           │   ├── repository
-│           │   └── service
-│           ├── storage
-│           │   ├── exception
-│           │   └── service
-│           └── workingInfo
-│               ├── controller
-│               ├── dto
-│               ├── entity
-│               ├── enums
-│               ├── exception
-│               ├── repository
-│               ├── service
-│               └── validation
+│       └── fastarm
+│           └── back
+│               ├── BackApplication.java
+│               ├── auth
+│               │   ├── config
+│               │   ├── controller
+│               │   ├── dto
+│               │   ├── enums
+│               │   ├── exception
+│               │   ├── security
+│               │   └── service
+│               ├── basedata
+│               │   ├── constants
+│               │   ├── controller
+│               │   ├── dto
+│               │   ├── entity
+│               │   ├── exception
+│               │   ├── repository
+│               │   └── service
+│               ├── common
+│               │   ├── config
+│               │   ├── constants
+│               │   ├── controller
+│               │   ├── exception
+│               │   └── service
+│               ├── connection
+│               │   ├── controller
+│               │   ├── dto
+│               │   ├── entity
+│               │   ├── enums
+│               │   ├── exception
+│               │   ├── repository
+│               │   └── service
+│               ├── history
+│               │   ├── controller
+│               │   ├── dto
+│               │   ├── entity
+│               │   ├── repository
+│               │   └── service
+│               ├── karaoke
+│               │   ├── dto
+│               │   ├── entity
+│               │   └── repository
+│               ├── likes
+│               │   ├── controller
+│               │   ├── dto
+│               │   ├── entity
+│               │   ├── exception
+│               │   ├── repository
+│               │   └── service
+│               ├── member
+│               │   ├── controller
+│               │   ├── dto
+│               │   ├── entity
+│               │   ├── enums
+│               │   ├── exception
+│               │   ├── repository
+│               │   ├── service
+│               │   └── validation
+│               ├── notification
+│               │   ├── controller
+│               │   ├── dto
+│               │   ├── entity
+│               │   ├── enums
+│               │   ├── exception
+│               │   ├── repository
+│               │   └── service
+│               ├── song
+│               │   ├── constants
+│               │   ├── controller
+│               │   ├── dto
+│               │   ├── entity
+│               │   ├── enums
+│               │   ├── exception
+│               │   ├── repository
+│               │   └── service
+│               └── team
+│                   ├── controller
+│                   ├── dto
+│                   ├── entity
+│                   ├── exception
+│                   ├── repository
+│                   ├── service
+│                   └── validation
 └── resources
-    ├── application-secret.yml
     ├── application.yml
-    ├── data.sql
-    └── email
-        └── form
-            ├── changePassword.html
-            └── signup.html
-```
 
+```
 </div>
-</details>
+</td>
+</tr>
+</table>
 
