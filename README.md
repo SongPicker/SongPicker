@@ -89,6 +89,12 @@ SongPicker는 노래방 이용 데이터를 바탕으로 사용자의 취향에 
 <img src="https://github.com/user-attachments/assets/62dacbf7-2da1-4533-9fc8-b0bfcb21bc49" width="100%" />
 </div>
 </td>
+  <td width="30%" valign="top">
+<div>
+<p style="font-weight: bold">팀 초대 수락/거절 기능</p>
+<img src="https://github.com/user-attachments/assets/740c36a7-080a-47f3-95ce-96c91e842f7e" width="100%" />
+</div>
+</td>
 </tr>
 </table>
 
