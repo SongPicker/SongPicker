@@ -80,7 +80,7 @@ SongPicker는 노래방 이용 데이터를 바탕으로 사용자의 취향에 
 <td width="30%" valign="top">
 <div>
 <p style="font-weight: bold">그룹 생성 기능</p>
-  <img src="https://github.com/user-attachments/assets/404ef577-e765-4f4e-848b-799acbb3e1a8" width="100%" />
+  <img src="https://github.com/user-attachments/assets/e354b0ce-768e-4eff-8d8f-50f986986fbb" width="100%" />
 </div>
 </td>
 <td width="30%" valign="top">
