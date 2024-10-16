@@ -37,16 +37,16 @@ SongPicker는 노래방 이용 데이터를 바탕으로 사용자의 취향에 
 
 <table>
 <tr>
-<td width="25%" valign="top">
+<td width="30%" valign="top">
 <div>
 <p style="font-weight: bold">개인 선곡 추천 기능</p>
-
+  <img src="https://github.com/user-attachments/assets/d1064e0c-7075-4c96-90e9-3842c1ad3267" width="100%" />
 </div>
 </td>
-<td width="25%" valign="top">
+<td width="30%" valign="top">
 <div>
 <p style="font-weight: bold">팀 선곡 추천 기능</p>
-
+<img src="https://github.com/user-attachments/assets/d571a586-d1fb-4809-803b-c17f41d4a7e2" width="100%" />
 </div>
 </td>
 </tr>
@@ -54,7 +54,7 @@ SongPicker는 노래방 이용 데이터를 바탕으로 사용자의 취향에 
 
 <hr>
 
-#### 💡 고객 측면(예약)
+#### 💡 노래방 연동 기능
 - 리뷰를 보고 실시간 예약 가능
 - 팔로우, 즐겨찾기 기능을 통해 관심 매장 등록 후 예약 가능
 - 편리한 예약 정보 관리
@@ -70,19 +70,27 @@ SongPicker는 노래방 이용 데이터를 바탕으로 사용자의 취향에 
 
 <hr>
 
-#### 💡 매장/디자이너 측면
+#### 💡 그룹 생성 및 초대 기능
 - 디자이너 관리 및 시술 정보 관리
 - 예약 시간 단위 커스텀 및 시술 시간에 따른 일정 관리
 - SNS 형식의 매장 홍보글 작성 가능
 
-<details>
-<summary>서비스 이미지</summary>
-<div markdown="1">  
-  <img src="https://github.com/user-attachments/assets/8d4650bc-a734-40f1-b4f5-feb4526d3384" width="24.5%" />
-  <img src="https://github.com/user-attachments/assets/dcfcb29a-b985-40d9-ab1d-350b3eb738cc" width="30%" />
-  <img src="https://github.com/user-attachments/assets/33610f86-d02b-44dc-924c-3c69d92ad18a" width="35%" />
+<table>
+<tr>
+<td width="30%" valign="top">
+<div>
+<p style="font-weight: bold">그룹 생성 기능</p>
+  <img src="https://github.com/user-attachments/assets/404ef577-e765-4f4e-848b-799acbb3e1a8" width="100%" />
 </div>
-</details>
+</td>
+<td width="30%" valign="top">
+<div>
+<p style="font-weight: bold">팀원 초대 기능</p>
+<img src="https://github.com/user-attachments/assets/62dacbf7-2da1-4533-9fc8-b0bfcb21bc49" width="100%" />
+</div>
+</td>
+</tr>
+</table>
 
 <hr>
 
