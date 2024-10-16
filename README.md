@@ -31,18 +31,26 @@ SongPicker는 노래방 이용 데이터를 바탕으로 사용자의 취향에 
 
 ### 📌 주요기능 소개
 
-#### 💡 고객 측면(리뷰)
-- 미용, 네일, 에스테틱 등 뷰티 관련 매장 리뷰를 SNS 형식으로 직관적으로 제공
-- 위치 기반 주변 매장 리뷰 검색
-- 프로필 검색을 통한 매장 리뷰 및 게시글 모아보기
+#### 💡 선곡 추천 기능
+노래방 이용 데이터를 기반으로 사용자에게 알맞은 선곡을 추천합니다.  
+개인 이용 기록을 바탕으로한 개인 선곡 추천, 팀 이용 기록을 바탕으로한 팀 선곡 추천을 제공합니다.
 
-<details>
-<summary>서비스 이미지</summary>
-<div markdown="1">
-  <img src="https://github.com/user-attachments/assets/2495d97e-5aef-46e7-95fa-d0efb6f2cce1" width="26%" />
-  <img src="https://github.com/user-attachments/assets/ca769ee1-c9a7-4e5f-b48b-e429408b2d92" width="23.7%" />
+<table>
+<tr>
+<td width="25%" valign="top">
+<div>
+<p style="font-weight: bold">개인 선곡 추천 기능</p>
+
 </div>
-</details>
+</td>
+<td width="25%" valign="top">
+<div>
+<p style="font-weight: bold">팀 선곡 추천 기능</p>
+
+</div>
+</td>
+</tr>
+</table>
 
 <hr>
 
