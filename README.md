@@ -185,6 +185,7 @@ SongPicker는 노래방 이용 데이터를 바탕으로 사용자의 취향에 
 #### [명세서 자세히 보기](https://mahogany-emperor-c5e.notion.site/API-6398db3c8a6147acb53ae2cfe13a5d50?pvs=4)
 
 ## 📂 디렉토리 구조
+
 <table>
 <tr>
 <td width="25%" valign="top">
@@ -328,6 +329,14 @@ SongPicker는 노래방 이용 데이터를 바탕으로 사용자의 취향에 
 ```
 </div>
 </td>
+</tr>
+</table>
+
+
+<details>
+<summary>노래방 서비스 디렉토리 구조</summary>
+<table>
+<tr>
 <td width="25%" valign="top">
 <div>
 <p style="font-weight: bold">karaoke_front</p>
@@ -427,4 +436,4 @@ SongPicker는 노래방 이용 데이터를 바탕으로 사용자의 취향에 
 </td>
 </tr>
 </table>
-
+</details>
