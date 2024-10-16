@@ -108,9 +108,6 @@ SongPicker는 노래방 이용 데이터를 바탕으로 사용자의 취향에 
   <img width="80%" src="https://github.com/user-attachments/assets/123c0ae6-44ea-4abe-aa29-078e3b1e2e84"> 
 </p>
 
-- **Jenkins**: CI/CD 구축
-- **Nginx**: Reverse Proxy를 이용하여 클라이언트의 요청 분배
-- **Redis**: 리프레시 토큰 저장 및 인증 세션 저장소
 
 ### 개발 환경
 
