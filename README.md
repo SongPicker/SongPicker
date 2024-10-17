@@ -55,18 +55,49 @@ SongPicker는 노래방 이용 데이터를 바탕으로 사용자의 취향에 
 <hr>
 
 #### 💡 노래방 연동 기능
-- 리뷰를 보고 실시간 예약 가능
-- 팔로우, 즐겨찾기 기능을 통해 관심 매장 등록 후 예약 가능
-- 편리한 예약 정보 관리
+노래방 기기에 부여된 QR코드를 태깅하여 연동할 수 있습니다.  
+연동을 완료하면 노래를 예약할 수 있고, 추천 차트를 기기에서도 확인할 수 있습니다.
 
-<details>
-<summary>서비스 이미지</summary>
-<div markdown="1">  
-  <img src="https://github.com/user-attachments/assets/9a76a7fe-2883-472f-9b25-d33c1552e051" width="27%" />
-  <img src="https://github.com/user-attachments/assets/cfc83f04-0e2a-4bb7-976f-1fa3ac2db367" width="34.3%" />
-  <img src="https://github.com/user-attachments/assets/3d4a4d08-6402-49de-9523-9ccbe1070736" width="24.7%" />
+<table>
+<tr>
+<td width="30%" valign="top">
+<div>
+<p style="font-weight: bold">개별(솔로) 모드 연동 기능</p>
+  <img src="https://github.com/user-attachments/assets/3ab812f5-9759-4c94-b081-a1d5c1fa6ab3" width="100%" />
 </div>
-</details>
+</td>
+<td width="30%" valign="top">
+<div>
+<p style="font-weight: bold">그룹 모드 연동 기능</p>
+<img src="https://github.com/user-attachments/assets/8e1ab559-7488-42da-af66-57676b18e722" width="100%" />
+</div>
+</td>
+</tr>
+</table>
+
+<table>
+<tr>
+<td width="30%" valign="top">
+<div>
+<p style="font-weight: bold">예약 기능</p>
+  <img src="https://github.com/user-attachments/assets/c8436a4e-6d35-425c-bb4b-05c66cecd56c" width="80%" />
+</div>
+</td>
+<td width="30%" valign="top">
+<div>
+<p style="font-weight: bold">예약 목록 조회</p>
+<img src="https://github.com/user-attachments/assets/6d1774b9-3f20-41d4-b5e3-765a90894fda" width="100%" />
+</div>
+<div>
+<p style="font-weight: bold">추천 차트 조회</p>
+<img src="https://github.com/user-attachments/assets/a801f4e4-8e77-40db-818a-096eb85a7b39" width="100%" />
+</div>
+</td>
+</tr>
+</table>
+
+
+
 
 <hr>
 
@@ -88,7 +119,7 @@ SongPicker는 노래방 이용 데이터를 바탕으로 사용자의 취향에 
 <img src="https://github.com/user-attachments/assets/62dacbf7-2da1-4533-9fc8-b0bfcb21bc49" width="100%" />
 </div>
 </td>
-  <td width="30%" valign="top">
+<td width="30%" valign="top">
 <div>
 <p style="font-weight: bold">팀 초대 수락/거절 기능</p>
 <img src="https://github.com/user-attachments/assets/740c36a7-080a-47f3-95ce-96c91e842f7e" width="100%" />
