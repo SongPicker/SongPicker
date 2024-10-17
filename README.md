@@ -226,7 +226,7 @@ SongPicker는 노래방 이용 데이터를 바탕으로 사용자의 취향에 
 
 <br>
 
-<p align="center"><img src="https://github.com/user-attachments/assets/48bb8b2a-4486-4082-9508-c9cdedc67084" width="100%" /></p>
+![_C__Users_SSAFY_AppData_Local_Temp_c4329436-0718-4647-b396-b2cbe905768c_f7a73be4-594f-4e5b-ab72-76e4993032f9_Export-294bb2cb-2e83-4319-be1a-3d38250cf085 zip 68c_API%20%E1%84%86%E1%85%A7%E1%86%BC%E1%84%89%E1%85%A6%E](https://github.com/user-attachments/assets/240e443e-7de9-4d3f-b421-ac0d17d6fde4)
 
 </div>
 </details>
