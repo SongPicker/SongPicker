@@ -130,20 +130,6 @@ SongPicker는 노래방 이용 데이터를 바탕으로 사용자의 취향에 
 
 <hr>
 
-#### 💡 기타
-- 전화번호, 이메일 인증을 통한 고객 인증
-- 사업자 등록번호 검증을 통한 매장 등록
-- 프로필 전환을 통한 다양한 프로필 이용 가능
-
-<details>
-<summary>서비스 이미지</summary>
-<div markdown="1">  
-  <img src="https://github.com/user-attachments/assets/9e3dadbb-9ef4-4cc4-b53b-0508712f6c73" width="30%" />
-  <img src="https://github.com/user-attachments/assets/294f5bf7-f038-4312-be88-2767c07fda1d" width="30%" />
-</div>
-</details>
-
-
 <br>
 
 
