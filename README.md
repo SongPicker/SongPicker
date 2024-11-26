@@ -134,11 +134,9 @@ SongPicker는 노래방 이용 데이터를 바탕으로 사용자의 취향에 
 
 
 ## <img align="center" width="50" src="https://github.com/user-attachments/assets/2e9357e9-30a3-4de4-9db6-b753a952ec55"> 시스템 아키텍처
-<!--<p align="center">
-  <img width="80%" src="https://github.com/user-attachments/assets/7942911b-1f57-432e-bf19-367bc1a71084"> 
+<p align="center">
+  <img width="80%" src="https://github.com/user-attachments/assets/36156f4c-cbd9-4d06-815e-2e46721d0972"> 
 </p>
--->
-### 작성중
 
 ### 개발 환경
 
