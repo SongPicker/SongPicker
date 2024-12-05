@@ -37,16 +37,16 @@ SongPicker는 노래방 이용 데이터를 바탕으로 사용자의 취향에 
 
 <table>
 <tr>
-<td width="30%" valign="top">
+<td valign="top">
 <div>
 <p style="font-weight: bold">개인 선곡 추천 기능</p>
-  <img src="https://github.com/user-attachments/assets/d1064e0c-7075-4c96-90e9-3842c1ad3267" width="100%" />
+  <img src="https://github.com/user-attachments/assets/d1064e0c-7075-4c96-90e9-3842c1ad3267" width="220px" />
 </div>
 </td>
-<td width="30%" valign="top">
+<td valign="top">
 <div>
 <p style="font-weight: bold">그룹 선곡 추천 기능</p>
-<img src="https://github.com/user-attachments/assets/d571a586-d1fb-4809-803b-c17f41d4a7e2" width="100%" />
+<img src="https://github.com/user-attachments/assets/d571a586-d1fb-4809-803b-c17f41d4a7e2" width="220px" />
 </div>
 </td>
 </tr>
@@ -63,13 +63,13 @@ SongPicker는 노래방 이용 데이터를 바탕으로 사용자의 취향에 
 <td width="30%" valign="top">
 <div>
 <p style="font-weight: bold">개별(솔로) 모드 연동 기능</p>
-  <img src="https://github.com/user-attachments/assets/3ab812f5-9759-4c94-b081-a1d5c1fa6ab3" width="100%" />
+  <img src="https://github.com/user-attachments/assets/3ab812f5-9759-4c94-b081-a1d5c1fa6ab3" width="220px" />
 </div>
 </td>
 <td width="30%" valign="top">
 <div>
 <p style="font-weight: bold">그룹 모드 연동 기능</p>
-<img src="https://github.com/user-attachments/assets/8e1ab559-7488-42da-af66-57676b18e722" width="100%" />
+<img src="https://github.com/user-attachments/assets/8e1ab559-7488-42da-af66-57676b18e722" width="220px" />
 </div>
 </td>
 </tr>
@@ -80,17 +80,17 @@ SongPicker는 노래방 이용 데이터를 바탕으로 사용자의 취향에 
 <td width="30%" valign="top">
 <div>
 <p style="font-weight: bold">예약 기능</p>
-  <img src="https://github.com/user-attachments/assets/c8436a4e-6d35-425c-bb4b-05c66cecd56c" width="80%" />
+  <img src="https://github.com/user-attachments/assets/c8436a4e-6d35-425c-bb4b-05c66cecd56c" width="220px" />
 </div>
 </td>
 <td width="30%" valign="top">
 <div>
 <p style="font-weight: bold">예약 목록 조회</p>
-<img src="https://github.com/user-attachments/assets/6d1774b9-3f20-41d4-b5e3-765a90894fda" width="100%" />
+<img src="https://github.com/user-attachments/assets/6d1774b9-3f20-41d4-b5e3-765a90894fda" width="380px" />
 </div>
 <div>
 <p style="font-weight: bold">추천 차트 조회</p>
-<img src="https://github.com/user-attachments/assets/a801f4e4-8e77-40db-818a-096eb85a7b39" width="100%" />
+<img src="https://github.com/user-attachments/assets/a801f4e4-8e77-40db-818a-096eb85a7b39" width="380px" />
 </div>
 </td>
 </tr>
@@ -110,19 +110,19 @@ SongPicker는 노래방 이용 데이터를 바탕으로 사용자의 취향에 
 <td width="30%" valign="top">
 <div>
 <p style="font-weight: bold">그룹 생성 기능</p>
-  <img src="https://github.com/user-attachments/assets/e354b0ce-768e-4eff-8d8f-50f986986fbb" width="100%" />
+  <img src="https://github.com/user-attachments/assets/e354b0ce-768e-4eff-8d8f-50f986986fbb" width="200px" />
 </div>
 </td>
 <td width="30%" valign="top">
 <div>
 <p style="font-weight: bold">팀원 초대 기능</p>
-<img src="https://github.com/user-attachments/assets/62dacbf7-2da1-4533-9fc8-b0bfcb21bc49" width="100%" />
+<img src="https://github.com/user-attachments/assets/62dacbf7-2da1-4533-9fc8-b0bfcb21bc49" width="200px" />
 </div>
 </td>
 <td width="30%" valign="top">
 <div>
 <p style="font-weight: bold">팀 초대 수락/거절 기능</p>
-<img src="https://github.com/user-attachments/assets/740c36a7-080a-47f3-95ce-96c91e842f7e" width="100%" />
+<img src="https://github.com/user-attachments/assets/740c36a7-080a-47f3-95ce-96c91e842f7e" width="200px" />
 </div>
 </td>
 </tr>
